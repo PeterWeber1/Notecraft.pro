@@ -5,6 +5,7 @@ function App() {
   const [output, setOutput] = useState('');
   const [style, setStyle] = useState('natural');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const humanizeText = () => {
     if (!text.trim()) {
@@ -48,30 +49,99 @@ function App() {
     });
   };
 
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  // Theme-based styles
+  const getThemeStyles = () => ({
+    background: isDarkMode ? '#111827' : '#f9fafb',
+    color: isDarkMode ? '#ffffff' : '#111827',
+    cardBackground: isDarkMode ? '#1f2937' : '#ffffff',
+    cardBorder: isDarkMode ? '#374151' : '#e5e7eb',
+    inputBackground: isDarkMode ? '#374151' : '#ffffff',
+    inputBorder: isDarkMode ? '#4b5563' : '#e5e7eb',
+    inputColor: isDarkMode ? '#ffffff' : '#111827',
+    outputBackground: isDarkMode ? '#374151' : '#f9fafb',
+    outputBorder: isDarkMode ? '#8b5cf6' : '#8b5cf6',
+    labelColor: isDarkMode ? '#d1d5db' : '#374151',
+    mutedColor: isDarkMode ? '#9ca3af' : '#666666'
+  });
+
+  const theme = getThemeStyles();
+
   return (
     <div style={{ 
       padding: '40px', 
       maxWidth: '800px', 
       margin: '0 auto', 
       fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f9fafb',
-      minHeight: '100vh'
+      backgroundColor: theme.background,
+      color: theme.color,
+      minHeight: '100vh',
+      transition: 'all 0.3s ease'
     }}>
-      <h1 style={{ color: '#8b5cf6', marginBottom: '10px', textAlign: 'center' }}>
-        🤖 AI Writing Platform
-      </h1>
-      <p style={{ color: '#666', marginBottom: '30px', textAlign: 'center' }}>
-        Transform AI-generated text into human-like content
-      </p>
+      {/* NEW: Header with theme toggle */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        marginBottom: '20px'
+      }}>
+        <div>
+          <h1 style={{ 
+            color: '#8b5cf6', 
+            marginBottom: '5px', 
+            fontSize: '2.5rem',
+            margin: 0
+          }}>
+            🤖 AI Writing Platform
+          </h1>
+          <p style={{ 
+            color: theme.mutedColor, 
+            margin: 0,
+            fontSize: '16px'
+          }}>
+            Transform AI-generated text into human-like content
+          </p>
+        </div>
+        
+        {/* NEW: Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          style={{
+            background: isDarkMode ? '#374151' : '#e5e7eb',
+            border: 'none',
+            borderRadius: '50px',
+            padding: '12px',
+            cursor: 'pointer',
+            fontSize: '20px',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}
+          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+      </div>
 
       <div style={{ 
-        background: 'white', 
+        background: theme.cardBackground, 
         padding: '30px', 
         borderRadius: '15px', 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        border: '1px solid #e5e7eb'
+        boxShadow: isDarkMode 
+          ? '0 4px 20px rgba(0,0,0,0.3)' 
+          : '0 4px 20px rgba(0,0,0,0.1)',
+        border: `1px solid ${theme.cardBorder}`,
+        transition: 'all 0.3s ease'
       }}>
-        <h2 style={{ marginBottom: '20px', color: '#374151' }}>AI Humanizer</h2>
+        <h2 style={{ 
+          marginBottom: '20px', 
+          color: theme.color,
+          fontSize: '1.5rem'
+        }}>
+          AI Humanizer
+        </h2>
         
         <textarea
           value={text}
@@ -81,22 +151,24 @@ function App() {
             width: '100%',
             height: '120px',
             padding: '15px',
-            border: '2px solid #e5e7eb',
+            border: `2px solid ${theme.inputBorder}`,
             borderRadius: '8px',
             fontSize: '14px',
             resize: 'vertical',
             marginBottom: '15px',
-            fontFamily: 'inherit'
+            fontFamily: 'inherit',
+            backgroundColor: theme.inputBackground,
+            color: theme.inputColor,
+            transition: 'all 0.3s ease'
           }}
         />
         
-        {/* NEW: Style Selector */}
         <div style={{ marginBottom: '20px' }}>
           <label style={{ 
             display: 'block', 
             marginBottom: '8px', 
             fontWeight: '600', 
-            color: '#374151',
+            color: theme.labelColor,
             fontSize: '14px'
           }}>
             Humanization Style:
@@ -107,11 +179,13 @@ function App() {
             style={{
               width: '100%',
               padding: '10px 15px',
-              border: '2px solid #e5e7eb',
+              border: `2px solid ${theme.inputBorder}`,
               borderRadius: '8px',
               fontSize: '14px',
-              backgroundColor: 'white',
-              cursor: 'pointer'
+              backgroundColor: theme.inputBackground,
+              color: theme.inputColor,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
             }}
           >
             <option value="natural">✨ Natural & Conversational</option>
@@ -136,7 +210,8 @@ function App() {
             fontWeight: '600',
             cursor: isProcessing ? 'not-allowed' : 'pointer',
             marginBottom: '20px',
-            width: '100%'
+            width: '100%',
+            transition: 'all 0.3s ease'
           }}
         >
           {isProcessing ? '🔄 Processing...' : '✨ Humanize Text'}
@@ -145,14 +220,15 @@ function App() {
         {output && (
           <div>
             <div style={{
-              background: '#f9fafb',
+              background: theme.outputBackground,
               padding: '20px',
               borderRadius: '8px',
-              border: '2px solid #8b5cf6',
+              border: `2px solid ${theme.outputBorder}`,
               whiteSpace: 'pre-wrap',
               marginBottom: '15px',
               fontSize: '14px',
-              lineHeight: '1.6'
+              lineHeight: '1.6',
+              transition: 'all 0.3s ease'
             }}>
               {output}
             </div>
@@ -168,7 +244,8 @@ function App() {
                 fontSize: '14px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                width: '100%'
+                width: '100%',
+                transition: 'all 0.3s ease'
               }}
             >
               📋 Copy to Clipboard
@@ -180,10 +257,10 @@ function App() {
       <div style={{ 
         marginTop: '30px', 
         textAlign: 'center', 
-        color: '#666',
+        color: theme.mutedColor,
         fontSize: '14px' 
       }}>
-        🚀 Built with React • Enhanced Step by Step
+        🚀 Built with React • {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'}
       </div>
     </div>
   );
