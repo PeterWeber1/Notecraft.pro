@@ -150,3 +150,43 @@ function App() {
               borderRadius: '8px',
               border: '2px solid #8b5cf6',
               whiteSpace: 'pre-wrap',
+              marginBottom: '15px',
+              fontSize: '14px',
+              lineHeight: '1.6'
+            }}>
+              {output}
+            </div>
+            
+            <button
+              onClick={copyToClipboard}
+              style={{
+                background: '#10b981',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                width: '100%'
+              }}
+            >
+              📋 Copy to Clipboard
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div style={{ 
+        marginTop: '30px', 
+        textAlign: 'center', 
+        color: '#666',
+        fontSize: '14px' 
+      }}>
+        🚀 Built with React • Enhanced Step by Step
+      </div>
+    </div>
+  );
+}
+
+export default App;
