@@ -1,100 +1,41 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Sparkles, Check, X, Loader2, Sun, Moon, Copy, FileText,
-  Bold, Italic, Underline, Link, AlignLeft, AlignCenter,
+import { 
+  Bold, Italic, Underline, Link, AlignLeft, AlignCenter, 
   AlignRight, List, ListOrdered, IndentDecrease, IndentIncrease,
-  Palette, MoveVertical
+  Palette, MoveVertical, Copy, FileText
 } from 'lucide-react';
 
-const TRANSLATIONS = {
-  "en-US": {
-    "appTitle": "NoteCraft Notepad",
-    "yourText": "Your Text",
-    "sample": "Sample",
-    "copy": "Copy",
-    "fontFamily": "Font Family",
-    "fontSize": "Font Size",
-    "bold": "Bold",
-    "italic": "Italic",
-    "underline": "Underline",
-    "textColor": "Text Color",
-    "addLink": "Add Link",
-    "alignLeft": "Align Left",
-    "alignCenter": "Align Center",
-    "alignRight": "Align Right",
-    "lineSpacing": "Line Spacing",
-    "bulletList": "Bullet List",
-    "numberedList": "Numbered List",
-    "decreaseIndent": "Decrease Indent",
-    "increaseIndent": "Increase Indent",
-    "addLinkTitle": "Add Link",
-    "enterUrl": "Enter URL",
-    "add": "Add",
-    "cancel": "Cancel",
-    "characters": "characters",
-    "analyzeText": "Analyze Text",
-    "analyzing": "Analyzing...",
-    "suggestions": "Suggestions",
-    "all": "All",
-    "grammar": "Grammar",
-    "spelling": "Spelling",
-    "punctuation": "Punctuation",
-    "style": "Style",
-    "clarity": "Clarity",
-    "clickAnalyzeText": "Click 'Analyze Text' to get suggestions",
-    "noSuggestionsCategory": "No suggestions in this category",
-    "applySuggestion": "Apply suggestion",
-    "dismiss": "Dismiss",
-    "textHighlightColor": "Text highlight color",
-    "applyAllSuggestions": "Apply All Suggestions",
-    "pleaseEnterText": "Please enter some text to analyze",
-    "failedToAnalyze": "Failed to analyze text. Please try again.",
-    "failedToParse": "Failed to parse suggestions. Please try again.",
-    "reject": "Reject",
-    "accept": "Accept"
-  }
-};
-
-const appLocale = '{{APP_LOCALE}}';
-const browserLocale = navigator.languages?.[0] || navigator.language || 'en-US';
-const findMatchingLocale = (locale) => {
-  if (TRANSLATIONS[locale]) return locale;
-  const lang = locale.split('-')[0];
-  const match = Object.keys(TRANSLATIONS).find(key => key.startsWith(lang + '-'));
-  return match || 'en-US';
-};
-const locale = (appLocale !== '{{APP_LOCALE}}') ? findMatchingLocale(appLocale) : findMatchingLocale(browserLocale);
-const t = (key) => TRANSLATIONS[locale]?.[key] || TRANSLATIONS['en-US'][key] || key;
-
-function TextEditor() {
+function Notepad({ isDarkMode, toggleTheme }) {
   const [text, setText] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [error, setError] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('all');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showLinkDialog, setShowLinkDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [showLineSpacing, setShowLineSpacing] = useState(false);
-  const [activeTooltip, setActiveTooltip] = useState(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0, isBelow: false });
+  const [savedStatus, setSavedStatus] = useState('');
   const editorRef = useRef(null);
-  const categories = [
-    { id: 'all', label: t('all'), color: 'bg-purple-500' },
-    { id: 'grammar', label: t('grammar'), color: 'bg-blue-500' },
-    { id: 'spelling', label: t('spelling'), color: 'bg-red-500' },
-    { id: 'punctuation', label: t('punctuation'), color: 'bg-yellow-500' },
-    { id: 'style', label: t('style'), color: 'bg-green-500' },
-    { id: 'clarity', label: t('clarity'), color: 'bg-indigo-500' }
-  ];
 
-  const sampleTexts = [
-    'Human welfare is at the heart of our work at Anthropic: our mission is to make sure that increasingly capable and sophisticated AI systems remain beneficial to humanity.\n\nBut as we build those AI systems, and as they begin to approximate or surpass many human qualities, another question arises. Should we also be concerned about the potential consciousness and experiences of the models themselves? Should we be concerned about *model welfare*, too?\n\nThis is an open question, and one that\'s both philosophically and scientifically difficult. But now that models can communicate, relate, plan, problem-solve, and pursue goals—along with very many more characteristics we associate with people—we think it\'s time to address it.\n\nTo that end, we recently started a research program to investigate, and prepare to navigate, model welfare.'
-  ];
+  // Theme-based styles
+  const getThemeStyles = () => ({
+    background: isDarkMode ? '#111827' : '#f9fafb',
+    color: isDarkMode ? '#ffffff' : '#111827',
+    cardBackground: isDarkMode ? '#1f2937' : '#ffffff',
+    cardBorder: isDarkMode ? '#374151' : '#e5e7eb',
+    inputBackground: isDarkMode ? '#374151' : '#ffffff',
+    inputBorder: isDarkMode ? '#4b5563' : '#e5e7eb',
+    inputColor: isDarkMode ? '#ffffff' : '#111827',
+    labelColor: isDarkMode ? '#d1d5db' : '#374151',
+    mutedColor: isDarkMode ? '#9ca3af' : '#666666',
+    editorBackground: isDarkMode ? '#111827' : '#f9fafb',
+    toolbarBackground: isDarkMode ? '#111827' : '#f9fafb'
+  });
 
-  const colors = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000'];
+  const theme = getThemeStyles();
+
+  const colors = [
+    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', 
+    '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000'
+  ];
 
   const fonts = [
     { value: 'Arial', label: 'Arial' },
@@ -125,35 +66,28 @@ function TextEditor() {
     { value: '2', label: '2.0' }
   ];
 
-  const updateContent = () => {
-    if (editorRef.current) {
-      const html = editorRef.current.innerHTML;
-      setHtmlContent(html);
-
-      setActiveTooltip(null);
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
-
-      const marks = tempDiv.querySelectorAll('mark');
-      marks.forEach(mark => {
-        const textNode = document.createTextNode(mark.textContent);
-        mark.parentNode.replaceChild(textNode, mark);
-      });
-
-      tempDiv.innerHTML = tempDiv.innerHTML.replace(/<br\\s*\\/?\\>/gi, '\\n');
-      const plainText = tempDiv.textContent || '';
-      setText(plainText);
+  // Load saved content on mount
+  useEffect(() => {
+    const savedContent = localStorage.getItem('notepadContent');
+    const savedHtml = localStorage.getItem('notepadHtml');
+    if (savedHtml && editorRef.current) {
+      editorRef.current.innerHTML = savedHtml;
+      setText(savedContent || '');
+      setHtmlContent(savedHtml);
+    } else if (savedContent) {
+      setText(savedContent);
     }
-  };
+  }, []);
 
+  // Execute formatting command
   const formatText = (command, value = null) => {
-    editorRef.current?.focus();
-
+    editorRef.current.focus();
+    
     if (command === 'fontSize') {
       const selection = window.getSelection();
       if (!selection.rangeCount) return;
       const range = selection.getRangeAt(0);
-
+      
       if (range.collapsed) {
         const allContent = editorRef.current.childNodes;
         allContent.forEach(node => {
@@ -181,7 +115,7 @@ function TextEditor() {
           selection.addRange(range);
         } catch (e) {
           document.execCommand('fontSize', false, '7');
-          const tempFonts = editorRef.current.querySelectorAll('font[size=\"7\"]');
+          const tempFonts = editorRef.current.querySelectorAll('font[size="7"]');
           tempFonts.forEach(font => {
             const span = document.createElement('span');
             span.style.fontSize = value;
@@ -195,9 +129,12 @@ function TextEditor() {
       if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         let node = range.commonAncestorContainer;
-        if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+        if (node.nodeType === Node.TEXT_NODE) {
+          node = node.parentNode;
+        }
+        
         const inList = node.closest('ul, ol');
-
+        
         if (inList) {
           document.execCommand(command, false, null);
         } else {
@@ -205,6 +142,7 @@ function TextEditor() {
           if (!block || block === editorRef.current) {
             document.execCommand('formatBlock', false, 'div');
           }
+          
           setTimeout(() => {
             document.execCommand(command, false, null);
             editorRef.current.focus();
@@ -216,7 +154,10 @@ function TextEditor() {
       if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         let node = range.commonAncestorContainer;
-        if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+        if (node.nodeType === Node.TEXT_NODE) {
+          node = node.parentNode;
+        }
+        
         const listItem = node.closest('li');
         if (listItem) {
           document.execCommand(command, false, null);
@@ -235,15 +176,41 @@ function TextEditor() {
     } else {
       document.execCommand(command, false, value);
     }
-
-    editorRef.current?.focus();
+    
+    editorRef.current.focus();
     updateContent();
   };
+
+  // Update content and save
+  const updateContent = () => {
+    if (editorRef.current) {
+      const html = editorRef.current.innerHTML;
+      setHtmlContent(html);
+      
+      // Extract plain text
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      tempDiv.innerHTML = tempDiv.innerHTML.replace(/<br\s*\/?>/gi, '\n');
+      const plainText = tempDiv.textContent || '';
+      setText(plainText);
+      
+      // Save to localStorage
+      localStorage.setItem('notepadContent', plainText);
+      localStorage.setItem('notepadHtml', html);
+      setSavedStatus('✅ Saved');
+      
+      // Clear saved status after 2 seconds
+      setTimeout(() => setSavedStatus(''), 2000);
+    }
+  };
+
+  // Handle paste events
   const handlePaste = (e) => {
     e.preventDefault();
+    
     const text = e.clipboardData.getData('text/plain');
     if (!text) return;
-
+    
     const paragraphs = text.split(/\n\n+/);
     const cleanHTML = paragraphs
       .map(paragraph => {
@@ -252,62 +219,31 @@ function TextEditor() {
           .map(line => line.trim())
           .filter(line => line)
           .join('<br>');
-        return `<div style="font-family: Arial; font-size: 16px;">${paragraphHTML}</div>`;
+        
+        if (paragraphHTML) {
+          return `<div style="font-family: Arial; font-size: 16px;">${paragraphHTML}</div>`;
+        }
+        return '';
       })
       .filter(html => html)
       .join('<div><br></div>');
-
+    
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
-
+    
     selection.deleteFromDocument();
     const range = selection.getRangeAt(0);
     const fragment = range.createContextualFragment(cleanHTML);
     range.insertNode(fragment);
+    
     range.collapse(false);
     selection.removeAllRanges();
     selection.addRange(range);
-
+    
     updateContent();
   };
 
-  const handleCopy = (e) => {
-    const selection = window.getSelection();
-    if (selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
-    const clonedSelection = range.cloneContents();
-    const tempDiv = document.createElement('div');
-    tempDiv.appendChild(clonedSelection);
-
-    const marks = tempDiv.querySelectorAll('mark');
-    marks.forEach(mark => {
-      const span = document.createElement('span');
-      span.innerHTML = mark.innerHTML;
-      const parent = mark.parentElement;
-      if (parent && parent.style.fontSize) {
-        span.style.fontSize = parent.style.fontSize;
-      }
-      if (parent && parent.style.fontFamily) {
-        span.style.fontFamily = parent.style.fontFamily;
-      }
-      mark.parentNode.replaceChild(span, mark);
-    });
-
-    const allElements = tempDiv.querySelectorAll('*');
-    allElements.forEach(el => {
-      el.style.backgroundColor = '';
-      el.style.background = '';
-      el.style.backgroundImage = '';
-      el.style.backgroundClip = '';
-      el.style.webkitBackgroundClip = '';
-      el.style.webkitTextFillColor = '';
-    });
-
-    e.clipboardData.setData('text/plain', tempDiv.textContent);
-    e.clipboardData.setData('text/html', tempDiv.innerHTML);
-    e.preventDefault();
-  };
-
+  // Handle link insertion
   const insertLink = () => {
     if (linkUrl) {
       formatText('createLink', linkUrl);
@@ -316,370 +252,601 @@ function TextEditor() {
     }
   };
 
-  const analyzeText = async () => {
-    if (editorRef.current) {
-      let content = editorRef.current.innerHTML;
-      content = content.replace(/<mark[^>]*>(.*?)<\/mark>/g, '$1');
-      editorRef.current.innerHTML = content;
-      updateContent();
-    }
-
-    if (!text.trim()) {
-      setError(t('pleaseEnterText'));
-      return;
-    }
-
-    setIsAnalyzing(true);
-    setError('');
-    setSuggestions([]);
-
-    try {
-      const textToAnalyze = text;
-      const prompt = `Analyze the following text and provide specific suggestions for improvement. Focus on grammar, spelling, punctuation, style, and clarity. Please respond in ${locale} language.\n\nText to analyze:\n"${textToAnalyze}"\n\nIMPORTANT: When identifying issues, preserve the EXACT text including all quotation marks, apostrophes, and special characters. Respond with a JSON array of suggestion objects.`;
-
-      const response = await window.claude.complete(prompt);
-
-      try {
-        const parsedSuggestions = JSON.parse(response);
-        if (Array.isArray(parsedSuggestions)) {
-          setSuggestions(parsedSuggestions);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (parseError) {
-        console.error('Parse error:', parseError);
-        setError(t('failedToParse'));
+  const clearNotes = () => {
+    if (window.confirm('Are you sure you want to clear all notes?')) {
+      setText('');
+      setHtmlContent('');
+      if (editorRef.current) {
+        editorRef.current.innerHTML = '<div><br></div>';
       }
-    } catch (err) {
-      console.error('Analysis error:', err);
-      setError(t('failedToAnalyze'));
-    } finally {
-      setIsAnalyzing(false);
+      localStorage.removeItem('notepadContent');
+      localStorage.removeItem('notepadHtml');
+      setSavedStatus('🗑️ Cleared');
+      setTimeout(() => setSavedStatus(''), 2000);
     }
   };
-  const applySuggestion = (suggestion) => {
-    if (!editorRef.current) return;
-
-    let content = editorRef.current.innerHTML;
-    content = content.replace(/<mark[^>]*>(.*?)<\/mark>/g, '$1');
-
-    const issueText = suggestion.issue;
-    const replacementText = suggestion.suggestion;
-
-    const escapeHtml = (text) => {
-      return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    };
-
-    const patterns = [
-      issueText,
-      escapeHtml(issueText),
-      issueText.replace(/"/g, '&quot;').replace(/'/g, '&#039;')
-    ];
-
-    let replaced = false;
-    for (const pattern of patterns) {
-      if (content.includes(pattern)) {
-        content = content.replace(pattern, escapeHtml(replacementText));
-        replaced = true;
-        break;
-      }
-    }
-
-    if (!replaced) {
-      console.log(`Could not find text to replace: "${issueText}"`);
-    }
-
-    editorRef.current.innerHTML = content;
-    updateContent();
-
-    setSuggestions(suggestions.filter(s => s !== suggestion));
-
-    if (activeTooltip && activeTooltip.issue === suggestion.issue) {
-      setActiveTooltip(null);
-    }
-  };
-
-  const dismissSuggestion = (suggestion) => {
-    setSuggestions(suggestions.filter(s => s !== suggestion));
-    if (activeTooltip && activeTooltip.issue === suggestion.issue) {
-      setActiveTooltip(null);
-    }
-  };
-
-  const getCategoryColor = (category) => {
-    const cat = categories.find(c => c.id === category);
-    return cat ? cat.color : 'bg-gray-500';
-  };
-
-  const filteredSuggestions = activeCategory === 'all'
-    ? suggestions
-    : suggestions.filter(s => s.category === activeCategory);
 
   const copyText = () => {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = editorRef.current.innerHTML;
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.left = '-9999px';
-    tempDiv.style.whiteSpace = 'pre-wrap';
-    document.body.appendChild(tempDiv);
-
-    const marks = tempDiv.querySelectorAll('mark');
-    marks.forEach(mark => {
-      const span = document.createElement('span');
-      span.innerHTML = mark.innerHTML;
-      const parent = mark.parentElement;
-      if (parent && parent.style.fontSize) {
-        span.style.fontSize = parent.style.fontSize;
-      }
-      if (parent && parent.style.fontFamily) {
-        span.style.fontFamily = parent.style.fontFamily;
-      }
-      mark.parentNode.replaceChild(span, mark);
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Notes copied to clipboard!');
+    }).catch(() => {
+      alert('❌ Failed to copy notes');
     });
-
-    const allElements = tempDiv.querySelectorAll('*');
-    allElements.forEach(el => {
-      el.style.backgroundColor = '';
-      el.style.background = '';
-      el.style.backgroundImage = '';
-      el.style.backgroundClip = '';
-      el.style.webkitBackgroundClip = '';
-      el.style.webkitTextFillColor = '';
-    });
-
-    const selection = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(tempDiv);
-    selection.removeAllRanges();
-    selection.addRange(range);
-
-    try {
-      document.execCommand('copy');
-      selection.removeAllRanges();
-      document.body.removeChild(tempDiv);
-    } catch (err) {
-      document.body.removeChild(tempDiv);
-      navigator.clipboard.writeText(text);
-    }
   };
+
+  // Toolbar button component
+  const ToolbarButton = ({ icon: Icon, onClick, onMouseDown, title, active = false }) => (
+    <button
+      onClick={onClick}
+      onMouseDown={onMouseDown}
+      title={title}
+      className={`p-2 rounded transition-colors ${
+        active 
+          ? isDarkMode ? 'bg-purple-600 text-white' : 'bg-purple-500 text-white'
+          : isDarkMode 
+            ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+            : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+      }`}
+      style={{ minWidth: '36px', height: '36px' }}
+    >
+      <Icon style={{ width: '16px', height: '16px' }} />
+    </button>
+  );
+
+  const ToolbarSeparator = () => (
+    <div className={`w-px h-6 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-300'}`} />
+  );
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const isColorPicker = e.target.closest('[data-dropdown="color"]');
+      const isLineSpacing = e.target.closest('[data-dropdown="line-spacing"]');
+      
+      if (!isColorPicker) {
+        setShowColorPicker(false);
+      }
+      if (!isLineSpacing) {
+        setShowLineSpacing(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Initialize editor on mount
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML === '') {
       editorRef.current.innerHTML = '<div><br></div>';
     }
   }, []);
 
-  useEffect(() => {
-    if (!editorRef.current) return;
-
-    const handleEditorClick = (e) => {
-      if (e.target.tagName === 'MARK') {
-        const issueText = decodeURIComponent(e.target.getAttribute('data-issue') || '');
-        const match = suggestions.find(s => s.issue === issueText);
-        if (!match) return;
-
-        const rect = e.target.getBoundingClientRect();
-        const editorRect = editorRef.current.getBoundingClientRect();
-        let top = rect.top - editorRect.top - 10;
-        let left = rect.left - editorRect.left + rect.width / 2;
-        let isBelow = false;
-
-        if (top < 100) {
-          top = rect.bottom - editorRect.top + 10;
-          isBelow = true;
-        }
-
-        const tooltipWidth = 300;
-        if (left - tooltipWidth / 2 < 10) {
-          left = tooltipWidth / 2 + 10;
-        } else if (left + tooltipWidth / 2 > editorRect.width - 10) {
-          left = editorRect.width - tooltipWidth / 2 - 10;
-        }
-
-        setTooltipPosition({ top, left, isBelow });
-        setActiveTooltip(match);
-      }
-    };
-
-    editorRef.current.addEventListener('click', handleEditorClick);
-    return () => {
-      editorRef.current?.removeEventListener('click', handleEditorClick);
-    };
-  }, [suggestions]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      const isColor = e.target.closest('[data-dropdown=\"color\"]');
-      const isSpacing = e.target.closest('[data-dropdown=\"line-spacing\"]');
-      const isTooltip = e.target.closest('[data-tooltip]');
-      const isMark = e.target.tagName === 'MARK';
-
-      if (!isColor) setShowColorPicker(false);
-      if (!isSpacing) setShowLineSpacing(false);
-      if (!isTooltip && !isMark) setActiveTooltip(null);
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <div className="max-w-7xl mx-auto p-4 md:p-8">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-3">
-            <Sparkles className="w-8 h-8 text-purple-500" />
-            <h1 className="text-3xl font-bold">{t('appTitle')}</h1>
+    <div style={{ 
+      padding: '40px 20px', 
+      width: '100%',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: theme.background,
+      color: theme.color,
+      minHeight: '100vh',
+      transition: 'all 0.3s ease'
+    }}>
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto'
+      }}>
+        {/* Header */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '30px',
+          flexWrap: 'wrap',
+          gap: '20px'
+        }}>
+          <div>
+            <h1 style={{ 
+              color: '#8b5cf6', 
+              marginBottom: '5px', 
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              margin: 0
+            }}>
+              📝 NoteCraft
+            </h1>
+            <p style={{ 
+              color: theme.mutedColor, 
+              margin: 0,
+              fontSize: 'clamp(14px, 1.5vw, 18px)'
+            }}>
+              Your personal writing space with auto-save
+            </p>
           </div>
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 rounded-lg transition-colors bg-gray-200 hover:bg-gray-300 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-yellow-400"
-          >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
+          
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <a 
+              href="/" 
+              style={{
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                color: isDarkMode ? '#d1d5db' : '#374151',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontSize: '14px',
+                fontWeight: '600',
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              ← Back to AI Tools
+            </a>
+            <button
+              onClick={toggleTheme}
+              style={{
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                border: 'none',
+                borderRadius: '50px',
+                padding: '12px',
+                cursor: 'pointer',
+                fontSize: '20px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left panel (editor) */}
-          <div className="rounded-xl shadow-lg p-6 relative bg-white dark:bg-gray-800">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">{t('yourText')}</h2>
-              <div className="flex gap-2">
-                <button onClick={copyText} className="px-3 py-1 text-sm rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 flex items-center gap-1">
-                  <Copy className="w-4 h-4" />
-                  {t('copy')}
-                </button>
-              </div>
-            </div>
-
-            <div
-              ref={editorRef}
-              contentEditable
-              suppressContentEditableWarning
-              onInput={updateContent}
-              onPaste={handlePaste}
-              onCopy={handleCopy}
-              className="w-full h-96 p-4 rounded-lg border overflow-y-auto focus:outline-none bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
-              style={{
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '16px',
-                lineHeight: '1.5'
-              }}
-            />
-            <div className="mt-4 flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {text.length} {t('characters')}
+        {/* Editor Card */}
+        <div style={{ 
+          background: theme.cardBackground, 
+          padding: 'clamp(20px, 3vw, 40px)', 
+          borderRadius: '15px', 
+          boxShadow: isDarkMode 
+            ? '0 4px 20px rgba(0,0,0,0.3)' 
+            : '0 4px 20px rgba(0,0,0,0.1)',
+          border: `1px solid ${theme.cardBorder}`,
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '20px',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <h2 style={{ 
+              margin: 0,
+              color: theme.color,
+              fontSize: 'clamp(1.2rem, 2vw, 1.8rem)'
+            }}>
+              Your Notes
+            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ 
+                color: '#10b981', 
+                fontSize: '14px',
+                fontWeight: '600'
+              }}>
+                {savedStatus}
               </span>
               <button
-                onClick={analyzeText}
-                disabled={isAnalyzing || !text.trim()}
-                className={`px-6 py-2 rounded-lg font-medium transition-all transform hover:scale-105 flex items-center gap-2 ${
-                  isAnalyzing || !text.trim()
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:from-purple-600 hover:to-indigo-700 shadow-lg'
-                }`}
+                onClick={copyText}
+                style={{
+                  background: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
               >
-                {isAnalyzing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t('analyzing')}
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    {t('analyzeText')}
-                  </>
-                )}
+                <Copy style={{ width: '16px', height: '16px' }} />
+                Copy All
               </button>
             </div>
-            {error && (
-              <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                <p className="text-red-500 text-sm">{error}</p>
-              </div>
-            )}
           </div>
 
-          {/* Right panel (suggestions) */}
-          <div className="rounded-xl shadow-lg p-6 bg-white dark:bg-gray-800">
-            <h2 className="text-xl font-semibold mb-4">{t('suggestions')}</h2>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {categories.map(category => (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    activeCategory === category.id
-                      ? `${category.color} text-white`
-                      : isDarkMode
-                        ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {category.label}
-                  {suggestions.filter(s => category.id === 'all' || s.category === category.id).length > 0 && (
-                    <span className="ml-1">
-                      ({suggestions.filter(s => category.id === 'all' || s.category === category.id).length})
-                    </span>
-                  )}
-                </button>
+          {/* Formatting Toolbar */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '8px',
+            marginBottom: '8px',
+            borderRadius: '8px',
+            border: `1px solid ${theme.cardBorder}`,
+            backgroundColor: theme.toolbarBackground
+          }}>
+            {/* Font Selection */}
+            <select
+              onChange={(e) => formatText('fontName', e.target.value)}
+              defaultValue="Arial"
+              style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                backgroundColor: theme.inputBackground,
+                color: theme.inputColor,
+                border: `1px solid ${theme.inputBorder}`
+              }}
+              title="Font Family"
+            >
+              {fonts.map(font => (
+                <option key={font.value} value={font.value} style={{ fontFamily: font.value }}>
+                  {font.label}
+                </option>
               ))}
-            </div>
+            </select>
 
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {filteredSuggestions.length === 0 ? (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                  {suggestions.length === 0 ? t('clickAnalyzeText') : t('noSuggestionsCategory')}
-                </div>
-              ) : (
-                filteredSuggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className="p-4 rounded-lg border bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-md"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(suggestion.category)}`}>
-                          {suggestion.category}
-                        </span>
-                      </div>
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => applySuggestion(suggestion)}
-                          className="p-1 rounded hover:bg-green-500/20 text-green-500"
-                          title={t('applySuggestion')}
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => dismissSuggestion(suggestion)}
-                          className="p-1 rounded hover:bg-red-500/20 text-red-500"
-                          title={t('dismiss')}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="line-through text-red-600 dark:text-red-400">{suggestion.issue}</span>
-                        <span className="text-gray-400 dark:text-gray-500">→</span>
-                        <span className="font-medium text-green-600 dark:text-green-400">{suggestion.suggestion}</span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{suggestion.explanation}</p>
-                    </div>
+            {/* Text Size */}
+            <select
+              onChange={(e) => formatText('fontSize', e.target.value)}
+              defaultValue="16px"
+              style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                backgroundColor: theme.inputBackground,
+                color: theme.inputColor,
+                border: `1px solid ${theme.inputBorder}`
+              }}
+              title="Font Size"
+            >
+              {textSizes.map(size => (
+                <option key={size.value} value={size.value}>
+                  {size.label}
+                </option>
+              ))}
+            </select>
+
+            <ToolbarSeparator />
+
+            <ToolbarButton icon={Bold} onClick={() => formatText('bold')} title="Bold" />
+            <ToolbarButton icon={Italic} onClick={() => formatText('italic')} title="Italic" />
+            <ToolbarButton icon={Underline} onClick={() => formatText('underline')} title="Underline" />
+            
+            <ToolbarSeparator />
+            
+            <div style={{ position: 'relative' }} data-dropdown="color">
+              <ToolbarButton 
+                icon={Palette} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowColorPicker(!showColorPicker);
+                }} 
+                title="Text Color" 
+              />
+              {showColorPicker && (
+                <div style={{
+                  position: 'absolute',
+                  top: '40px',
+                  left: '0',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  zIndex: 10,
+                  backgroundColor: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`
+                }}>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    gap: '4px'
+                  }}>
+                    {colors.map(color => (
+                      <button
+                        key={color}
+                        onClick={() => {
+                          formatText('foreColor', color);
+                          setShowColorPicker(false);
+                        }}
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc',
+                          backgroundColor: color,
+                          cursor: 'pointer'
+                        }}
+                      />
+                    ))}
                   </div>
-                ))
+                </div>
               )}
             </div>
+            
+            <ToolbarButton icon={Link} onClick={() => setShowLinkDialog(true)} title="Add Link" />
+            
+            <ToolbarSeparator />
+            
+            <ToolbarButton icon={AlignLeft} onClick={() => formatText('justifyLeft')} title="Align Left" />
+            <ToolbarButton icon={AlignCenter} onClick={() => formatText('justifyCenter')} title="Align Center" />
+            <ToolbarButton icon={AlignRight} onClick={() => formatText('justifyRight')} title="Align Right" />
+            
+            <ToolbarSeparator />
+            
+            <div style={{ position: 'relative' }} data-dropdown="line-spacing">
+              <ToolbarButton 
+                icon={MoveVertical} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowLineSpacing(!showLineSpacing);
+                }} 
+                title="Line Spacing" 
+              />
+              {showLineSpacing && (
+                <div style={{
+                  position: 'absolute',
+                  top: '40px',
+                  left: '0',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  zIndex: 10,
+                  backgroundColor: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {lineSpacings.map(spacing => (
+                      <button
+                        key={spacing.value}
+                        onClick={() => {
+                          editorRef.current.style.lineHeight = spacing.value;
+                          setShowLineSpacing(false);
+                        }}
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: '14px',
+                          textAlign: 'left',
+                          borderRadius: '4px',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          color: theme.color,
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        {spacing.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <ToolbarSeparator />
+            
+            <ToolbarButton 
+              icon={List} 
+              onMouseDown={(e) => {
+                e.preventDefault();
+                formatText('insertUnorderedList');
+              }} 
+              title="Bullet List" 
+            />
+            <ToolbarButton 
+              icon={ListOrdered} 
+              onMouseDown={(e) => {
+                e.preventDefault();
+                formatText('insertOrderedList');
+              }} 
+              title="Numbered List" 
+            />
+            <ToolbarButton icon={IndentDecrease} onClick={() => formatText('outdent')} title="Decrease Indent" />
+            <ToolbarButton icon={IndentIncrease} onClick={() => formatText('indent')} title="Increase Indent" />
+          </div>
+
+          {/* Link Dialog */}
+          {showLinkDialog && (
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 50
+            }}>
+              <div style={{
+                padding: '24px',
+                borderRadius: '8px',
+                backgroundColor: theme.cardBackground,
+                boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+              }}>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  color: theme.color
+                }}>
+                  Add Link
+                </h3>
+                <input
+                  type="text"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="Enter URL"
+                  style={{
+                    width: '300px',
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    border: `1px solid ${theme.inputBorder}`,
+                    backgroundColor: theme.inputBackground,
+                    color: theme.inputColor,
+                    fontSize: '14px'
+                  }}
+                />
+                <div style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginTop: '16px'
+                }}>
+                  <button
+                    onClick={insertLink}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#8b5cf6',
+                      color: 'white',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowLinkDialog(false);
+                      setLinkUrl('');
+                    }}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                      color: theme.color,
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Rich Text Editor */}
+          <style 
+            dangerouslySetInnerHTML={{ __html: `
+              [contenteditable] {
+                outline: none;
+              }
+              [contenteditable] ul,
+              [contenteditable] ol {
+                margin: 8px 0;
+                padding-left: 24px;
+                font-family: inherit;
+                font-size: inherit;
+              }
+              [contenteditable] li {
+                margin: 4px 0;
+                font-family: inherit;
+                font-size: inherit;
+                list-style-position: outside;
+              }
+              [contenteditable] ul {
+                list-style-type: disc;
+              }
+              [contenteditable] ol {
+                list-style-type: decimal;
+              }
+              [contenteditable] ul ul {
+                list-style-type: circle;
+              }
+              [contenteditable] ul ul ul {
+                list-style-type: square;
+              }
+              [contenteditable]:empty:before {
+                content: "";
+                display: inline-block;
+              }
+              [contenteditable] div {
+                font-family: inherit;
+                font-size: inherit;
+                margin: 0;
+                padding: 0;
+                min-height: 1.2em;
+              }
+              [contenteditable] li > div {
+                display: inline;
+              }
+              ${isDarkMode ? `
+                [contenteditable] li::marker {
+                  color: #d1d5db;
+                }
+              ` : ''}
+            `}} />
+          <div
+            ref={editorRef}
+            contentEditable={true}
+            suppressContentEditableWarning={true}
+            onInput={updateContent}
+            onPaste={handlePaste}
+            placeholder="Start writing your notes here... Everything is automatically saved as you type."
+            style={{
+              width: '100%',
+              height: 'clamp(400px, 60vh, 700px)',
+              padding: '20px',
+              border: `2px solid ${theme.inputBorder}`,
+              borderRadius: '8px',
+              fontSize: '16px',
+              resize: 'vertical',
+              marginBottom: '20px',
+              fontFamily: 'Arial, sans-serif',
+              backgroundColor: theme.editorBackground,
+              color: theme.inputColor,
+              transition: 'all 0.3s ease',
+              lineHeight: '1.6',
+              overflowY: 'auto',
+              outline: 'none',
+              minHeight: '400px',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale'
+            }}
+          />
+
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ color: theme.labelColor, fontSize: '14px' }}>
+              {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
+            </div>
+            <button
+              onClick={clearNotes}
+              style={{
+                background: '#ef4444',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              🗑️ Clear Notes
+            </button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
 
-export default TextEditor;
+        <div style={{ 
+          marginTop: '30px', 
+          textAlign: 'center', 
+          color: theme.mutedColor,
+          fontSize: '14
