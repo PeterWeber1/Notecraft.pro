@@ -1,4 +1,3 @@
-// TextEditor.js (converted from .tsx to .js)
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Sparkles, Check, X, Loader2, Sun, Moon, Copy, FileText,
