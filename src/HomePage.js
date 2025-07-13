@@ -113,392 +113,408 @@ function HomePage({ isDarkMode, toggleTheme }) {
 
   return (
     <div style={{ 
-      padding: '40px', 
-      maxWidth: '800px', 
-      margin: '0 auto', 
+      padding: '40px 20px', 
+      width: '100%',
       fontFamily: 'Arial, sans-serif',
       backgroundColor: theme.background,
       color: theme.color,
       minHeight: '100vh',
       transition: 'all 0.3s ease'
     }}>
-      {/* Header with theme toggle and link to notepad */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '20px'
-      }}>
-        <div>
-          <h1 style={{ 
-            color: '#8b5cf6', 
-            marginBottom: '5px', 
-            fontSize: '2.5rem',
-            margin: 0
-          }}>
-            🤖 AI Writing Platform
-          </h1>
-          <p style={{ 
-            color: theme.mutedColor, 
-            margin: 0,
-            fontSize: '16px'
-          }}>
-            Transform and create content with AI-powered tools
-          </p>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <a 
-            href="/notepad" 
-            style={{
-              background: isDarkMode ? '#374151' : '#e5e7eb',
-              color: isDarkMode ? '#d1d5db' : '#374151',
-              padding: '10px 20px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontSize: '14px',
-              fontWeight: '600',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            📝 Notepad
-          </a>
-          <button
-            onClick={toggleTheme}
-            style={{
-              background: isDarkMode ? '#374151' : '#e5e7eb',
-              border: 'none',
-              borderRadius: '50px',
-              padding: '12px',
-              cursor: 'pointer',
-              fontSize: '20px',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-            }}
-            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {isDarkMode ? '☀️' : '🌙'}
-          </button>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
       <div style={{
-        display: 'flex',
-        gap: '10px',
-        marginBottom: '30px',
-        background: theme.cardBackground,
-        padding: '10px',
-        borderRadius: '12px',
-        border: `1px solid ${theme.cardBorder}`
+        maxWidth: '1400px',
+        margin: '0 auto'
       }}>
-        <button
-          onClick={() => setCurrentTool('humanizer')}
-          style={{
-            flex: 1,
-            padding: '12px 20px',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            background: currentTool === 'humanizer' ? theme.navButtonActive : theme.navButton,
-            color: currentTool === 'humanizer' ? 'white' : theme.color
-          }}
-        >
-          🤖 AI Humanizer
-        </button>
-        <button
-          onClick={() => setCurrentTool('writer')}
-          style={{
-            flex: 1,
-            padding: '12px 20px',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            background: currentTool === 'writer' ? theme.navButtonActive : theme.navButton,
-            color: currentTool === 'writer' ? 'white' : theme.color
-          }}
-        >
-          ✍️ AI Writer
-        </button>
-      </div>
-
-      {/* AI Humanizer Tool */}
-      {currentTool === 'humanizer' && (
+        {/* Header with theme toggle and link to notepad */}
         <div style={{ 
-          background: theme.cardBackground, 
-          padding: '30px', 
-          borderRadius: '15px', 
-          boxShadow: isDarkMode 
-            ? '0 4px 20px rgba(0,0,0,0.3)' 
-            : '0 4px 20px rgba(0,0,0,0.1)',
-          border: `1px solid ${theme.cardBorder}`,
-          transition: 'all 0.3s ease'
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '30px',
+          flexWrap: 'wrap',
+          gap: '20px'
         }}>
-          <h2 style={{ 
-            marginBottom: '20px', 
-            color: theme.color,
-            fontSize: '1.5rem'
-          }}>
-            AI Humanizer
-          </h2>
-          
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Paste your AI-generated text here..."
-            style={{
-              width: '100%',
-              height: '120px',
-              padding: '15px',
-              border: `2px solid ${theme.inputBorder}`,
-              borderRadius: '8px',
-              fontSize: '14px',
-              resize: 'vertical',
-              marginBottom: '15px',
-              fontFamily: 'inherit',
-              backgroundColor: theme.inputBackground,
-              color: theme.inputColor,
-              transition: 'all 0.3s ease'
-            }}
-          />
-          
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: '600', 
-              color: theme.labelColor,
-              fontSize: '14px'
+          <div>
+            <h1 style={{ 
+              color: '#8b5cf6', 
+              marginBottom: '5px', 
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              margin: 0
             }}>
-              Humanization Style:
-            </label>
-            <select
-              value={style}
-              onChange={(e) => setStyle(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 15px',
-                border: `2px solid ${theme.inputBorder}`,
-                borderRadius: '8px',
-                fontSize: '14px',
-                backgroundColor: theme.inputBackground,
-                color: theme.inputColor,
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              <option value="natural">✨ Natural & Conversational</option>
-              <option value="professional">💼 Professional</option>
-              <option value="casual">😊 Casual & Friendly</option>
-              <option value="academic">🎓 Academic</option>
-            </select>
+              🤖 AI Writing Platform
+            </h1>
+            <p style={{ 
+              color: theme.mutedColor, 
+              margin: 0,
+              fontSize: 'clamp(14px, 1.5vw, 18px)'
+            }}>
+              Transform and create content with AI-powered tools
+            </p>
           </div>
           
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <a 
+              href="/notepad" 
+              style={{
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                color: isDarkMode ? '#d1d5db' : '#374151',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontSize: '14px',
+                fontWeight: '600',
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              📝 Notepad
+            </a>
+            <button
+              onClick={toggleTheme}
+              style={{
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                border: 'none',
+                borderRadius: '50px',
+                padding: '12px',
+                cursor: 'pointer',
+                fontSize: '20px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div style={{
+          display: 'flex',
+          gap: '10px',
+          marginBottom: '30px',
+          background: theme.cardBackground,
+          padding: '10px',
+          borderRadius: '12px',
+          border: `1px solid ${theme.cardBorder}`,
+          maxWidth: '600px'
+        }}>
           <button
-            onClick={humanizeText}
-            disabled={isProcessing}
+            onClick={() => setCurrentTool('humanizer')}
             style={{
-              background: isProcessing 
-                ? '#9ca3af' 
-                : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-              color: 'white',
+              flex: 1,
+              padding: '12px 20px',
               border: 'none',
-              padding: '12px 24px',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: '600',
-              cursor: isProcessing ? 'not-allowed' : 'pointer',
-              marginBottom: '20px',
-              width: '100%',
-              transition: 'all 0.3s ease'
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              background: currentTool === 'humanizer' ? theme.navButtonActive : theme.navButton,
+              color: currentTool === 'humanizer' ? 'white' : theme.color
             }}
           >
-            {isProcessing ? '🔄 Processing...' : '✨ Humanize Text'}
+            🤖 AI Humanizer
           </button>
-
-          {output && (
-            <div>
-              <div style={{
-                background: theme.outputBackground,
-                padding: '20px',
-                borderRadius: '8px',
-                border: `2px solid ${theme.outputBorder}`,
-                whiteSpace: 'pre-wrap',
-                marginBottom: '15px',
-                fontSize: '14px',
-                lineHeight: '1.6',
-                transition: 'all 0.3s ease'
-              }}>
-                {output}
-              </div>
-              
-              <button
-                onClick={() => copyToClipboard(output)}
-                style={{
-                  background: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  width: '100%',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                📋 Copy to Clipboard
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* AI Writer Tool */}
-      {currentTool === 'writer' && (
-        <div style={{ 
-          background: theme.cardBackground, 
-          padding: '30px', 
-          borderRadius: '15px', 
-          boxShadow: isDarkMode 
-            ? '0 4px 20px rgba(0,0,0,0.3)' 
-            : '0 4px 20px rgba(0,0,0,0.1)',
-          border: `1px solid ${theme.cardBorder}`,
-          transition: 'all 0.3s ease'
-        }}>
-          <h2 style={{ 
-            marginBottom: '20px', 
-            color: theme.color,
-            fontSize: '1.5rem'
-          }}>
-            AI Writer
-          </h2>
-          
-          <textarea
-            value={writerPrompt}
-            onChange={(e) => setWriterPrompt(e.target.value)}
-            placeholder="Describe what you want to write about..."
-            style={{
-              width: '100%',
-              height: '120px',
-              padding: '15px',
-              border: `2px solid ${theme.inputBorder}`,
-              borderRadius: '8px',
-              fontSize: '14px',
-              resize: 'vertical',
-              marginBottom: '15px',
-              fontFamily: 'inherit',
-              backgroundColor: theme.inputBackground,
-              color: theme.inputColor,
-              transition: 'all 0.3s ease'
-            }}
-          />
-          
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '8px', 
-              fontWeight: '600', 
-              color: theme.labelColor,
-              fontSize: '14px'
-            }}>
-              Content Type:
-            </label>
-            <select
-              value={writerType}
-              onChange={(e) => setWriterType(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 15px',
-                border: `2px solid ${theme.inputBorder}`,
-                borderRadius: '8px',
-                fontSize: '14px',
-                backgroundColor: theme.inputBackground,
-                color: theme.inputColor,
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              <option value="article">📰 Article</option>
-              <option value="blog">✍️ Blog Post</option>
-              <option value="email">📧 Email</option>
-              <option value="story">📚 Creative Story</option>
-            </select>
-          </div>
-          
           <button
-            onClick={generateContent}
-            disabled={isGenerating}
+            onClick={() => setCurrentTool('writer')}
             style={{
-              background: isGenerating 
-                ? '#9ca3af' 
-                : 'linear-gradient(135deg, #059669, #047857)',
-              color: 'white',
+              flex: 1,
+              padding: '12px 20px',
               border: 'none',
-              padding: '12px 24px',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: '600',
-              cursor: isGenerating ? 'not-allowed' : 'pointer',
-              marginBottom: '20px',
-              width: '100%',
-              transition: 'all 0.3s ease'
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              background: currentTool === 'writer' ? theme.navButtonActive : theme.navButton,
+              color: currentTool === 'writer' ? 'white' : theme.color
             }}
           >
-            {isGenerating ? '🔄 Generating...' : '✨ Generate Content'}
+            ✍️ AI Writer
           </button>
+        </div>
 
-          {writerOutput && (
-            <div>
-              <div style={{
-                background: theme.outputBackground,
-                padding: '20px',
+        {/* AI Humanizer Tool */}
+        {currentTool === 'humanizer' && (
+          <div style={{ 
+            background: theme.cardBackground, 
+            padding: 'clamp(20px, 3vw, 40px)', 
+            borderRadius: '15px', 
+            boxShadow: isDarkMode 
+              ? '0 4px 20px rgba(0,0,0,0.3)' 
+              : '0 4px 20px rgba(0,0,0,0.1)',
+            border: `1px solid ${theme.cardBorder}`,
+            transition: 'all 0.3s ease',
+            maxWidth: '1200px'
+          }}>
+            <h2 style={{ 
+              marginBottom: '20px', 
+              color: theme.color,
+              fontSize: 'clamp(1.2rem, 2vw, 1.8rem)'
+            }}>
+              AI Humanizer
+            </h2>
+            
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Paste your AI-generated text here..."
+              style={{
+                width: '100%',
+                height: 'clamp(120px, 15vh, 200px)',
+                padding: '15px',
+                border: `2px solid ${theme.inputBorder}`,
                 borderRadius: '8px',
-                border: `2px solid #059669`,
-                whiteSpace: 'pre-wrap',
+                fontSize: '16px',
+                resize: 'vertical',
                 marginBottom: '15px',
-                fontSize: '14px',
-                lineHeight: '1.6',
+                fontFamily: 'inherit',
+                backgroundColor: theme.inputBackground,
+                color: theme.inputColor,
                 transition: 'all 0.3s ease'
+              }}
+            />
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '8px', 
+                fontWeight: '600', 
+                color: theme.labelColor,
+                fontSize: '14px'
               }}>
-                {writerOutput}
-              </div>
-              
-              <button
-                onClick={() => copyToClipboard(writerOutput)}
+                Humanization Style:
+              </label>
+              <select
+                value={style}
+                onChange={(e) => setStyle(e.target.value)}
                 style={{
-                  background: '#059669',
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
                   width: '100%',
+                  maxWidth: '400px',
+                  padding: '10px 15px',
+                  border: `2px solid ${theme.inputBorder}`,
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputColor,
+                  cursor: 'pointer',
                   transition: 'all 0.3s ease'
                 }}
               >
-                📋 Copy to Clipboard
-              </button>
+                <option value="natural">✨ Natural & Conversational</option>
+                <option value="professional">💼 Professional</option>
+                <option value="casual">😊 Casual & Friendly</option>
+                <option value="academic">🎓 Academic</option>
+              </select>
             </div>
-          )}
-        </div>
-      )}
+            
+            <button
+              onClick={humanizeText}
+              disabled={isProcessing}
+              style={{
+                background: isProcessing 
+                  ? '#9ca3af' 
+                  : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: isProcessing ? 'not-allowed' : 'pointer',
+                marginBottom: '20px',
+                width: '100%',
+                maxWidth: '400px',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {isProcessing ? '🔄 Processing...' : '✨ Humanize Text'}
+            </button>
 
-      <div style={{ 
-        marginTop: '30px', 
-        textAlign: 'center', 
-        color: theme.mutedColor,
-        fontSize: '14px' 
-      }}>
-        🚀 Built with React • {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'} • {currentTool === 'humanizer' ? 'AI Humanizer' : 'AI Writer'} Active
+            {output && (
+              <div>
+                <div style={{
+                  background: theme.outputBackground,
+                  padding: '20px',
+                  borderRadius: '8px',
+                  border: `2px solid ${theme.outputBorder}`,
+                  whiteSpace: 'pre-wrap',
+                  marginBottom: '15px',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  transition: 'all 0.3s ease'
+                }}>
+                  {output}
+                </div>
+                
+                <button
+                  onClick={() => copyToClipboard(output)}
+                  style={{
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    width: '100%',
+                    maxWidth: '400px',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  📋 Copy to Clipboard
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* AI Writer Tool */}
+        {currentTool === 'writer' && (
+          <div style={{ 
+            background: theme.cardBackground, 
+            padding: 'clamp(20px, 3vw, 40px)', 
+            borderRadius: '15px', 
+            boxShadow: isDarkMode 
+              ? '0 4px 20px rgba(0,0,0,0.3)' 
+              : '0 4px 20px rgba(0,0,0,0.1)',
+            border: `1px solid ${theme.cardBorder}`,
+            transition: 'all 0.3s ease',
+            maxWidth: '1200px'
+          }}>
+            <h2 style={{ 
+              marginBottom: '20px', 
+              color: theme.color,
+              fontSize: 'clamp(1.2rem, 2vw, 1.8rem)'
+            }}>
+              AI Writer
+            </h2>
+            
+            <textarea
+              value={writerPrompt}
+              onChange={(e) => setWriterPrompt(e.target.value)}
+              placeholder="Describe what you want to write about..."
+              style={{
+                width: '100%',
+                height: 'clamp(120px, 15vh, 200px)',
+                padding: '15px',
+                border: `2px solid ${theme.inputBorder}`,
+                borderRadius: '8px',
+                fontSize: '16px',
+                resize: 'vertical',
+                marginBottom: '15px',
+                fontFamily: 'inherit',
+                backgroundColor: theme.inputBackground,
+                color: theme.inputColor,
+                transition: 'all 0.3s ease'
+              }}
+            />
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '8px', 
+                fontWeight: '600', 
+                color: theme.labelColor,
+                fontSize: '14px'
+              }}>
+                Content Type:
+              </label>
+              <select
+                value={writerType}
+                onChange={(e) => setWriterType(e.target.value)}
+                style={{
+                  width: '100%',
+                  maxWidth: '400px',
+                  padding: '10px 15px',
+                  border: `2px solid ${theme.inputBorder}`,
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputColor,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <option value="article">📰 Article</option>
+                <option value="blog">✍️ Blog Post</option>
+                <option value="email">📧 Email</option>
+                <option value="story">📚 Creative Story</option>
+              </select>
+            </div>
+            
+            <button
+              onClick={generateContent}
+              disabled={isGenerating}
+              style={{
+                background: isGenerating 
+                  ? '#9ca3af' 
+                  : 'linear-gradient(135deg, #059669, #047857)',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: isGenerating ? 'not-allowed' : 'pointer',
+                marginBottom: '20px',
+                width: '100%',
+                maxWidth: '400px',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {isGenerating ? '🔄 Generating...' : '✨ Generate Content'}
+            </button>
+
+            {writerOutput && (
+              <div>
+                <div style={{
+                  background: theme.outputBackground,
+                  padding: '20px',
+                  borderRadius: '8px',
+                  border: `2px solid #059669`,
+                  whiteSpace: 'pre-wrap',
+                  marginBottom: '15px',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  transition: 'all 0.3s ease'
+                }}>
+                  {writerOutput}
+                </div>
+                
+                <button
+                  onClick={() => copyToClipboard(writerOutput)}
+                  style={{
+                    background: '#059669',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    width: '100%',
+                    maxWidth: '400px',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  📋 Copy to Clipboard
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div style={{ 
+          marginTop: '30px', 
+          textAlign: 'center', 
+          color: theme.mutedColor,
+          fontSize: '14px' 
+        }}>
+          🚀 Built with React • {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'} • {currentTool === 'humanizer' ? 'AI Humanizer' : 'AI Writer'} Active
+        </div>
       </div>
     </div>
   );
