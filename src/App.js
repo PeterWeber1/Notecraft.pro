@@ -15,6 +15,14 @@ function App() {
     }, 1000);
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(output).then(() => {
+      alert('✅ Text copied to clipboard!');
+    }).catch(() => {
+      alert('❌ Failed to copy text');
+    });
+  };
+
   return (
     <div style={{ 
       padding: '40px', 
@@ -71,14 +79,34 @@ function App() {
         </button>
 
         {output && (
-          <div style={{
-            background: '#f9fafb',
-            padding: '20px',
-            borderRadius: '8px',
-            border: '2px solid #8b5cf6',
-            whiteSpace: 'pre-wrap'
-          }}>
-            {output}
+          <div>
+            <div style={{
+              background: '#f9fafb',
+              padding: '20px',
+              borderRadius: '8px',
+              border: '2px solid #8b5cf6',
+              whiteSpace: 'pre-wrap',
+              marginBottom: '10px'
+            }}>
+              {output}
+            </div>
+            
+            {/* NEW: Copy Button */}
+            <button
+              onClick={copyToClipboard}
+              style={{
+                background: '#10b981',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              📋 Copy to Clipboard
+            </button>
           </div>
         )}
       </div>
