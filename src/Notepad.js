@@ -845,8 +845,40 @@ function Notepad({ isDarkMode, toggleTheme }) {
           </div>
         </div>
 
+       import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Bold, Italic, Underline, Link, AlignLeft, AlignCenter, 
+  AlignRight, List, ListOrdered, IndentDecrease, IndentIncrease,
+  Palette, MoveVertical, Copy, FileText
+} from 'lucide-react';
+
+function Notepad({ isDarkMode, toggleTheme }) {
+  // ... (entire Notepad component code remains unchanged until the footer)
+
+  return (
+    <div style={{ 
+      padding: '40px 20px', 
+      width: '100%',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: theme.background,
+      color: theme.color,
+      minHeight: '100vh',
+      transition: 'all 0.3s ease'
+    }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* ... (All existing content above remains unchanged) */}
+
         <div style={{ 
           marginTop: '30px', 
           textAlign: 'center', 
           color: theme.mutedColor,
-          fontSize: '14
+          fontSize: '14px'
+        }}>
+          Built with ❤️ by NoteCraft.pro
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Notepad;
