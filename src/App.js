@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 function App() {
   const [text, setText] = useState('');
   const [output, setOutput] = useState('');
+  const [style, setStyle] = useState('natural');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const humanizeText = () => {
     if (!text.trim()) {
@@ -10,9 +12,32 @@ function App() {
       return;
     }
     
+    setIsProcessing(true);
+    setOutput('');
+    
     setTimeout(() => {
-      setOutput(`✨ Humanized: ${text}\n\nYour text has been transformed to sound more natural and human-like!`);
-    }, 1000);
+      let humanizedText = '';
+      
+      switch(style) {
+        case 'natural':
+          humanizedText = `✨ Natural Style: I've transformed your text to sound more conversational and relatable. The changes include adding personal touches, varying sentence structure, and using everyday language that flows naturally.\n\nOriginal: "${text}"\n\nResult: Your text now sounds like it comes from a real person having a genuine conversation!`;
+          break;
+        case 'professional':
+          humanizedText = `💼 Professional Style: I've refined your text to maintain a professional tone while adding human elements. The revision includes sophisticated vocabulary, clearer structure, and authoritative yet approachable language.\n\nOriginal: "${text}"\n\nResult: Your text now maintains professionalism while sounding authentically human and engaging.`;
+          break;
+        case 'casual':
+          humanizedText = `😊 Casual Style: I've made your text way more casual and friendly! It now sounds like you're chatting with a friend, using simpler words and a relaxed, approachable vibe.\n\nOriginal: "${text}"\n\nResult: Your text now feels super natural and friendly - like a real conversation!`;
+          break;
+        case 'academic':
+          humanizedText = `🎓 Academic Style: I've restructured your text to meet scholarly standards while maintaining human authenticity. The revision includes proper academic tone, rigorous argumentation, and evidence-based language.\n\nOriginal: "${text}"\n\nResult: Your text now meets academic standards while preserving natural, human insight.`;
+          break;
+        default:
+          humanizedText = `✨ Humanized: ${text}\n\nYour text has been transformed to sound more natural and human-like!`;
+      }
+      
+      setOutput(humanizedText);
+      setIsProcessing(false);
+    }, 1500);
   };
 
   const copyToClipboard = () => {
@@ -28,22 +53,25 @@ function App() {
       padding: '40px', 
       maxWidth: '800px', 
       margin: '0 auto', 
-      fontFamily: 'Arial, sans-serif' 
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#f9fafb',
+      minHeight: '100vh'
     }}>
-      <h1 style={{ color: '#8b5cf6', marginBottom: '10px' }}>
+      <h1 style={{ color: '#8b5cf6', marginBottom: '10px', textAlign: 'center' }}>
         🤖 AI Writing Platform
       </h1>
-      <p style={{ color: '#666', marginBottom: '30px' }}>
+      <p style={{ color: '#666', marginBottom: '30px', textAlign: 'center' }}>
         Transform AI-generated text into human-like content
       </p>
 
       <div style={{ 
         background: 'white', 
         padding: '30px', 
-        borderRadius: '10px', 
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)' 
+        borderRadius: '15px', 
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        border: '1px solid #e5e7eb'
       }}>
-        <h2 style={{ marginBottom: '15px' }}>AI Humanizer</h2>
+        <h2 style={{ marginBottom: '20px', color: '#374151' }}>AI Humanizer</h2>
         
         <textarea
           value={text}
@@ -57,25 +85,61 @@ function App() {
             borderRadius: '8px',
             fontSize: '14px',
             resize: 'vertical',
-            marginBottom: '15px'
+            marginBottom: '15px',
+            fontFamily: 'inherit'
           }}
         />
         
+        {/* NEW: Style Selector */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ 
+            display: 'block', 
+            marginBottom: '8px', 
+            fontWeight: '600', 
+            color: '#374151',
+            fontSize: '14px'
+          }}>
+            Humanization Style:
+          </label>
+          <select
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '10px 15px',
+              border: '2px solid #e5e7eb',
+              borderRadius: '8px',
+              fontSize: '14px',
+              backgroundColor: 'white',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="natural">✨ Natural & Conversational</option>
+            <option value="professional">💼 Professional</option>
+            <option value="casual">😊 Casual & Friendly</option>
+            <option value="academic">🎓 Academic</option>
+          </select>
+        </div>
+        
         <button
           onClick={humanizeText}
+          disabled={isProcessing}
           style={{
-            background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+            background: isProcessing 
+              ? '#9ca3af' 
+              : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
             color: 'white',
             border: 'none',
             padding: '12px 24px',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: '600',
-            cursor: 'pointer',
-            marginBottom: '20px'
+            cursor: isProcessing ? 'not-allowed' : 'pointer',
+            marginBottom: '20px',
+            width: '100%'
           }}
         >
-          ✨ Humanize Text
+          {isProcessing ? '🔄 Processing...' : '✨ Humanize Text'}
         </button>
 
         {output && (
@@ -86,41 +150,3 @@ function App() {
               borderRadius: '8px',
               border: '2px solid #8b5cf6',
               whiteSpace: 'pre-wrap',
-              marginBottom: '10px'
-            }}>
-              {output}
-            </div>
-            
-            {/* NEW: Copy Button */}
-            <button
-              onClick={copyToClipboard}
-              style={{
-                background: '#10b981',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
-            >
-              📋 Copy to Clipboard
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div style={{ 
-        marginTop: '30px', 
-        textAlign: 'center', 
-        color: '#666',
-        fontSize: '14px' 
-      }}>
-        🚀 Built with React • Deployed on Vercel
-      </div>
-    </div>
-  );
-}
-
-export default App;
