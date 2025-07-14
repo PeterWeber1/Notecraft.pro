@@ -459,7 +459,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ 
-                color: '#10b981', 
+                color: '#8b5cf6', // soft purple for status
                 fontSize: '14px',
                 fontWeight: '600'
               }}>
@@ -468,18 +468,19 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               <button
                 onClick={copyText}
                 style={{
-                  background: '#10b981',
+                  background: '#8b5cf6', // soft purple
                   color: 'white',
                   border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  fontSize: '14px',
+                  padding: '10px 24px',
+                  borderRadius: '999px',
+                  fontSize: '15px',
                   fontWeight: '600',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '8px',
+                  boxShadow: isDarkMode ? '0 2px 8px rgba(139,92,246,0.10)' : '0 2px 8px rgba(139,92,246,0.08)'
                 }}
               >
                 📋 Copy All
@@ -778,7 +779,8 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             onPaste={handlePaste}
             style={{
               width: '100%',
-              height: 'clamp(400px, 60vh, 700px)',
+              minHeight: '120px',
+              maxHeight: 'clamp(350px, 40vh, 500px)',
               padding: '20px',
               border: `2px solid ${theme.inputBorder}`,
               borderRadius: '8px',
@@ -792,34 +794,36 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               lineHeight: '1.6',
               overflowY: 'auto',
               outline: 'none',
-              minHeight: '400px',
               WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale'
+              MozOsxFontSmoothing: 'grayscale',
+              boxSizing: 'border-box',
             }}
           />
 
           <div style={{ 
             display: 'flex', 
             gap: '10px',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end', // right align
             alignItems: 'center',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            marginTop: '8px'
           }}>
-            <div style={{ color: theme.labelColor, fontSize: '14px' }}>
+            <div style={{ color: theme.labelColor, fontSize: '14px', marginRight: 'auto' }}>
               {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
             </div>
             <button
               onClick={clearNotes}
               style={{
-                background: '#ef4444',
+                background: '#ef4444', // soft red
                 color: 'white',
                 border: 'none',
-                padding: '10px 20px',
-                borderRadius: '6px',
-                fontSize: '14px',
+                padding: '10px 24px',
+                borderRadius: '999px',
+                fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                boxShadow: isDarkMode ? '0 2px 8px rgba(239,68,68,0.10)' : '0 2px 8px rgba(239,68,68,0.08)'
               }}
             >
               🗑️ Clear Notes
