@@ -381,7 +381,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     updateFormatState();
   };
 
-  // Icon button component
+  // Update IconButton for toolbar to use a simple border-bottom when active, no color fill
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
       onClick={onClick}
@@ -392,30 +392,23 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         height: '36px',
         padding: '8px',
         border: 'none',
+        borderBottom: active ? `2.5px solid ${isDarkMode ? '#fff' : '#18181b'}` : '2.5px solid transparent',
         borderRadius: '4px',
         cursor: 'pointer',
         fontSize: '16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: active 
-          ? (isDarkMode ? '#8b5cf6' : '#8b5cf6')
-          : 'transparent',
-        color: active 
-          ? 'white'
-          : (isDarkMode ? '#d1d5db' : '#374151'),
-        boxShadow: active ? (isDarkMode ? '0 2px 8px rgba(139,92,246,0.15)' : '0 2px 8px rgba(139,92,246,0.10)') : 'none',
-        transition: 'all 0.2s ease'
+        backgroundColor: 'transparent',
+        color: isDarkMode ? '#fff' : '#18181b',
+        boxShadow: 'none',
+        transition: 'border-bottom 0.2s, color 0.2s',
       }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
-        }
+      onMouseEnter={e => {
+        e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
       }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          e.target.style.backgroundColor = 'transparent';
-        }
+      onMouseLeave={e => {
+        e.target.style.backgroundColor = 'transparent';
       }}
     >
       {icon}
@@ -567,62 +560,56 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               <button
                 onClick={copyText}
                 style={{
-                  background: '#8b5cf6',
-                  color: 'white',
+                  background: 'none',
                   border: 'none',
-                  padding: '10px 24px',
-                  borderRadius: '999px',
-                  fontSize: '15px',
-                  fontWeight: '600',
+                  color: isDarkMode ? '#fff' : '#18181b',
+                  fontSize: 22,
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: isDarkMode ? '0 2px 8px rgba(139,92,246,0.10)' : '0 2px 8px rgba(139,92,246,0.08)'
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  transition: 'background 0.2s',
                 }}
+                title="Copy"
+                onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'none'}
               >
-                📋 Copy
+                📋
               </button>
               <button
                 onClick={downloadNote}
                 style={{
-                  background: '#6366f1',
-                  color: 'white',
+                  background: 'none',
                   border: 'none',
-                  padding: '10px 24px',
-                  borderRadius: '999px',
-                  fontSize: '15px',
-                  fontWeight: '600',
+                  color: isDarkMode ? '#fff' : '#18181b',
+                  fontSize: 22,
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: isDarkMode ? '0 2px 8px rgba(99,102,241,0.10)' : '0 2px 8px rgba(99,102,241,0.08)'
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  transition: 'background 0.2s',
                 }}
+                title="Download"
+                onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'none'}
               >
-                ⬇️ Download
+                ⬇️
               </button>
               <button
                 onClick={saveCurrentNote}
                 style={{
-                  background: '#a21caf',
-                  color: 'white',
+                  background: 'none',
                   border: 'none',
-                  padding: '10px 24px',
-                  borderRadius: '999px',
-                  fontSize: '15px',
-                  fontWeight: '600',
+                  color: isDarkMode ? '#fff' : '#18181b',
+                  fontSize: 22,
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: isDarkMode ? '0 2px 8px rgba(162,28,175,0.10)' : '0 2px 8px rgba(162,28,175,0.08)'
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  transition: 'background 0.2s',
                 }}
+                title="Save"
+                onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'none'}
               >
-                💾 Save
+                💾
               </button>
             </div>
           </div>
