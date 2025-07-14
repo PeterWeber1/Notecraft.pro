@@ -957,7 +957,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
                       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
                         <div
                           onClick={() => toggleExpandNote(idx)}
-                          style={{fontWeight: 600, marginBottom: 4, color: '#8b5cf6', flex: 1, userSelect: 'none'}}
+                          style={{fontWeight: 700, marginBottom: 4, color: isDarkMode ? '#fff' : '#18181b', flex: 1, userSelect: 'none'}}
                         >
                           Note {idx+1}
                         </div>
