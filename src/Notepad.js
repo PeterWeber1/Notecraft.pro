@@ -68,47 +68,41 @@ function Notepad({ isDarkMode, toggleTheme }) {
 
   // Load saved content on mount
   useEffect(() => {
-    try {
-      const savedContent = localStorage.getItem('notepadContent');
-      const savedHtml = localStorage.getItem('notepadHtml');
-      if (savedHtml && editorRef.current) {
-        editorRef.current.innerHTML = savedHtml;
-        setText(savedContent || '');
-        setHtmlContent(savedHtml);
-      } else if (savedContent) {
-        setText(savedContent);
-      }
-    } catch (error) {
-      console.log('localStorage not available');
+    const savedContent = localStorage.getItem('notepadContent');
+    const savedHtml = localStorage.getItem('notepadHtml');
+    if (savedHtml && editorRef.current) {
+      editorRef.current.innerHTML = savedHtml;
+      setText(savedContent || '');
+      setHtmlContent(savedHtml);
+    } else if (savedContent) {
+      setText(savedContent);
     }
   }, []);
 
   // Execute formatting command
   const formatText = (command, value = null) => {
-    if (!editorRef.current) return;
-    
     editorRef.current.focus();
     
-    try {
-      if (command === 'fontSize') {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-        const range = selection.getRangeAt(0);
-        
-        if (range.collapsed) {
-          const allContent = editorRef.current.childNodes;
-          allContent.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-              const span = document.createElement('span');
-              span.style.fontSize = value;
-              span.style.fontFamily = 'Arial';
-              span.textContent = node.textContent;
-              node.parentNode.replaceChild(span, node);
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-              node.style.fontSize = value;
-            }
-          });
-        } else {
+    if (command === 'fontSize') {
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      const range = selection.getRangeAt(0);
+      
+      if (range.collapsed) {
+        const allContent = editorRef.current.childNodes;
+        allContent.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            const span = document.createElement('span');
+            span.style.fontSize = value;
+            span.style.fontFamily = 'Arial';
+            span.textContent = node.textContent;
+            node.parentNode.replaceChild(span, node);
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            node.style.fontSize = value;
+          }
+        });
+      } else {
+        try {
           const contents = range.extractContents();
           const span = document.createElement('span');
           span.style.fontSize = value;
@@ -119,65 +113,72 @@ function Notepad({ isDarkMode, toggleTheme }) {
           range.selectNodeContents(span);
           selection.removeAllRanges();
           selection.addRange(range);
+        } catch (e) {
+          document.execCommand('fontSize', false, '7');
+          const tempFonts = editorRef.current.querySelectorAll('font[size="7"]');
+          tempFonts.forEach(font => {
+            const span = document.createElement('span');
+            span.style.fontSize = value;
+            span.innerHTML = font.innerHTML;
+            font.parentNode.replaceChild(span, font);
+          });
         }
-      } else if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          let node = range.commonAncestorContainer;
-          if (node.nodeType === Node.TEXT_NODE) {
-            node = node.parentNode;
-          }
-          
-          const inList = node.closest('ul, ol');
-          
-          if (inList) {
-            document.execCommand(command, false, null);
-          } else {
-            const block = node.closest('div, p');
-            if (!block || block === editorRef.current) {
-              document.execCommand('formatBlock', false, 'div');
-            }
-            
-            setTimeout(() => {
-              document.execCommand(command, false, null);
-              editorRef.current.focus();
-            }, 10);
-          }
-        }
-      } else if (command === 'indent' || command === 'outdent') {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          let node = range.commonAncestorContainer;
-          if (node.nodeType === Node.TEXT_NODE) {
-            node = node.parentNode;
-          }
-          
-          const listItem = node.closest('li');
-          if (listItem) {
-            document.execCommand(command, false, null);
-          } else {
-            const block = node.closest('div, p') || node;
-            if (block && block !== editorRef.current) {
-              const currentMargin = parseInt(block.style.marginLeft || 0);
-              if (command === 'indent') {
-                block.style.marginLeft = `${currentMargin + 40}px`;
-              } else if (currentMargin > 0) {
-                block.style.marginLeft = `${Math.max(0, currentMargin - 40)}px`;
-              }
-            }
-          }
-        }
-      } else {
-        document.execCommand(command, false, value);
       }
-      
-      editorRef.current.focus();
-      updateContent();
-    } catch (error) {
-      console.error('Error executing format command:', error);
+    } else if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        let node = range.commonAncestorContainer;
+        if (node.nodeType === Node.TEXT_NODE) {
+          node = node.parentNode;
+        }
+        
+        const inList = node.closest('ul, ol');
+        
+        if (inList) {
+          document.execCommand(command, false, null);
+        } else {
+          const block = node.closest('div, p');
+          if (!block || block === editorRef.current) {
+            document.execCommand('formatBlock', false, 'div');
+          }
+          
+          setTimeout(() => {
+            document.execCommand(command, false, null);
+            editorRef.current.focus();
+          }, 10);
+        }
+      }
+    } else if (command === 'indent' || command === 'outdent') {
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        let node = range.commonAncestorContainer;
+        if (node.nodeType === Node.TEXT_NODE) {
+          node = node.parentNode;
+        }
+        
+        const listItem = node.closest('li');
+        if (listItem) {
+          document.execCommand(command, false, null);
+        } else {
+          const block = node.closest('div, p') || node;
+          if (block && block !== editorRef.current) {
+            const currentMargin = parseInt(block.style.marginLeft || 0);
+            if (command === 'indent') {
+              block.style.marginLeft = `${currentMargin + 40}px`;
+            } else if (currentMargin > 0) {
+              block.style.marginLeft = `${Math.max(0, currentMargin - 40)}px`;
+            }
+          }
+        }
+      }
+    } else {
+      document.execCommand(command, false, value);
     }
+    
+    editorRef.current.focus();
+    updateContent();
   };
 
   // Update content and save
@@ -194,16 +195,12 @@ function Notepad({ isDarkMode, toggleTheme }) {
       setText(plainText);
       
       // Save to localStorage
-      try {
-        localStorage.setItem('notepadContent', plainText);
-        localStorage.setItem('notepadHtml', html);
-        setSavedStatus('✅ Saved');
-        
-        // Clear saved status after 2 seconds
-        setTimeout(() => setSavedStatus(''), 2000);
-      } catch (error) {
-        console.log('Could not save to localStorage');
-      }
+      localStorage.setItem('notepadContent', plainText);
+      localStorage.setItem('notepadHtml', html);
+      setSavedStatus('✅ Saved');
+      
+      // Clear saved status after 2 seconds
+      setTimeout(() => setSavedStatus(''), 2000);
     }
   };
 
@@ -262,12 +259,8 @@ function Notepad({ isDarkMode, toggleTheme }) {
       if (editorRef.current) {
         editorRef.current.innerHTML = '<div><br></div>';
       }
-      try {
-        localStorage.removeItem('notepadContent');
-        localStorage.removeItem('notepadHtml');
-      } catch (error) {
-        console.log('Could not clear localStorage');
-      }
+      localStorage.removeItem('notepadContent');
+      localStorage.removeItem('notepadHtml');
       setSavedStatus('🗑️ Cleared');
       setTimeout(() => setSavedStatus(''), 2000);
     }
@@ -340,8 +333,9 @@ function Notepad({ isDarkMode, toggleTheme }) {
       transition: 'all 0.3s ease'
     }}>
       <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto'
+        /* maxWidth: '1400px', */
+        /* margin: '0 auto', */
+        width: '100%'
       }}>
         {/* Header */}
         <div style={{ 
@@ -415,7 +409,8 @@ function Notepad({ isDarkMode, toggleTheme }) {
             ? '0 4px 20px rgba(0,0,0,0.3)' 
             : '0 4px 20px rgba(0,0,0,0.1)',
           border: `1px solid ${theme.cardBorder}`,
-          transition: 'all 0.3s ease'
+          transition: 'all 0.3s ease',
+          width: '100%'
         }}>
           <div style={{ 
             display: 'flex', 
@@ -852,7 +847,29 @@ function Notepad({ isDarkMode, toggleTheme }) {
           </div>
         </div>
 
-        {/* Footer */}
+       import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Bold, Italic, Underline, Link, AlignLeft, AlignCenter, 
+  AlignRight, List, ListOrdered, IndentDecrease, IndentIncrease,
+  Palette, MoveVertical, Copy, FileText
+} from 'lucide-react';
+
+function Notepad({ isDarkMode, toggleTheme }) {
+  // ... (entire Notepad component code remains unchanged until the footer)
+
+  return (
+    <div style={{ 
+      padding: '40px 20px', 
+      width: '100%',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: theme.background,
+      color: theme.color,
+      minHeight: '100vh',
+      transition: 'all 0.3s ease'
+    }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        {/* ... (All existing content above remains unchanged) */}
+
         <div style={{ 
           marginTop: '30px', 
           textAlign: 'center', 
