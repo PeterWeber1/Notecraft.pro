@@ -8,6 +8,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [linkUrl, setLinkUrl] = useState('');
   const [showLineSpacing, setShowLineSpacing] = useState(false);
   const [savedStatus, setSavedStatus] = useState('');
+  const [savedNotes, setSavedNotes] = useState([]); // NEW: array of saved notes
   const editorRef = useRef(null);
 
   // Theme-based styles
@@ -61,7 +62,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     { value: '2', label: '2.0' }
   ];
 
-  // Load saved content on mount
+  // Load saved notes from localStorage on mount
   useEffect(() => {
     try {
       const savedContent = localStorage.getItem('notepadContent');
@@ -73,6 +74,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
       } else if (savedContent) {
         setText(savedContent);
       }
+      // Load saved notes array
+      const notes = JSON.parse(localStorage.getItem('notepadSavedNotes') || '[]');
+      setSavedNotes(notes);
     } catch (error) {
       console.log('localStorage not available');
     }
@@ -280,6 +284,32 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     });
   };
 
+  // Download note as .txt file
+  const downloadNote = () => {
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'note.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Save note to savedNotes array
+  const saveCurrentNote = () => {
+    if (!text.trim()) {
+      setSavedStatus('⚠️ Cannot save empty note');
+      setTimeout(() => setSavedStatus(''), 2000);
+      return;
+    }
+    const notes = JSON.parse(localStorage.getItem('notepadSavedNotes') || '[]');
+    notes.push(text);
+    localStorage.setItem('notepadSavedNotes', JSON.stringify(notes));
+    setSavedNotes(notes);
+    setSavedStatus('✅ Note saved as note ' + notes.length);
+    setTimeout(() => setSavedStatus(''), 2000);
+  };
+
   // Icon button component
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
@@ -468,7 +498,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               <button
                 onClick={copyText}
                 style={{
-                  background: '#8b5cf6', // soft purple
+                  background: '#8b5cf6',
                   color: 'white',
                   border: 'none',
                   padding: '10px 24px',
@@ -483,7 +513,47 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
                   boxShadow: isDarkMode ? '0 2px 8px rgba(139,92,246,0.10)' : '0 2px 8px rgba(139,92,246,0.08)'
                 }}
               >
-                📋 Copy All
+                📋 Copy
+              </button>
+              <button
+                onClick={downloadNote}
+                style={{
+                  background: '#6366f1',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 24px',
+                  borderRadius: '999px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: isDarkMode ? '0 2px 8px rgba(99,102,241,0.10)' : '0 2px 8px rgba(99,102,241,0.08)'
+                }}
+              >
+                ⬇️ Download
+              </button>
+              <button
+                onClick={saveCurrentNote}
+                style={{
+                  background: '#a21caf',
+                  color: 'white',
+                  border: 'none',
+                  padding: '10px 24px',
+                  borderRadius: '999px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: isDarkMode ? '0 2px 8px rgba(162,28,175,0.10)' : '0 2px 8px rgba(162,28,175,0.08)'
+                }}
+              >
+                💾 Save
               </button>
             </div>
           </div>
@@ -838,6 +908,30 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           color: theme.mutedColor,
           fontSize: '14px'
         }}>
+          {/* Saved Notes List */}
+          {savedNotes.length > 0 && (
+            <div style={{
+              marginBottom: 24,
+              textAlign: 'left',
+              background: isDarkMode ? '#23233a' : '#f3f3fa',
+              borderRadius: 8,
+              padding: 16,
+              border: `1px solid ${theme.cardBorder}`,
+              maxWidth: 700,
+              margin: '24px auto',
+              boxShadow: isDarkMode ? '0 2px 8px rgba(139,92,246,0.05)' : '0 2px 8px rgba(139,92,246,0.03)'
+            }}>
+              <h3 style={{margin: '0 0 12px 0', color: '#8b5cf6', fontSize: 18}}>Saved Notes</h3>
+              <ul style={{padding: 0, margin: 0, listStyle: 'none'}}>
+                {savedNotes.map((note, idx) => (
+                  <li key={idx} style={{marginBottom: 12, paddingBottom: 12, borderBottom: idx !== savedNotes.length-1 ? `1px solid ${theme.cardBorder}` : 'none'}}>
+                    <div style={{fontWeight: 600, marginBottom: 4}}>Note {idx+1}</div>
+                    <div style={{whiteSpace: 'pre-wrap', color: theme.color, fontSize: 15}}>{note}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           Built with ❤️ by NoteCraft.pro
         </div>
       </div>
