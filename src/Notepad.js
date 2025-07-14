@@ -136,7 +136,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             
             setTimeout(() => {
               document.execCommand(command, false, null);
-              editorRef.current.focus();
+              if (editorRef.current) {
+                editorRef.current.focus();
+              }
             }, 10);
           }
         }
@@ -168,7 +170,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         document.execCommand(command, false, value);
       }
       
-      editorRef.current.focus();
+      if (editorRef.current) {
+        editorRef.current.focus();
+      }
       updateContent();
     } catch (error) {
       console.error('Error executing format command:', error);
@@ -276,7 +280,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     });
   };
 
-  // Icon components using Unicode symbols
+  // Icon button component
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
       onClick={onClick}
@@ -409,24 +413,21 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               ← Back to AI Tools
             </a>
             <button
-  onClick={copyText}
-  style={{
-    background: '#10b981',
-    color: 'white',
-    border: 'none',
-    padding: '8px 16px',
-    borderRadius: '6px',
-    fontSize: '14px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px'
-  }}
->
-  📋 Copy All
-</button>
+              onClick={toggleTheme}
+              style={{
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                border: 'none',
+                borderRadius: '50px',
+                padding: '12px',
+                cursor: 'pointer',
+                fontSize: '20px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              }}
+              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
           </div>
         </div>
 
@@ -481,8 +482,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
                   gap: '6px'
                 }}
               >
-                <Copy style={{ width: '16px', height: '16px' }} />
-                Copy All
+                📋 Copy All
               </button>
             </div>
           </div>
@@ -543,9 +543,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
 
             <ToolbarSeparator />
 
-            <IconButton icon="𝐁" onClick={() => formatText('bold')} title="Bold" />
-            <IconButton icon="𝐼" onClick={() => formatText('italic')} title="Italic" />
-            <IconButton icon="U̲" onClick={() => formatText('underline')} title="Underline" />
+            <IconButton icon="B" onClick={() => formatText('bold')} title="Bold" />
+            <IconButton icon="I" onClick={() => formatText('italic')} title="Italic" />
+            <IconButton icon="U" onClick={() => formatText('underline')} title="Underline" />
             
             <ToolbarSeparator />
             
@@ -601,9 +601,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             
             <ToolbarSeparator />
             
-            <IconButton icon="⬅" onClick={() => formatText('justifyLeft')} title="Align Left" />
-            <IconButton icon="⬌" onClick={() => formatText('justifyCenter')} title="Align Center" />
-            <IconButton icon="➡" onClick={() => formatText('justifyRight')} title="Align Right" />
+            <IconButton icon="←" onClick={() => formatText('justifyLeft')} title="Align Left" />
+            <IconButton icon="↔" onClick={() => formatText('justifyCenter')} title="Align Center" />
+            <IconButton icon="→" onClick={() => formatText('justifyRight')} title="Align Right" />
             
             <ToolbarSeparator />
             
@@ -633,7 +633,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
                       <button
                         key={spacing.value}
                         onClick={() => {
-                          editorRef.current.style.lineHeight = spacing.value;
+                          if (editorRef.current) {
+                            editorRef.current.style.lineHeight = spacing.value;
+                          }
                           setShowLineSpacing(false);
                         }}
                         style={{
@@ -768,63 +770,12 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           )}
           
           {/* Rich Text Editor */}
-          <style 
-            dangerouslySetInnerHTML={{ __html: `
-              [contenteditable] {
-                outline: none;
-              }
-              [contenteditable] ul,
-              [contenteditable] ol {
-                margin: 8px 0;
-                padding-left: 24px;
-                font-family: inherit;
-                font-size: inherit;
-              }
-              [contenteditable] li {
-                margin: 4px 0;
-                font-family: inherit;
-                font-size: inherit;
-                list-style-position: outside;
-              }
-              [contenteditable] ul {
-                list-style-type: disc;
-              }
-              [contenteditable] ol {
-                list-style-type: decimal;
-              }
-              [contenteditable] ul ul {
-                list-style-type: circle;
-              }
-              [contenteditable] ul ul ul {
-                list-style-type: square;
-              }
-              [contenteditable]:empty:before {
-                content: "";
-                display: inline-block;
-              }
-              [contenteditable] div {
-                font-family: inherit;
-                font-size: inherit;
-                margin: 0;
-                padding: 0;
-                min-height: 1.2em;
-              }
-              [contenteditable] li > div {
-                display: inline;
-              }
-              ${isDarkMode ? `
-                [contenteditable] li::marker {
-                  color: #d1d5db;
-                }
-              ` : ''}
-            `}} />
           <div
             ref={editorRef}
             contentEditable={true}
             suppressContentEditableWarning={true}
             onInput={updateContent}
             onPaste={handlePaste}
-            placeholder="Start writing your notes here... Everything is automatically saved as you type."
             style={{
               width: '100%',
               height: 'clamp(400px, 60vh, 700px)',
