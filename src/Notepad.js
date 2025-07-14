@@ -381,7 +381,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     updateFormatState();
   };
 
-  // Update IconButton for toolbar to use a simple border-bottom when active, no color fill
+  // Update IconButton for toolbar to fill the whole button when active
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
       onClick={onClick}
@@ -392,23 +392,26 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         height: '36px',
         padding: '8px',
         border: 'none',
-        borderBottom: active ? `2.5px solid ${isDarkMode ? '#fff' : '#18181b'}` : '2.5px solid transparent',
         borderRadius: '4px',
         cursor: 'pointer',
-        fontSize: '16px',
+        fontSize: '18px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'transparent',
-        color: isDarkMode ? '#fff' : '#18181b',
+        backgroundColor: active
+          ? (isDarkMode ? '#fff' : '#18181b')
+          : 'transparent',
+        color: active
+          ? (isDarkMode ? '#18181b' : '#fff')
+          : (isDarkMode ? '#fff' : '#18181b'),
         boxShadow: 'none',
-        transition: 'border-bottom 0.2s, color 0.2s',
+        transition: 'background 0.2s, color 0.2s',
       }}
       onMouseEnter={e => {
-        e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+        if (!active) e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
       }}
       onMouseLeave={e => {
-        e.target.style.backgroundColor = 'transparent';
+        if (!active) e.target.style.backgroundColor = 'transparent';
       }}
     >
       {icon}
@@ -776,9 +779,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             
             <ToolbarSeparator />
             
-            <IconButton icon="←" onClick={() => { formatText('justifyLeft'); updateFormatState(); }} title="Align Left" active={!!formatState.justifyLeft} />
-            <IconButton icon="↔" onClick={() => { formatText('justifyCenter'); updateFormatState(); }} title="Align Center" active={!!formatState.justifyCenter} />
-            <IconButton icon="→" onClick={() => { formatText('justifyRight'); updateFormatState(); }} title="Align Right" active={!!formatState.justifyRight} />
+            <IconButton icon={<span style={{fontFamily:'monospace'}}>≡</span>} onClick={() => { formatText('justifyLeft'); updateFormatState(); }} title="Align Left" active={!!formatState.justifyLeft} />
+            <IconButton icon={<span style={{fontFamily:'monospace'}}>≣</span>} onClick={() => { formatText('justifyCenter'); updateFormatState(); }} title="Align Center" active={!!formatState.justifyCenter} />
+            <IconButton icon={<span style={{fontFamily:'monospace', transform:'rotate(180deg)', display:'inline-block'}}>≡</span>} onClick={() => { formatText('justifyRight'); updateFormatState(); }} title="Align Right" active={!!formatState.justifyRight} />
             
             <ToolbarSeparator />
             
@@ -841,22 +844,8 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             
             <ToolbarSeparator />
             
-            <IconButton 
-              icon="•" 
-              onMouseDown={(e) => {
-                e.preventDefault();
-                formatText('insertUnorderedList');
-              }} 
-              title="Bullet List" 
-            />
-            <IconButton 
-              icon="1." 
-              onMouseDown={(e) => {
-                e.preventDefault();
-                formatText('insertOrderedList');
-              }} 
-              title="Numbered List" 
-            />
+            <IconButton icon={<span style={{fontSize: '20px'}}>•</span>} onMouseDown={(e) => { e.preventDefault(); formatText('insertUnorderedList'); updateFormatState(); }} title="Bullet List" />
+            <IconButton icon={<span style={{fontFamily:'monospace', fontSize:'18px'}}>1.</span>} onMouseDown={(e) => { e.preventDefault(); formatText('insertOrderedList'); updateFormatState(); }} title="Numbered List" />
             <IconButton icon="⬅" onClick={() => formatText('outdent')} title="Decrease Indent" />
             <IconButton icon="➡" onClick={() => formatText('indent')} title="Increase Indent" />
           </div>
