@@ -13,6 +13,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [toast, setToast] = useState(''); // For subtle confirmation
   const toastTimer = useRef();
   const editorRef = useRef(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // Theme-based styles
   const getThemeStyles = () => ({
@@ -334,6 +335,23 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
       : [...expandedNotes, idx]);
   };
 
+  const insertEmoji = (emoji) => {
+    if (!editorRef.current) return;
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    const textNode = document.createTextNode(emoji);
+    range.insertNode(textNode);
+    // Move cursor after emoji
+    range.setStartAfter(textNode);
+    range.setEndAfter(textNode);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    editorRef.current.focus();
+    updateContent();
+  };
+
   // Icon button component
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
@@ -388,12 +406,16 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     const handleClickOutside = (e) => {
       const isColorPicker = e.target.closest('[data-dropdown="color"]');
       const isLineSpacing = e.target.closest('[data-dropdown="line-spacing"]');
+      const isEmojiPicker = e.target.closest('[data-dropdown="emoji"]');
       
       if (!isColorPicker) {
         setShowColorPicker(false);
       }
       if (!isLineSpacing) {
         setShowLineSpacing(false);
+      }
+      if (!isEmojiPicker) {
+        setShowEmojiPicker(false);
       }
     };
     
@@ -685,7 +707,55 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               )}
             </div>
             
-            <IconButton icon="🔗" onClick={() => setShowLinkDialog(true)} title="Add Link" />
+            {/* Toolbar: Replace Add Link with Add Emoji */}
+            <div style={{ position: 'relative' }} data-dropdown="emoji">
+              <IconButton 
+                icon="😊" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowEmojiPicker(!showEmojiPicker);
+                }} 
+                title="Add Emoji" 
+              />
+              {showEmojiPicker && (
+                <div style={{
+                  position: 'absolute',
+                  top: '40px',
+                  left: '0',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  zIndex: 10,
+                  backgroundColor: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`
+                }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: 180 }}>
+                    {["😀","😁","😂","🤣","😊","😍","😎","😢","😡","👍","🙏","🎉","🔥","💡","✅","❌","⭐","🥳","🤔","🙌"].map(emoji => (
+                      <button
+                        key={emoji}
+                        onClick={() => {
+                          insertEmoji(emoji);
+                          setShowEmojiPicker(false);
+                        }}
+                        style={{
+                          fontSize: 22,
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 4,
+                          borderRadius: 4,
+                          transition: 'background 0.2s',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? '#374151' : '#e5e7eb'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             
             <ToolbarSeparator />
             
@@ -947,7 +1017,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               margin: '24px auto',
               boxShadow: isDarkMode ? '0 2px 8px rgba(139,92,246,0.05)' : '0 2px 8px rgba(139,92,246,0.03)'
             }}>
-              <h3 style={{margin: '0 0 12px 0', color: '#8b5cf6', fontSize: 18}}>Saved Notes</h3>
+              <h3 style={{margin: '0 0 12px 0', color: isDarkMode ? '#fff' : '#18181b', fontWeight: 700, fontSize: 18}}>Saved Notes</h3>
               <ul style={{padding: 0, margin: 0, listStyle: 'none'}}>
                 {savedNotes.map((note, idx) => {
                   const isExpanded = expandedNotes.includes(idx);
