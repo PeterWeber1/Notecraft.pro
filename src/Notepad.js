@@ -10,6 +10,8 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [savedStatus, setSavedStatus] = useState('');
   const [savedNotes, setSavedNotes] = useState([]); // NEW: array of saved notes
   const [expandedNotes, setExpandedNotes] = useState([]); // Track expanded notes
+  const [toast, setToast] = useState(''); // For subtle confirmation
+  const toastTimer = useRef();
   const editorRef = useRef(null);
 
   // Theme-based styles
@@ -259,6 +261,13 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     }
   };
 
+  // Show toast helper
+  const showToast = (msg) => {
+    setToast(msg);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(''), 1800);
+  };
+
   const clearNotes = () => {
     if (window.confirm('Are you sure you want to clear all notes?')) {
       setText('');
@@ -272,16 +281,15 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
       } catch (error) {
         console.log('Could not clear localStorage');
       }
-      setSavedStatus('🗑️ Cleared');
-      setTimeout(() => setSavedStatus(''), 2000);
+      showToast('Notes cleared');
     }
   };
 
   const copyText = () => {
     navigator.clipboard.writeText(text).then(() => {
-      alert('✅ Notes copied to clipboard!');
+      showToast('Copied to clipboard!');
     }).catch(() => {
-      alert('❌ Failed to copy notes');
+      showToast('Failed to copy');
     });
   };
 
@@ -294,21 +302,20 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     a.download = 'note.txt';
     a.click();
     URL.revokeObjectURL(url);
+    showToast('Downloaded note.txt');
   };
 
   // Save note to savedNotes array
   const saveCurrentNote = () => {
     if (!text.trim()) {
-      setSavedStatus('⚠️ Cannot save empty note');
-      setTimeout(() => setSavedStatus(''), 2000);
+      showToast('Cannot save empty note');
       return;
     }
     const notes = JSON.parse(localStorage.getItem('notepadSavedNotes') || '[]');
     notes.push(text);
     localStorage.setItem('notepadSavedNotes', JSON.stringify(notes));
     setSavedNotes(notes);
-    setSavedStatus('✅ Note saved as note ' + notes.length);
-    setTimeout(() => setSavedStatus(''), 2000);
+    showToast('Note saved!');
   };
 
   // Delete a saved note by index
@@ -505,13 +512,6 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               Your Notes
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ 
-                color: '#8b5cf6', // soft purple for status
-                fontSize: '14px',
-                fontWeight: '600'
-              }}>
-                {savedStatus}
-              </span>
               <button
                 onClick={copyText}
                 style={{
@@ -1013,6 +1013,28 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           Built with ❤️ by NoteCraft.pro
         </div>
       </div>
+      {/* Toast notification */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          left: '50%',
+          bottom: 32,
+          transform: 'translateX(-50%)',
+          background: isDarkMode ? 'rgba(55,65,81,0.97)' : 'rgba(243,244,246,0.97)',
+          color: isDarkMode ? '#fff' : '#222',
+          padding: '12px 28px',
+          borderRadius: 24,
+          fontSize: 16,
+          fontWeight: 500,
+          boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
+          zIndex: 1000,
+          opacity: toast ? 1 : 0,
+          transition: 'opacity 0.3s',
+          pointerEvents: 'none',
+        }}>
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
