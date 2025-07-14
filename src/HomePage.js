@@ -113,17 +113,22 @@ function HomePage({ isDarkMode, toggleTheme }) {
 
   return (
     <div style={{ 
-      padding: '40px 20px', 
-      width: '100%',
+      margin: 0,
+      padding: 0,
+      width: '100vw',
+      minHeight: '100vh',
       fontFamily: 'Arial, sans-serif',
       backgroundColor: theme.background,
       color: theme.color,
-      minHeight: '100vh',
-      transition: 'all 0.3s ease'
+      transition: 'all 0.3s ease',
+      overflowX: 'hidden',
+      boxSizing: 'border-box'
     }}>
       <div style={{
         maxWidth: '1400px',
-        margin: '0 auto'
+        margin: '0 auto',
+        padding: '20px',
+        boxSizing: 'border-box'
       }}>
         {/* Header with theme toggle and link to notepad */}
         <div style={{ 
@@ -246,7 +251,8 @@ function HomePage({ isDarkMode, toggleTheme }) {
               : '0 4px 20px rgba(0,0,0,0.1)',
             border: `1px solid ${theme.cardBorder}`,
             transition: 'all 0.3s ease',
-            maxWidth: '1200px'
+            maxWidth: '100%',
+            boxSizing: 'border-box'
           }}>
             <h2 style={{ 
               marginBottom: '20px', 
@@ -272,7 +278,8 @@ function HomePage({ isDarkMode, toggleTheme }) {
                 fontFamily: 'inherit',
                 backgroundColor: theme.inputBackground,
                 color: theme.inputColor,
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
               }}
             />
             
@@ -343,7 +350,8 @@ function HomePage({ isDarkMode, toggleTheme }) {
                   marginBottom: '15px',
                   fontSize: '16px',
                   lineHeight: '1.6',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  boxSizing: 'border-box'
                 }}>
                   {output}
                 </div>
@@ -382,7 +390,8 @@ function HomePage({ isDarkMode, toggleTheme }) {
               : '0 4px 20px rgba(0,0,0,0.1)',
             border: `1px solid ${theme.cardBorder}`,
             transition: 'all 0.3s ease',
-            maxWidth: '1200px'
+            maxWidth: '100%',
+            boxSizing: 'border-box'
           }}>
             <h2 style={{ 
               marginBottom: '20px', 
@@ -408,7 +417,8 @@ function HomePage({ isDarkMode, toggleTheme }) {
                 fontFamily: 'inherit',
                 backgroundColor: theme.inputBackground,
                 color: theme.inputColor,
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
               }}
             />
             
@@ -479,7 +489,8 @@ function HomePage({ isDarkMode, toggleTheme }) {
                   marginBottom: '15px',
                   fontSize: '16px',
                   lineHeight: '1.6',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  boxSizing: 'border-box'
                 }}>
                   {writerOutput}
                 </div>
