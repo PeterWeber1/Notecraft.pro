@@ -2,136 +2,203 @@ import React, { useState, useEffect, useRef } from 'react';
 
 function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [text, setText] = useState('');
+  const [htmlContent, setHtmlContent] = useState('');
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [showLineSpacing, setShowLineSpacing] = useState(false);
   const [savedStatus, setSavedStatus] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [filterType, setFilterType] = useState('all');
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const editorRef = useRef(null);
 
-  // Theme styles
-  const theme = {
-    background: isDarkMode ? '#0f1419' : '#f8fafc',
-    color: isDarkMode ? '#ffffff' : '#1e293b',
-    cardBackground: isDarkMode ? '#1e2329' : '#ffffff',
-    cardBorder: isDarkMode ? '#3c4043' : '#e2e8f0',
-    inputBackground: isDarkMode ? '#2d3748' : '#ffffff',
-    inputBorder: isDarkMode ? '#4a5568' : '#cbd5e0',
-    inputColor: isDarkMode ? '#ffffff' : '#1e293b',
-    labelColor: isDarkMode ? '#e2e8f0' : '#4a5568',
-    mutedColor: isDarkMode ? '#a0aec0' : '#64748b',
-    primaryColor: '#8b5cf6',
-    successColor: '#10b981',
-    errorColor: '#ef4444'
-  };
+  // Theme-based styles
+  const getThemeStyles = () => ({
+    background: isDarkMode ? '#111827' : '#f9fafb',
+    color: isDarkMode ? '#ffffff' : '#111827',
+    cardBackground: isDarkMode ? '#1f2937' : '#ffffff',
+    cardBorder: isDarkMode ? '#374151' : '#e5e7eb',
+    inputBackground: isDarkMode ? '#374151' : '#ffffff',
+    inputBorder: isDarkMode ? '#4b5563' : '#e5e7eb',
+    inputColor: isDarkMode ? '#ffffff' : '#111827',
+    labelColor: isDarkMode ? '#d1d5db' : '#374151',
+    mutedColor: isDarkMode ? '#9ca3af' : '#666666',
+    editorBackground: isDarkMode ? '#111827' : '#f9fafb',
+    toolbarBackground: isDarkMode ? '#111827' : '#f9fafb'
+  });
 
-  // Sample text
-  const sampleText = `The quick brown fox jumps over the lazy dog. This is a sample text with various issues that can be improved. Their are some grammatical errors and spelling mistakes that need to be fixed.`;
+  const theme = getThemeStyles();
 
-  // Load sample text
-  const loadSampleText = () => {
-    setText(sampleText);
-    if (editorRef.current) {
-      editorRef.current.innerHTML = sampleText.replace(/\n/g, '<br>');
-    }
-    updateContent();
-  };
+  const colors = [
+    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', 
+    '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000'
+  ];
 
-  // Mock AI analysis
-  const analyzeText = async () => {
-    if (!text.trim()) {
-      alert('Please enter some text to analyze!');
-      return;
-    }
+  const fonts = [
+    { value: 'Arial', label: 'Arial' },
+    { value: 'Times New Roman', label: 'Times New Roman' },
+    { value: 'Georgia', label: 'Georgia' },
+    { value: 'Verdana', label: 'Verdana' },
+    { value: 'Helvetica', label: 'Helvetica' },
+    { value: 'Courier New', label: 'Courier New' },
+    { value: 'Trebuchet MS', label: 'Trebuchet MS' },
+    { value: 'Comic Sans MS', label: 'Comic Sans MS' }
+  ];
 
-    setIsAnalyzing(true);
-    setShowSuggestions(true);
-    
-    // Simulate analysis delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const mockSuggestions = [
-      {
-        id: 1,
-        type: 'grammar',
-        original: 'Their are some',
-        suggestion: 'There are some',
-        reason: 'Incorrect use of "their" instead of "there"',
-        color: '#ef4444'
-      },
-      {
-        id: 2,
-        type: 'style',
-        original: 'can be improved',
-        suggestion: 'could be enhanced',
-        reason: 'More formal language',
-        color: '#8b5cf6'
-      },
-      {
-        id: 3,
-        type: 'clarity',
-        original: 'various issues',
-        suggestion: 'multiple problems',
-        reason: 'More specific language',
-        color: '#06b6d4'
+  const textSizes = [
+    { value: '13.33px', label: '10' },
+    { value: '14.67px', label: '11' },
+    { value: '16px', label: '12' },
+    { value: '18.67px', label: '14' },
+    { value: '21.33px', label: '16' },
+    { value: '24px', label: '18' },
+    { value: '32px', label: '24' },
+    { value: '48px', label: '36' }
+  ];
+
+  const lineSpacings = [
+    { value: '1', label: '1.0' },
+    { value: '1.15', label: '1.15' },
+    { value: '1.5', label: '1.5' },
+    { value: '2', label: '2.0' }
+  ];
+
+  // Load saved content on mount
+  useEffect(() => {
+    try {
+      const savedContent = localStorage.getItem('notepadContent');
+      const savedHtml = localStorage.getItem('notepadHtml');
+      if (savedHtml && editorRef.current) {
+        editorRef.current.innerHTML = savedHtml;
+        setText(savedContent || '');
+        setHtmlContent(savedHtml);
+      } else if (savedContent) {
+        setText(savedContent);
       }
-    ];
-
-    setSuggestions(mockSuggestions);
-    setIsAnalyzing(false);
-  };
-
-  // Apply suggestion
-  const applySuggestion = (suggestion) => {
-    const newText = text.replace(suggestion.original, suggestion.suggestion);
-    setText(newText);
-    
-    if (editorRef.current) {
-      editorRef.current.innerHTML = newText.replace(/\n/g, '<br>');
+    } catch (error) {
+      console.log('localStorage not available');
     }
-    
-    setSuggestions(prev => prev.filter(s => s.id !== suggestion.id));
-    updateContent();
-  };
+  }, []);
 
-  // Apply all suggestions
-  const applyAllSuggestions = () => {
-    let newText = text;
-    suggestions.forEach(suggestion => {
-      newText = newText.replace(suggestion.original, suggestion.suggestion);
-    });
-    setText(newText);
+  // Execute formatting command
+  const formatText = (command, value = null) => {
+    if (!editorRef.current) return;
     
-    if (editorRef.current) {
-      editorRef.current.innerHTML = newText.replace(/\n/g, '<br>');
+    editorRef.current.focus();
+    
+    try {
+      if (command === 'fontSize') {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        const range = selection.getRangeAt(0);
+        
+        if (range.collapsed) {
+          const allContent = editorRef.current.childNodes;
+          allContent.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+              const span = document.createElement('span');
+              span.style.fontSize = value;
+              span.style.fontFamily = 'Arial';
+              span.textContent = node.textContent;
+              node.parentNode.replaceChild(span, node);
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+              node.style.fontSize = value;
+            }
+          });
+        } else {
+          const contents = range.extractContents();
+          const span = document.createElement('span');
+          span.style.fontSize = value;
+          while (contents.firstChild) {
+            span.appendChild(contents.firstChild);
+          }
+          range.insertNode(span);
+          range.selectNodeContents(span);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      } else if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          let node = range.commonAncestorContainer;
+          if (node.nodeType === Node.TEXT_NODE) {
+            node = node.parentNode;
+          }
+          
+          const inList = node.closest('ul, ol');
+          
+          if (inList) {
+            document.execCommand(command, false, null);
+          } else {
+            const block = node.closest('div, p');
+            if (!block || block === editorRef.current) {
+              document.execCommand('formatBlock', false, 'div');
+            }
+            
+            setTimeout(() => {
+              document.execCommand(command, false, null);
+              if (editorRef.current) {
+                editorRef.current.focus();
+              }
+            }, 10);
+          }
+        }
+      } else if (command === 'indent' || command === 'outdent') {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          const range = selection.getRangeAt(0);
+          let node = range.commonAncestorContainer;
+          if (node.nodeType === Node.TEXT_NODE) {
+            node = node.parentNode;
+          }
+          
+          const listItem = node.closest('li');
+          if (listItem) {
+            document.execCommand(command, false, null);
+          } else {
+            const block = node.closest('div, p') || node;
+            if (block && block !== editorRef.current) {
+              const currentMargin = parseInt(block.style.marginLeft || 0);
+              if (command === 'indent') {
+                block.style.marginLeft = `${currentMargin + 40}px`;
+              } else if (currentMargin > 0) {
+                block.style.marginLeft = `${Math.max(0, currentMargin - 40)}px`;
+              }
+            }
+          }
+        }
+      } else {
+        document.execCommand(command, false, value);
+      }
+      
+      if (editorRef.current) {
+        editorRef.current.focus();
+      }
+      updateContent();
+    } catch (error) {
+      console.error('Error executing format command:', error);
     }
-    
-    setSuggestions([]);
-    updateContent();
   };
-
-  // Dismiss suggestion
-  const dismissSuggestion = (suggestionId) => {
-    setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
-  };
-
-  // Filter suggestions
-  const filteredSuggestions = suggestions.filter(s => 
-    filterType === 'all' || s.type === filterType
-  );
 
   // Update content and save
   const updateContent = () => {
     if (editorRef.current) {
       const html = editorRef.current.innerHTML;
+      setHtmlContent(html);
+      
+      // Extract plain text
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = html;
+      tempDiv.innerHTML = tempDiv.innerHTML.replace(/<br\s*\/?>/gi, '\n');
       const plainText = tempDiv.textContent || '';
       setText(plainText);
       
+      // Save to localStorage
       try {
         localStorage.setItem('notepadContent', plainText);
+        localStorage.setItem('notepadHtml', html);
         setSavedStatus('✅ Saved');
+        
+        // Clear saved status after 2 seconds
         setTimeout(() => setSavedStatus(''), 2000);
       } catch (error) {
         console.log('Could not save to localStorage');
@@ -139,25 +206,64 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     }
   };
 
-  // Copy text
-  const copyText = () => {
-    navigator.clipboard.writeText(text).then(() => {
-      setSavedStatus('📋 Copied!');
-      setTimeout(() => setSavedStatus(''), 2000);
-    }).catch(() => {
-      alert('❌ Failed to copy text');
-    });
+  // Handle paste events
+  const handlePaste = (e) => {
+    e.preventDefault();
+    
+    const text = e.clipboardData.getData('text/plain');
+    if (!text) return;
+    
+    const paragraphs = text.split(/\n\n+/);
+    const cleanHTML = paragraphs
+      .map(paragraph => {
+        const lines = paragraph.split('\n');
+        const paragraphHTML = lines
+          .map(line => line.trim())
+          .filter(line => line)
+          .join('<br>');
+        
+        if (paragraphHTML) {
+          return `<div style="font-family: Arial; font-size: 16px;">${paragraphHTML}</div>`;
+        }
+        return '';
+      })
+      .filter(html => html)
+      .join('<div><br></div>');
+    
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+    
+    selection.deleteFromDocument();
+    const range = selection.getRangeAt(0);
+    const fragment = range.createContextualFragment(cleanHTML);
+    range.insertNode(fragment);
+    
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    
+    updateContent();
   };
 
-  // Clear notes
+  // Handle link insertion
+  const insertLink = () => {
+    if (linkUrl) {
+      formatText('createLink', linkUrl);
+      setShowLinkDialog(false);
+      setLinkUrl('');
+    }
+  };
+
   const clearNotes = () => {
     if (window.confirm('Are you sure you want to clear all notes?')) {
       setText('');
+      setHtmlContent('');
       if (editorRef.current) {
-        editorRef.current.innerHTML = '';
+        editorRef.current.innerHTML = '<div><br></div>';
       }
       try {
         localStorage.removeItem('notepadContent');
+        localStorage.removeItem('notepadHtml');
       } catch (error) {
         console.log('Could not clear localStorage');
       }
@@ -166,484 +272,571 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     }
   };
 
-  // Load saved content on mount
-  useEffect(() => {
-    try {
-      const savedContent = localStorage.getItem('notepadContent');
-      if (savedContent) {
-        setText(savedContent);
-        if (editorRef.current) {
-          editorRef.current.innerHTML = savedContent.replace(/\n/g, '<br>');
+  const copyText = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ Notes copied to clipboard!');
+    }).catch(() => {
+      alert('❌ Failed to copy notes');
+    });
+  };
+
+  // Icon button component
+  const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
+    <button
+      onClick={onClick}
+      onMouseDown={onMouseDown}
+      title={title}
+      style={{
+        minWidth: '36px',
+        height: '36px',
+        padding: '8px',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: active 
+          ? (isDarkMode ? '#8b5cf6' : '#8b5cf6')
+          : 'transparent',
+        color: active 
+          ? 'white'
+          : (isDarkMode ? '#d1d5db' : '#374151'),
+        transition: 'all 0.2s ease'
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
         }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.target.style.backgroundColor = 'transparent';
+        }
+      }}
+    >
+      {icon}
+    </button>
+  );
+
+  const ToolbarSeparator = () => (
+    <div style={{
+      width: '1px',
+      height: '24px',
+      backgroundColor: isDarkMode ? '#4b5563' : '#d1d5db',
+      margin: '0 4px'
+    }} />
+  );
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const isColorPicker = e.target.closest('[data-dropdown="color"]');
+      const isLineSpacing = e.target.closest('[data-dropdown="line-spacing"]');
+      
+      if (!isColorPicker) {
+        setShowColorPicker(false);
       }
-    } catch (error) {
-      console.log('localStorage not available');
+      if (!isLineSpacing) {
+        setShowLineSpacing(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Initialize editor on mount
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML === '') {
+      editorRef.current.innerHTML = '<div><br></div>';
     }
   }, []);
 
   return (
     <div style={{ 
-      padding: '20px',
-      fontFamily: 'system-ui, sans-serif',
+      padding: '40px 20px', 
+      width: '100%',
+      fontFamily: 'Arial, sans-serif',
       backgroundColor: theme.background,
       color: theme.color,
-      minHeight: '100vh'
+      minHeight: '100vh',
+      transition: 'all 0.3s ease'
     }}>
-      <div style={{ maxWidth: '1600px', margin: '0 auto' }}>
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto'
+      }}>
         {/* Header */}
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          marginBottom: '24px',
+          marginBottom: '30px',
           flexWrap: 'wrap',
-          gap: '16px'
+          gap: '20px'
         }}>
           <div>
             <h1 style={{ 
-              color: theme.primaryColor,
-              marginBottom: '8px', 
-              fontSize: '2.5rem',
-              margin: 0,
-              fontWeight: '700'
+              color: '#8b5cf6', 
+              marginBottom: '5px', 
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              margin: 0
             }}>
-              ✨ AI Writing Assistant
+              📝 NoteCraft
             </h1>
             <p style={{ 
               color: theme.mutedColor, 
               margin: 0,
-              fontSize: '18px'
+              fontSize: 'clamp(14px, 1.5vw, 18px)'
             }}>
-              Intelligent text editor with AI-powered suggestions
+              Your personal writing space with auto-save
             </p>
           </div>
           
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <a 
               href="/" 
               style={{
-                background: theme.cardBackground,
-                color: theme.color,
-                padding: '12px 20px',
-                borderRadius: '12px',
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                color: isDarkMode ? '#d1d5db' : '#374151',
+                padding: '10px 20px',
+                borderRadius: '8px',
                 textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: '600',
-                border: `1px solid ${theme.cardBorder}`
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap'
               }}
             >
-              ← Back to Tools
+              ← Back to AI Tools
             </a>
             <button
               onClick={toggleTheme}
               style={{
-                background: theme.cardBackground,
-                border: `1px solid ${theme.cardBorder}`,
-                borderRadius: '12px',
+                background: isDarkMode ? '#374151' : '#e5e7eb',
+                border: 'none',
+                borderRadius: '50px',
                 padding: '12px',
                 cursor: 'pointer',
-                fontSize: '20px'
+                fontSize: '20px',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
               }}
+              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Editor Card */}
         <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: showSuggestions ? '1fr 400px' : '1fr',
-          gap: '24px',
-          alignItems: 'start'
+          background: theme.cardBackground, 
+          padding: 'clamp(20px, 3vw, 40px)', 
+          borderRadius: '15px', 
+          boxShadow: isDarkMode 
+            ? '0 4px 20px rgba(0,0,0,0.3)' 
+            : '0 4px 20px rgba(0,0,0,0.1)',
+          border: `1px solid ${theme.cardBorder}`,
+          transition: 'all 0.3s ease'
         }}>
-          {/* Editor Panel */}
           <div style={{ 
-            background: theme.cardBackground, 
-            padding: '24px', 
-            borderRadius: '16px',
-            border: `1px solid ${theme.cardBorder}`
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '20px',
+            flexWrap: 'wrap',
+            gap: '10px'
           }}>
-            {/* Editor Header */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              marginBottom: '20px',
-              flexWrap: 'wrap',
-              gap: '12px'
+            <h2 style={{ 
+              margin: 0,
+              color: theme.color,
+              fontSize: 'clamp(1.2rem, 2vw, 1.8rem)'
             }}>
-              <h2 style={{ 
-                margin: 0,
-                color: theme.color,
-                fontSize: '1.5rem',
+              Your Notes
+            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ 
+                color: '#10b981', 
+                fontSize: '14px',
                 fontWeight: '600'
               }}>
-                Text Editor
-              </h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ 
-                  color: theme.successColor, 
+                {savedStatus}
+              </span>
+              <button
+                onClick={copyText}
+                style={{
+                  background: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
                   fontSize: '14px',
-                  fontWeight: '600'
-                }}>
-                  {savedStatus}
-                </span>
-                <button
-                  onClick={loadSampleText}
-                  style={{
-                    background: '#06b6d4',
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  📝 Load Sample
-                </button>
-                <button
-                  onClick={copyText}
-                  style={{
-                    background: theme.successColor,
-                    color: 'white',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  📋 Copy
-                </button>
-              </div>
-            </div>
-
-            {/* Text Editor */}
-            <div
-              ref={editorRef}
-              contentEditable={true}
-              suppressContentEditableWarning={true}
-              onInput={updateContent}
-              style={{
-                width: '100%',
-                height: '400px',
-                padding: '20px',
-                border: `2px solid ${theme.inputBorder}`,
-                borderRadius: '12px',
-                fontSize: '16px',
-                marginBottom: '20px',
-                backgroundColor: theme.inputBackground,
-                color: theme.inputColor,
-                lineHeight: '1.6',
-                overflowY: 'auto',
-                outline: 'none'
-              }}
-            />
-
-            {/* Bottom Stats and Actions */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '16px'
-            }}>
-              <div style={{ color: theme.labelColor, fontSize: '14px', fontWeight: '500' }}>
-                {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={analyzeText}
-                  disabled={isAnalyzing}
-                  style={{
-                    background: isAnalyzing ? theme.mutedColor : theme.primaryColor,
-                    color: 'white',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: isAnalyzing ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {isAnalyzing ? '🔄 Analyzing...' : '🚀 Analyze Text'}
-                </button>
-                <button
-                  onClick={clearNotes}
-                  style={{
-                    background: theme.errorColor,
-                    color: 'white',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  🗑️ Clear
-                </button>
-              </div>
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                📋 Copy All
+              </button>
             </div>
           </div>
 
-          {/* AI Suggestions Panel */}
-          {showSuggestions && (
-            <div style={{ 
-              background: theme.cardBackground, 
-              padding: '24px', 
-              borderRadius: '16px',
-              border: `1px solid ${theme.cardBorder}`,
-              maxHeight: '80vh',
-              overflowY: 'auto'
-            }}>
-              {/* Suggestions Header */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                marginBottom: '20px'
-              }}>
-                <h3 style={{ 
-                  margin: 0,
-                  color: theme.color,
-                  fontSize: '1.25rem',
-                  fontWeight: '600'
-                }}>
-                  🎯 AI Suggestions
-                </h3>
-                <button
-                  onClick={() => setShowSuggestions(false)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: theme.mutedColor,
-                    fontSize: '20px',
-                    cursor: 'pointer',
-                    padding: '4px'
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
+          {/* Formatting Toolbar */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '4px',
+            padding: '8px',
+            marginBottom: '8px',
+            borderRadius: '8px',
+            border: `1px solid ${theme.cardBorder}`,
+            backgroundColor: theme.toolbarBackground
+          }}>
+            {/* Font Selection */}
+            <select
+              onChange={(e) => formatText('fontName', e.target.value)}
+              defaultValue="Arial"
+              style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                backgroundColor: theme.inputBackground,
+                color: theme.inputColor,
+                border: `1px solid ${theme.inputBorder}`
+              }}
+              title="Font Family"
+            >
+              {fonts.map(font => (
+                <option key={font.value} value={font.value} style={{ fontFamily: font.value }}>
+                  {font.label}
+                </option>
+              ))}
+            </select>
 
-              {/* Filter Tabs */}
-              <div style={{
-                display: 'flex',
-                gap: '8px',
-                marginBottom: '20px',
-                flexWrap: 'wrap'
-              }}>
-                {['all', 'grammar', 'style', 'clarity'].map(type => (
-                  <button
-                    key={type}
-                    onClick={() => setFilterType(type)}
-                    style={{
-                      padding: '6px 12px',
-                      border: 'none',
-                      borderRadius: '20px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      background: filterType === type ? theme.primaryColor : theme.inputBackground,
-                      color: filterType === type ? 'white' : theme.color,
-                      textTransform: 'capitalize'
-                    }}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
+            {/* Text Size */}
+            <select
+              onChange={(e) => formatText('fontSize', e.target.value)}
+              defaultValue="16px"
+              style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                backgroundColor: theme.inputBackground,
+                color: theme.inputColor,
+                border: `1px solid ${theme.inputBorder}`
+              }}
+              title="Font Size"
+            >
+              {textSizes.map(size => (
+                <option key={size.value} value={size.value}>
+                  {size.label}
+                </option>
+              ))}
+            </select>
 
-              {/* Suggestions Content */}
-              {isAnalyzing ? (
+            <ToolbarSeparator />
+
+            <IconButton icon="B" onClick={() => formatText('bold')} title="Bold" />
+            <IconButton icon="I" onClick={() => formatText('italic')} title="Italic" />
+            <IconButton icon="U" onClick={() => formatText('underline')} title="Underline" />
+            
+            <ToolbarSeparator />
+            
+            <div style={{ position: 'relative' }} data-dropdown="color">
+              <IconButton 
+                icon="🎨" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowColorPicker(!showColorPicker);
+                }} 
+                title="Text Color" 
+              />
+              {showColorPicker && (
                 <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  padding: '40px 20px',
-                  color: theme.mutedColor
+                  position: 'absolute',
+                  top: '40px',
+                  left: '0',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  zIndex: 10,
+                  backgroundColor: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`
                 }}>
                   <div style={{
-                    width: '40px',
-                    height: '40px',
-                    border: `3px solid ${theme.primaryColor}`,
-                    borderTop: '3px solid transparent',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite',
-                    marginBottom: '16px'
-                  }} />
-                  <p style={{ margin: 0, fontSize: '16px', fontWeight: '500' }}>
-                    Analyzing your text...
-                  </p>
-                </div>
-              ) : filteredSuggestions.length > 0 ? (
-                <>
-                  {/* Apply All Button */}
-                  <button
-                    onClick={applyAllSuggestions}
-                    style={{
-                      width: '100%',
-                      background: theme.successColor,
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px',
-                      borderRadius: '12px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      marginBottom: '16px'
-                    }}
-                  >
-                    ✨ Apply All Suggestions ({filteredSuggestions.length})
-                  </button>
-
-                  {/* Individual Suggestions */}
-                  {filteredSuggestions.map(suggestion => (
-                    <div
-                      key={suggestion.id}
-                      style={{
-                        background: theme.inputBackground,
-                        border: `1px solid ${theme.inputBorder}`,
-                        borderLeft: `4px solid ${suggestion.color}`,
-                        borderRadius: '12px',
-                        padding: '16px',
-                        marginBottom: '12px'
-                      }}
-                    >
-                      {/* Suggestion Type Badge */}
-                      <div style={{
-                        display: 'inline-block',
-                        background: suggestion.color,
-                        color: 'white',
-                        padding: '4px 8px',
-                        borderRadius: '12px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                        marginBottom: '8px'
-                      }}>
-                        {suggestion.type}
-                      </div>
-
-                      {/* Before/After */}
-                      <div style={{ marginBottom: '12px' }}>
-                        <div style={{
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: '1px solid rgba(239, 68, 68, 0.2)',
-                          borderRadius: '8px',
-                          padding: '8px',
-                          marginBottom: '8px'
-                        }}>
-                          <div style={{ fontSize: '12px', color: '#ef4444', fontWeight: '600', marginBottom: '4px' }}>
-                            Original:
-                          </div>
-                          <div style={{ fontSize: '14px' }}>
-                            "{suggestion.original}"
-                          </div>
-                        </div>
-                        <div style={{
-                          background: 'rgba(16, 185, 129, 0.1)',
-                          border: '1px solid rgba(16, 185, 129, 0.2)',
-                          borderRadius: '8px',
-                          padding: '8px'
-                        }}>
-                          <div style={{ fontSize: '12px', color: '#10b981', fontWeight: '600', marginBottom: '4px' }}>
-                            Suggestion:
-                          </div>
-                          <div style={{ fontSize: '14px' }}>
-                            "{suggestion.suggestion}"
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Reason */}
-                      <p style={{
-                        color: theme.mutedColor,
-                        fontSize: '14px',
-                        margin: '0 0 12px 0',
-                        lineHeight: '1.4'
-                      }}>
-                        {suggestion.reason}
-                      </p>
-
-                      {/* Action Buttons */}
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button
-                          onClick={() => applySuggestion(suggestion)}
-                          style={{
-                            background: theme.successColor,
-                            color: 'white',
-                            border: 'none',
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          ✓ Apply
-                        </button>
-                        <button
-                          onClick={() => dismissSuggestion(suggestion.id)}
-                          style={{
-                            background: theme.inputBackground,
-                            color: theme.mutedColor,
-                            border: `1px solid ${theme.inputBorder}`,
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          ✕ Dismiss
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <div style={{
-                  textAlign: 'center',
-                  padding: '40px 20px',
-                  color: theme.mutedColor
-                }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
-                  <h4 style={{ margin: '0 0 8px 0', color: theme.color }}>Great job!</h4>
-                  <p style={{ margin: 0, fontSize: '14px' }}>
-                    No suggestions found. Your text looks good!
-                  </p>
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    gap: '4px'
+                  }}>
+                    {colors.map(color => (
+                      <button
+                        key={color}
+                        onClick={() => {
+                          formatText('foreColor', color);
+                          setShowColorPicker(false);
+                        }}
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc',
+                          backgroundColor: color,
+                          cursor: 'pointer'
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
+            
+            <IconButton icon="🔗" onClick={() => setShowLinkDialog(true)} title="Add Link" />
+            
+            <ToolbarSeparator />
+            
+            <IconButton icon="←" onClick={() => formatText('justifyLeft')} title="Align Left" />
+            <IconButton icon="↔" onClick={() => formatText('justifyCenter')} title="Align Center" />
+            <IconButton icon="→" onClick={() => formatText('justifyRight')} title="Align Right" />
+            
+            <ToolbarSeparator />
+            
+            <div style={{ position: 'relative' }} data-dropdown="line-spacing">
+              <IconButton 
+                icon="⇅" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowLineSpacing(!showLineSpacing);
+                }} 
+                title="Line Spacing" 
+              />
+              {showLineSpacing && (
+                <div style={{
+                  position: 'absolute',
+                  top: '40px',
+                  left: '0',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  zIndex: 10,
+                  backgroundColor: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {lineSpacings.map(spacing => (
+                      <button
+                        key={spacing.value}
+                        onClick={() => {
+                          if (editorRef.current) {
+                            editorRef.current.style.lineHeight = spacing.value;
+                          }
+                          setShowLineSpacing(false);
+                        }}
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: '14px',
+                          textAlign: 'left',
+                          borderRadius: '4px',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          color: theme.color,
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        {spacing.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <ToolbarSeparator />
+            
+            <IconButton 
+              icon="•" 
+              onMouseDown={(e) => {
+                e.preventDefault();
+                formatText('insertUnorderedList');
+              }} 
+              title="Bullet List" 
+            />
+            <IconButton 
+              icon="1." 
+              onMouseDown={(e) => {
+                e.preventDefault();
+                formatText('insertOrderedList');
+              }} 
+              title="Numbered List" 
+            />
+            <IconButton icon="⬅" onClick={() => formatText('outdent')} title="Decrease Indent" />
+            <IconButton icon="➡" onClick={() => formatText('indent')} title="Increase Indent" />
+          </div>
+
+          {/* Link Dialog */}
+          {showLinkDialog && (
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 50
+            }}>
+              <div style={{
+                padding: '24px',
+                borderRadius: '8px',
+                backgroundColor: theme.cardBackground,
+                boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+              }}>
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  color: theme.color
+                }}>
+                  Add Link
+                </h3>
+                <input
+                  type="text"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="Enter URL"
+                  style={{
+                    width: '300px',
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    border: `1px solid ${theme.inputBorder}`,
+                    backgroundColor: theme.inputBackground,
+                    color: theme.inputColor,
+                    fontSize: '14px'
+                  }}
+                />
+                <div style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginTop: '16px'
+                }}>
+                  <button
+                    onClick={insertLink}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#8b5cf6',
+                      color: 'white',
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowLinkDialog(false);
+                      setLinkUrl('');
+                    }}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                      color: theme.color,
+                      borderRadius: '6px',
+                      border: 'none',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
+          
+          {/* Rich Text Editor */}
+          <div
+            ref={editorRef}
+            contentEditable={true}
+            suppressContentEditableWarning={true}
+            onInput={updateContent}
+            onPaste={handlePaste}
+            style={{
+              width: '100%',
+              height: 'clamp(400px, 60vh, 700px)',
+              padding: '20px',
+              border: `2px solid ${theme.inputBorder}`,
+              borderRadius: '8px',
+              fontSize: '16px',
+              resize: 'vertical',
+              marginBottom: '20px',
+              fontFamily: 'Arial, sans-serif',
+              backgroundColor: theme.editorBackground,
+              color: theme.inputColor,
+              transition: 'all 0.3s ease',
+              lineHeight: '1.6',
+              overflowY: 'auto',
+              outline: 'none',
+              minHeight: '400px',
+              WebkitFontSmoothing: 'antialiased',
+              MozOsxFontSmoothing: 'grayscale'
+            }}
+          />
+
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ color: theme.labelColor, fontSize: '14px' }}>
+              {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
+            </div>
+            <button
+              onClick={clearNotes}
+              style={{
+                background: '#ef4444',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              🗑️ Clear Notes
+            </button>
+          </div>
         </div>
 
         {/* Footer */}
         <div style={{ 
-          marginTop: '40px', 
+          marginTop: '30px', 
           textAlign: 'center', 
           color: theme.mutedColor,
           fontSize: '14px'
         }}>
-          🚀 Powered by AI • Built with ❤️ for better writing
+          Built with ❤️ by NoteCraft.pro
         </div>
       </div>
-
-      {/* CSS for animations */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `
-      }} />
     </div>
   );
 }
