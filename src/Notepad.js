@@ -780,7 +780,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             style={{
               width: '100%',
               minHeight: '400px',
-              maxHeight: 'clamp(700px, 80vh, 1000px)',
+              maxHeight: 'clamp(400px, 50vh, 600px)',
               padding: '20px',
               border: `2px solid ${theme.inputBorder}`,
               borderRadius: '8px',
