@@ -409,21 +409,24 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               ← Back to AI Tools
             </a>
             <button
-              onClick={toggleTheme}
-              style={{
-                background: isDarkMode ? '#374151' : '#e5e7eb',
-                border: 'none',
-                borderRadius: '50px',
-                padding: '12px',
-                cursor: 'pointer',
-                fontSize: '20px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-              }}
-              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDarkMode ? '☀️' : '🌙'}
-            </button>
+  onClick={copyText}
+  style={{
+    background: '#10b981',
+    color: 'white',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '6px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  }}
+>
+  📋 Copy All
+</button>
           </div>
         </div>
 
