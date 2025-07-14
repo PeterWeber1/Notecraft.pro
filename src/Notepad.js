@@ -9,6 +9,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [showLineSpacing, setShowLineSpacing] = useState(false);
   const [savedStatus, setSavedStatus] = useState('');
   const [savedNotes, setSavedNotes] = useState([]); // NEW: array of saved notes
+  const [expandedNotes, setExpandedNotes] = useState([]); // Track expanded notes
   const editorRef = useRef(null);
 
   // Theme-based styles
@@ -308,6 +309,22 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     setSavedNotes(notes);
     setSavedStatus('✅ Note saved as note ' + notes.length);
     setTimeout(() => setSavedStatus(''), 2000);
+  };
+
+  // Delete a saved note by index
+  const deleteSavedNote = (idx) => {
+    const notes = JSON.parse(localStorage.getItem('notepadSavedNotes') || '[]');
+    notes.splice(idx, 1);
+    localStorage.setItem('notepadSavedNotes', JSON.stringify(notes));
+    setSavedNotes(notes);
+    setExpandedNotes(expandedNotes.filter(i => i !== idx));
+  };
+
+  // Toggle expand/collapse for a note
+  const toggleExpandNote = (idx) => {
+    setExpandedNotes(expandedNotes.includes(idx)
+      ? expandedNotes.filter(i => i !== idx)
+      : [...expandedNotes, idx]);
   };
 
   // Icon button component
@@ -841,34 +858,60 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           )}
           
           {/* Rich Text Editor */}
-          <div
-            ref={editorRef}
-            contentEditable={true}
-            suppressContentEditableWarning={true}
-            onInput={updateContent}
-            onPaste={handlePaste}
-            style={{
-              width: '100%',
-              minHeight: '400px',
-              maxHeight: 'clamp(400px, 50vh, 600px)',
-              padding: '20px',
-              border: `2px solid ${theme.inputBorder}`,
-              borderRadius: '8px',
-              fontSize: '16px',
-              resize: 'vertical',
-              marginBottom: '20px',
-              fontFamily: 'Arial, sans-serif',
-              backgroundColor: theme.editorBackground,
-              color: theme.inputColor,
-              transition: 'all 0.3s ease',
-              lineHeight: '1.6',
-              overflowY: 'auto',
-              outline: 'none',
-              WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale',
-              boxSizing: 'border-box',
-            }}
-          />
+          <div style={{ position: 'relative' }}>
+            <div
+              ref={editorRef}
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={updateContent}
+              onPaste={handlePaste}
+              style={{
+                width: '100%',
+                minHeight: '400px',
+                maxHeight: 'clamp(400px, 50vh, 600px)',
+                padding: '20px',
+                border: `2px solid ${theme.inputBorder}`,
+                borderRadius: '8px',
+                fontSize: '16px',
+                resize: 'vertical',
+                marginBottom: '20px',
+                fontFamily: 'Arial, sans-serif',
+                backgroundColor: theme.editorBackground,
+                color: theme.inputColor,
+                transition: 'all 0.3s ease',
+                lineHeight: '1.6',
+                overflowY: 'auto',
+                outline: 'none',
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+                boxSizing: 'border-box',
+                position: 'relative',
+              }}
+            />
+            {/* Clear Notes button inside editor */}
+            <button
+              onClick={clearNotes}
+              title="Clear Notes"
+              style={{
+                position: 'absolute',
+                bottom: 12,
+                right: 16,
+                background: 'none',
+                border: 'none',
+                color: isDarkMode ? '#d1d5db' : '#374151',
+                fontSize: 20,
+                cursor: 'pointer',
+                padding: 0,
+                zIndex: 2,
+                opacity: 0.7,
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = 1}
+              onMouseLeave={e => e.currentTarget.style.opacity = 0.7}
+            >
+              🗑️
+            </button>
+          </div>
 
           <div style={{ 
             display: 'flex', 
@@ -881,23 +924,6 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             <div style={{ color: theme.labelColor, fontSize: '14px', marginRight: 'auto' }}>
               {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
             </div>
-            <button
-              onClick={clearNotes}
-              style={{
-                background: '#ef4444', // soft red
-                color: 'white',
-                border: 'none',
-                padding: '10px 24px',
-                borderRadius: '999px',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: isDarkMode ? '0 2px 8px rgba(239,68,68,0.10)' : '0 2px 8px rgba(239,68,68,0.08)'
-              }}
-            >
-              🗑️ Clear Notes
-            </button>
           </div>
         </div>
 
@@ -923,12 +949,64 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             }}>
               <h3 style={{margin: '0 0 12px 0', color: '#8b5cf6', fontSize: 18}}>Saved Notes</h3>
               <ul style={{padding: 0, margin: 0, listStyle: 'none'}}>
-                {savedNotes.map((note, idx) => (
-                  <li key={idx} style={{marginBottom: 12, paddingBottom: 12, borderBottom: idx !== savedNotes.length-1 ? `1px solid ${theme.cardBorder}` : 'none'}}>
-                    <div style={{fontWeight: 600, marginBottom: 4}}>Note {idx+1}</div>
-                    <div style={{whiteSpace: 'pre-wrap', color: theme.color, fontSize: 15}}>{note}</div>
-                  </li>
-                ))}
+                {savedNotes.map((note, idx) => {
+                  const isExpanded = expandedNotes.includes(idx);
+                  const preview = note.split('\n').slice(0,2).join('\n').slice(0,100) + (note.length > 100 || note.split('\n').length > 2 ? '...' : '');
+                  return (
+                    <li key={idx} style={{marginBottom: 12, paddingBottom: 12, borderBottom: idx !== savedNotes.length-1 ? `1px solid ${theme.cardBorder}` : 'none', position: 'relative'}}>
+                      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
+                        <div
+                          onClick={() => toggleExpandNote(idx)}
+                          style={{fontWeight: 600, marginBottom: 4, color: '#8b5cf6', flex: 1, userSelect: 'none'}}
+                        >
+                          Note {idx+1}
+                        </div>
+                        <button
+                          onClick={() => deleteSavedNote(idx)}
+                          title="Delete Note"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: isDarkMode ? '#d1d5db' : '#374151',
+                            fontSize: 18,
+                            cursor: 'pointer',
+                            padding: 0,
+                            marginLeft: 8,
+                            opacity: 0.7,
+                            transition: 'opacity 0.2s',
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                          onMouseLeave={e => e.currentTarget.style.opacity = 0.7}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                      <div
+                        onClick={() => toggleExpandNote(idx)}
+                        style={{
+                          whiteSpace: 'pre-wrap',
+                          color: theme.color,
+                          fontSize: 15,
+                          marginTop: 4,
+                          cursor: 'pointer',
+                          userSelect: 'none',
+                          maxHeight: isExpanded ? 'none' : '3.5em',
+                          overflow: isExpanded ? 'visible' : 'hidden',
+                          textOverflow: 'ellipsis',
+                          transition: 'max-height 0.2s',
+                        }}
+                      >
+                        {isExpanded ? note : preview}
+                        {!isExpanded && (note.length > 100 || note.split('\n').length > 2) && (
+                          <span style={{color: '#8b5cf6', fontWeight: 500}}> (click to expand)</span>
+                        )}
+                        {isExpanded && (
+                          <span style={{color: '#8b5cf6', fontWeight: 500}}> (click to collapse)</span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
