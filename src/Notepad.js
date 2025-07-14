@@ -779,7 +779,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             onPaste={handlePaste}
             style={{
               width: '100%',
-              minHeight: '120px',
+              minHeight: '400px',
               maxHeight: 'clamp(700px, 80vh, 1000px)',
               padding: '20px',
               border: `2px solid ${theme.inputBorder}`,
