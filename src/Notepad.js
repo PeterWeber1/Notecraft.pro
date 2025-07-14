@@ -315,7 +315,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     notes.push(text);
     localStorage.setItem('notepadSavedNotes', JSON.stringify(notes));
     setSavedNotes(notes);
-    showToast('Note saved!');
+    showToast('Saved Note ' + notes.length);
   };
 
   // Delete a saved note by index
