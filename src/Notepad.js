@@ -1075,8 +1075,8 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
                           color: theme.color,
                           fontSize: 15,
                           marginTop: 4,
-                          cursor: 'pointer',
-                          userSelect: 'none',
+                          cursor: 'text',
+                          // Removed userSelect: 'none' to allow selection
                           maxHeight: isExpanded ? 'none' : '3.5em',
                           overflow: isExpanded ? 'visible' : 'hidden',
                           textOverflow: 'ellipsis',
@@ -1084,11 +1084,18 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
                         }}
                       >
                         {isExpanded ? note : preview}
-                        {!isExpanded && (note.length > 100 || note.split('\n').length > 2) && (
-                          <span style={{color: '#8b5cf6', fontWeight: 500}}> (click to expand)</span>
+                        {/* Expand/collapse label is now a separate clickable span */}
+                        {(!isExpanded && (note.length > 100 || note.split('\n').length > 2)) && (
+                          <span 
+                            style={{color: '#8b5cf6', fontWeight: 500, cursor: 'pointer', marginLeft: 4, userSelect: 'none'}}
+                            onClick={() => toggleExpandNote(idx)}
+                          > (click to expand)</span>
                         )}
                         {isExpanded && (
-                          <span style={{color: '#8b5cf6', fontWeight: 500}}> (click to collapse)</span>
+                          <span 
+                            style={{color: '#8b5cf6', fontWeight: 500, cursor: 'pointer', marginLeft: 4, userSelect: 'none'}}
+                            onClick={() => toggleExpandNote(idx)}
+                          > (click to collapse)</span>
                         )}
                       </div>
                     </li>
