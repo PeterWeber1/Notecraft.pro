@@ -776,9 +776,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             
             <ToolbarSeparator />
             
-            <IconButton icon="←" onClick={() => { formatText('justifyLeft'); updateFormatState(); }} title="Align Left" active={!!formatState.justifyLeft} />
-            <IconButton icon="↔" onClick={() => { formatText('justifyCenter'); updateFormatState(); }} title="Align Center" active={!!formatState.justifyCenter} />
-            <IconButton icon="→" onClick={() => { formatText('justifyRight'); updateFormatState(); }} title="Align Right" active={!!formatState.justifyRight} />
+            <IconButton icon="≡" onClick={() => { formatText('justifyLeft'); updateFormatState(); }} title="Align Left" active={!!formatState.justifyLeft} />
+            <IconButton icon="≣" onClick={() => { formatText('justifyCenter'); updateFormatState(); }} title="Align Center" active={!!formatState.justifyCenter} />
+            <IconButton icon={<span style={{display:'inline-block', transform:'scaleX(-1)'}}>≡</span>} onClick={() => { formatText('justifyRight'); updateFormatState(); }} title="Align Right" active={!!formatState.justifyRight} />
             
             <ToolbarSeparator />
             
