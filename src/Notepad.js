@@ -14,6 +14,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const toastTimer = useRef();
   const editorRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [formatState, setFormatState] = useState({});
 
   // Theme-based styles
   const getThemeStyles = () => ({
@@ -352,6 +353,34 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     updateContent();
   };
 
+  // Update format state (bold, italic, underline, alignment, etc.)
+  const updateFormatState = () => {
+    if (!editorRef.current) return;
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
+    const commands = [
+      'bold', 'italic', 'underline',
+      'justifyLeft', 'justifyCenter', 'justifyRight',
+    ];
+    const state = {};
+    commands.forEach(cmd => {
+      state[cmd] = document.queryCommandState(cmd);
+    });
+    setFormatState(state);
+  };
+
+  // Attach selectionchange event to update format state
+  useEffect(() => {
+    document.addEventListener('selectionchange', updateFormatState);
+    return () => document.removeEventListener('selectionchange', updateFormatState);
+  }, []);
+
+  // Also update format state on input
+  const handleEditorInput = (e) => {
+    updateContent();
+    updateFormatState();
+  };
+
   // Icon button component
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
@@ -375,6 +404,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         color: active 
           ? 'white'
           : (isDarkMode ? '#d1d5db' : '#374151'),
+        boxShadow: active ? (isDarkMode ? '0 2px 8px rgba(139,92,246,0.15)' : '0 2px 8px rgba(139,92,246,0.10)') : 'none',
         transition: 'all 0.2s ease'
       }}
       onMouseEnter={(e) => {
@@ -611,7 +641,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           }}>
             {/* Font Selection */}
             <select
-              onChange={(e) => formatText('fontName', e.target.value)}
+              onChange={(e) => { formatText('fontName', e.target.value); updateFormatState(); }}
               defaultValue="Arial"
               style={{
                 padding: '4px 8px',
@@ -632,7 +662,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
 
             {/* Text Size */}
             <select
-              onChange={(e) => formatText('fontSize', e.target.value)}
+              onChange={(e) => { formatText('fontSize', e.target.value); updateFormatState(); }}
               defaultValue="16px"
               style={{
                 padding: '4px 8px',
@@ -653,9 +683,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
 
             <ToolbarSeparator />
 
-            <IconButton icon="B" onClick={() => formatText('bold')} title="Bold" />
-            <IconButton icon="I" onClick={() => formatText('italic')} title="Italic" />
-            <IconButton icon="U" onClick={() => formatText('underline')} title="Underline" />
+            <IconButton icon="B" onClick={() => { formatText('bold'); updateFormatState(); }} title="Bold" active={!!formatState.bold} />
+            <IconButton icon="I" onClick={() => { formatText('italic'); updateFormatState(); }} title="Italic" active={!!formatState.italic} />
+            <IconButton icon="U" onClick={() => { formatText('underline'); updateFormatState(); }} title="Underline" active={!!formatState.underline} />
             
             <ToolbarSeparator />
             
@@ -759,9 +789,9 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             
             <ToolbarSeparator />
             
-            <IconButton icon="←" onClick={() => formatText('justifyLeft')} title="Align Left" />
-            <IconButton icon="↔" onClick={() => formatText('justifyCenter')} title="Align Center" />
-            <IconButton icon="→" onClick={() => formatText('justifyRight')} title="Align Right" />
+            <IconButton icon="←" onClick={() => { formatText('justifyLeft'); updateFormatState(); }} title="Align Left" active={!!formatState.justifyLeft} />
+            <IconButton icon="↔" onClick={() => { formatText('justifyCenter'); updateFormatState(); }} title="Align Center" active={!!formatState.justifyCenter} />
+            <IconButton icon="→" onClick={() => { formatText('justifyRight'); updateFormatState(); }} title="Align Right" active={!!formatState.justifyRight} />
             
             <ToolbarSeparator />
             
@@ -933,7 +963,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               ref={editorRef}
               contentEditable={true}
               suppressContentEditableWarning={true}
-              onInput={updateContent}
+              onInput={handleEditorInput}
               onPaste={handlePaste}
               style={{
                 width: '100%',
