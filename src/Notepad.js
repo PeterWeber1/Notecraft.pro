@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-function Notepad({ isDarkMode, toggleTheme }) {
+function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [text, setText] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
