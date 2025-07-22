@@ -453,6 +453,16 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     }
   }, []);
 
+  // Allow scrolling on Notepad page
+  React.useEffect(() => {
+    document.body.classList.add('notepad-scrollable');
+    document.documentElement.classList.add('notepad-scrollable');
+    return () => {
+      document.body.classList.remove('notepad-scrollable');
+      document.documentElement.classList.remove('notepad-scrollable');
+    };
+  }, []);
+
   return (
     <div style={{ 
       padding: '40px 20px', 
@@ -469,8 +479,12 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         /* Hide scrollbars for all scrollable elements */
         ::-webkit-scrollbar { display: none; }
         html, body { scrollbar-width: none; -ms-overflow-style: none; }
-        /* Remove outline on focus for seamless look */
         *:focus { outline: none !important; }
+        /* Allow scrolling on Notepad page */
+        html.notepad-scrollable, body.notepad-scrollable {
+          overflow: auto !important;
+          height: 100%;
+        }
       `}</style>
       <div style={{
         maxWidth: '1400px',
