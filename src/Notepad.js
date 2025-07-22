@@ -1028,7 +1028,11 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             placeholder="Start writing your notes here... Everything is automatically saved as you type."
             style={{
               width: '100%',
-              height: 'clamp(400px, 60vh, 700px)',
+              maxWidth: '100%',
+              minWidth: 0,
+              height: 'auto',
+              minHeight: '200px',
+              maxHeight: '60vh',
               padding: '20px',
               border: `2px solid ${theme.inputBorder}`,
               borderRadius: '8px',
@@ -1042,7 +1046,6 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               lineHeight: '1.6',
               overflowY: 'auto',
               outline: 'none',
-              minHeight: '400px',
               WebkitFontSmoothing: 'antialiased',
               MozOsxFontSmoothing: 'grayscale'
             }}
