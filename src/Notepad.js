@@ -487,12 +487,14 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         }
       `}</style>
       <div style={{
-        width: '100vw',
-        maxWidth: '100vw',
+        width: '100%',
+        maxWidth: '100%',
         margin: 0,
         boxShadow: 'none',
         border: 'none',
         background: 'none',
+        boxSizing: 'border-box',
+        padding: 'clamp(12px, 2vw, 32px)',
       }}>
         {/* Header */}
         <div style={{ 
@@ -1034,7 +1036,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               height: 'auto',
               minHeight: '200px',
               maxHeight: '60vh',
-              padding: '20px',
+              padding: 'clamp(12px, 2vw, 32px)',
               border: `2px solid ${theme.inputBorder}`,
               borderRadius: '8px',
               fontSize: '16px',
@@ -1048,7 +1050,8 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               overflowY: 'auto',
               outline: 'none',
               WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale'
+              MozOsxFontSmoothing: 'grayscale',
+              boxSizing: 'border-box',
             }}
           />
 
