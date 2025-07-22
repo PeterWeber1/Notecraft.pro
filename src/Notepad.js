@@ -487,14 +487,13 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         }
       `}</style>
       <div style={{
-        width: '100%',
-        maxWidth: '100%',
-        margin: 0,
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '20px',
+        boxSizing: 'border-box',
         boxShadow: 'none',
         border: 'none',
         background: 'none',
-        boxSizing: 'border-box',
-        padding: 'clamp(12px, 2vw, 32px)',
       }}>
         {/* Header */}
         <div style={{ 
