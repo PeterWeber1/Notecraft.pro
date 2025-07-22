@@ -487,11 +487,12 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         }
       `}</style>
       <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        boxShadow: 'none', // Remove any shadow
-        border: 'none', // Remove any border
-        background: 'none', // Remove background for seamlessness
+        width: '100vw',
+        maxWidth: '100vw',
+        margin: 0,
+        boxShadow: 'none',
+        border: 'none',
+        background: 'none',
       }}>
         {/* Header */}
         <div style={{ 
@@ -1051,13 +1052,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             }}
           />
 
-          <div style={{ 
-            display: 'flex', 
-            gap: '10px',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap'
-          }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '10px 0' }}>
             <div style={{ color: theme.labelColor, fontSize: '14px' }}>
               {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
             </div>
@@ -1065,9 +1060,6 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               onClick={clearNotes}
               title="Clear Notes"
               style={{
-                position: 'absolute',
-                bottom: 12,
-                right: 16,
                 background: 'none',
                 border: 'none',
                 color: isDarkMode ? '#d1d5db' : '#374151',
@@ -1085,18 +1077,56 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             </button>
           </div>
 
-          <div style={{ 
-            display: 'flex', 
-            gap: '10px',
-            justifyContent: 'flex-end', // right align
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            marginTop: '8px'
-          }}>
-            <div style={{ color: theme.labelColor, fontSize: '14px', marginRight: 'auto' }}>
-              {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
+          {/* Saved Notes Section */}
+          {savedNotes.length > 0 && (
+            <div style={{ marginTop: '30px' }}>
+              <h3 style={{ color: theme.color, fontSize: '1.1rem', marginBottom: '10px' }}>Saved Notes</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {savedNotes.map((note, idx) => (
+                  <div key={idx} style={{
+                    background: theme.cardBackground,
+                    border: `1px solid ${theme.cardBorder}`,
+                    borderRadius: '8px',
+                    padding: '16px',
+                    position: 'relative',
+                  }}>
+                    <div style={{
+                      whiteSpace: expandedNotes.includes(idx) ? 'pre-wrap' : 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxHeight: expandedNotes.includes(idx) ? 'none' : '2.5em',
+                      cursor: 'pointer',
+                      color: theme.inputColor,
+                    }}
+                      onClick={() => toggleExpandNote(idx)}
+                    >
+                      {note}
+                    </div>
+                    <button
+                      onClick={() => deleteSavedNote(idx)}
+                      title="Delete Note"
+                      style={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                        background: 'none',
+                        border: 'none',
+                        color: theme.mutedColor,
+                        fontSize: 18,
+                        cursor: 'pointer',
+                        opacity: 0.7,
+                        transition: 'opacity 0.2s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                      onMouseLeave={e => e.currentTarget.style.opacity = 0.7}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer */}
