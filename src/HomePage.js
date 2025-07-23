@@ -5,15 +5,6 @@ function HomePage({ isDarkMode, toggleTheme }) {
   const [output, setOutput] = useState('');
   const [style, setStyle] = useState('natural');
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // Navigation state
-  const [currentTool, setCurrentTool] = useState('humanizer');
-  
-  // AI Writer state
-  const [writerPrompt, setWriterPrompt] = useState('');
-  const [writerType, setWriterType] = useState('article');
-  const [writerOutput, setWriterOutput] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const humanizeText = () => {
     if (!text.trim()) {
@@ -47,41 +38,6 @@ function HomePage({ isDarkMode, toggleTheme }) {
       setOutput(humanizedText);
       setIsProcessing(false);
     }, 1500);
-  };
-
-  // AI Writer function
-  const generateContent = () => {
-    if (!writerPrompt.trim()) {
-      alert('Please enter a writing prompt!');
-      return;
-    }
-    
-    setIsGenerating(true);
-    setWriterOutput('');
-    
-    setTimeout(() => {
-      let generatedContent = '';
-      
-      switch(writerType) {
-        case 'article':
-          generatedContent = `📰 Article: "${writerPrompt}"\n\nIn today's rapidly evolving world, the topic you've chosen represents a fascinating area of exploration. This subject offers multiple perspectives that deserve careful consideration.\n\nThe key aspects to understand include the fundamental principles, practical applications, and long-term implications. Each element contributes to a comprehensive understanding that benefits both newcomers and experts in the field.\n\nAs we look toward the future, it's clear that continued research and development in this area will yield significant benefits. The potential for innovation remains vast, with opportunities for breakthrough discoveries that could reshape our understanding.\n\nIn conclusion, this topic represents an exciting frontier that merits continued attention and investment from researchers, practitioners, and enthusiasts alike.`;
-          break;
-        case 'blog':
-          generatedContent = `✍️ Blog Post: "${writerPrompt}"\n\nHey there! Let's dive into something I've been thinking about lately: ${writerPrompt.toLowerCase()}.\n\nYou know what's interesting? This topic has been on my mind because it affects so many of us in our daily lives. I've noticed that people often overlook the subtle details that make all the difference.\n\nHere's what I've learned from my experience:\n\n• The importance of taking a step back and seeing the bigger picture\n• How small changes can lead to significant improvements\n• Why it's worth investing time to understand the fundamentals\n\nThe more I explore this subject, the more fascinated I become. There's always another layer to uncover, another perspective to consider.\n\nWhat do you think? Have you had similar experiences? I'd love to hear your thoughts in the comments below!`;
-          break;
-        case 'email':
-          generatedContent = `📧 Email: "${writerPrompt}"\n\nSubject: Regarding ${writerPrompt}\n\nHi there,\n\nI hope this email finds you well. I wanted to reach out to discuss ${writerPrompt.toLowerCase()} and share some thoughts that might be helpful.\n\nAfter giving this some consideration, I believe there are several important points worth highlighting:\n\n1. The current situation presents both opportunities and challenges\n2. A strategic approach will help us navigate the complexities involved\n3. Collaboration and open communication will be key to success\n\nI'd appreciate the opportunity to discuss this further at your convenience. Please let me know when you might be available for a brief conversation.\n\nThank you for your time and consideration.\n\nBest regards,\n[Your Name]`;
-          break;
-        case 'story':
-          generatedContent = `📚 Creative Story: "${writerPrompt}"\n\nThe morning mist hung low over the quiet town as Sarah opened her laptop, ready to explore the intriguing world of ${writerPrompt.toLowerCase()}. Little did she know that this simple action would set in motion a series of events that would change everything.\n\nAs she delved deeper into her research, patterns began to emerge that she'd never noticed before. Each discovery led to new questions, and each answer opened doors to possibilities she'd never imagined.\n\n"This is incredible," she whispered to herself, scrolling through page after page of fascinating information. The more she learned, the more she realized how much there was still to discover.\n\nHours passed like minutes as Sarah became completely absorbed in her exploration. By the time the sun began to set, she had uncovered insights that would reshape her understanding forever.\n\nAnd this was only the beginning of her journey into the remarkable world of ${writerPrompt.toLowerCase()}.`;
-          break;
-        default:
-          generatedContent = `Generated content about: ${writerPrompt}\n\nYour content has been created with a human-like approach, incorporating natural language patterns and engaging storytelling elements.`;
-      }
-      
-      setWriterOutput(generatedContent);
-      setIsGenerating(false);
-    }, 2000);
   };
 
   const copyToClipboard = (textToCopy) => {
@@ -125,7 +81,7 @@ function HomePage({ isDarkMode, toggleTheme }) {
       boxSizing: 'border-box'
     }}>
       <div style={{
-        maxWidth: 'clamp(320px, 95vw, 1400px)',
+        maxWidth: 'clamp(320px, 95vw, 1200px)',
         margin: '0 auto',
         padding: 'clamp(12px, 3vw, 20px)',
         boxSizing: 'border-box'
@@ -135,25 +91,27 @@ function HomePage({ isDarkMode, toggleTheme }) {
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          marginBottom: '30px',
+          marginBottom: '40px',
           flexWrap: 'wrap',
           gap: '20px'
         }}>
           <div>
             <h1 style={{ 
               color: '#8b5cf6', 
-              marginBottom: '5px', 
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
-              margin: 0
+              marginBottom: '10px', 
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+              margin: 0,
+              fontWeight: 'bold'
             }}>
-              🤖 AI Writing Platform
+              ✨ WriteHuman
             </h1>
             <p style={{ 
               color: theme.mutedColor, 
               margin: 0,
-              fontSize: 'clamp(14px, 1.5vw, 18px)'
+              fontSize: 'clamp(16px, 2vw, 20px)',
+              maxWidth: '600px'
             }}>
-              Transform and create content with AI-powered tools
+              Transform AI-generated text into natural, human-like content that sounds authentic and engaging
             </p>
           </div>
           
@@ -163,7 +121,7 @@ function HomePage({ isDarkMode, toggleTheme }) {
               style={{
                 background: isDarkMode ? '#374151' : '#e5e7eb',
                 color: isDarkMode ? '#d1d5db' : '#374151',
-                padding: '10px 20px',
+                padding: '12px 24px',
                 borderRadius: '8px',
                 textDecoration: 'none',
                 fontSize: '14px',
@@ -193,116 +151,101 @@ function HomePage({ isDarkMode, toggleTheme }) {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div style={{
-          display: 'flex',
-          gap: '10px',
-          marginBottom: '30px',
-          background: theme.cardBackground,
-          padding: '10px',
-          borderRadius: '12px',
+        {/* Main Humanizer Tool */}
+        <div style={{ 
+          background: theme.cardBackground, 
+          padding: 'clamp(30px, 4vw, 60px)', 
+          borderRadius: '20px', 
+          boxShadow: isDarkMode 
+            ? '0 8px 32px rgba(0,0,0,0.3)' 
+            : '0 8px 32px rgba(0,0,0,0.1)',
           border: `1px solid ${theme.cardBorder}`,
-          maxWidth: '600px'
+          transition: 'all 0.3s ease',
+          maxWidth: '100%',
+          boxSizing: 'border-box'
         }}>
-          <button
-            onClick={() => setCurrentTool('humanizer')}
-            style={{
-              flex: 1,
-              padding: '12px 20px',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              background: currentTool === 'humanizer' ? theme.navButtonActive : theme.navButton,
-              color: currentTool === 'humanizer' ? 'white' : theme.color
-            }}
-          >
-            🤖 AI Humanizer
-          </button>
-          <button
-            onClick={() => setCurrentTool('writer')}
-            style={{
-              flex: 1,
-              padding: '12px 20px',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              background: currentTool === 'writer' ? theme.navButtonActive : theme.navButton,
-              color: currentTool === 'writer' ? 'white' : theme.color
-            }}
-          >
-            ✍️ AI Writer
-          </button>
-        </div>
-
-        {/* AI Humanizer Tool */}
-        {currentTool === 'humanizer' && (
-          <div style={{ 
-            background: theme.cardBackground, 
-            padding: 'clamp(20px, 3vw, 40px)', 
-            borderRadius: '15px', 
-            boxShadow: isDarkMode 
-              ? '0 4px 20px rgba(0,0,0,0.3)' 
-              : '0 4px 20px rgba(0,0,0,0.1)',
-            border: `1px solid ${theme.cardBorder}`,
-            transition: 'all 0.3s ease',
-            maxWidth: '100%',
-            boxSizing: 'border-box'
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '40px'
           }}>
             <h2 style={{ 
-              marginBottom: '20px', 
+              marginBottom: '15px', 
               color: theme.color,
-              fontSize: 'clamp(1.2rem, 2vw, 1.8rem)'
+              fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
+              fontWeight: 'bold'
             }}>
-              AI Humanizer
+              🤖 AI Text Humanizer
             </h2>
-            
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Paste your AI-generated text here..."
-              style={{
-                width: '100%',
-                height: 'clamp(120px, 15vh, 200px)',
-                padding: '15px',
-                border: `2px solid ${theme.inputBorder}`,
-                borderRadius: '8px',
-                fontSize: '16px',
-                resize: 'vertical',
-                marginBottom: '15px',
-                fontFamily: 'inherit',
-                backgroundColor: theme.inputBackground,
-                color: theme.inputColor,
-                transition: 'all 0.3s ease',
-                boxSizing: 'border-box'
-              }}
-            />
-            
-            <div style={{ marginBottom: '20px' }}>
+            <p style={{
+              color: theme.mutedColor,
+              fontSize: 'clamp(14px, 1.5vw, 18px)',
+              maxWidth: '600px',
+              margin: '0 auto'
+            }}>
+              Paste your AI-generated text below and watch it transform into natural, human-like content
+            </p>
+          </div>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr',
+            gap: '30px',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}>
+            {/* Input Section */}
+            <div>
               <label style={{ 
                 display: 'block', 
-                marginBottom: '8px', 
+                marginBottom: '12px', 
                 fontWeight: '600', 
                 color: theme.labelColor,
-                fontSize: '14px'
+                fontSize: '16px'
               }}>
-                Humanization Style:
+                📝 Paste your AI text here:
+              </label>
+              <textarea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Paste your AI-generated text here and we'll make it sound more human..."
+                style={{
+                  width: '100%',
+                  height: 'clamp(150px, 20vh, 250px)',
+                  padding: '20px',
+                  border: `2px solid ${theme.inputBorder}`,
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                  backgroundColor: theme.inputBackground,
+                  color: theme.inputColor,
+                  transition: 'all 0.3s ease',
+                  boxSizing: 'border-box',
+                  lineHeight: '1.6'
+                }}
+              />
+            </div>
+            
+            {/* Style Selection */}
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '12px', 
+                fontWeight: '600', 
+                color: theme.labelColor,
+                fontSize: '16px'
+              }}>
+                🎨 Humanization Style:
               </label>
               <select
                 value={style}
                 onChange={(e) => setStyle(e.target.value)}
                 style={{
                   width: '100%',
-                  maxWidth: '400px',
-                  padding: '10px 15px',
+                  padding: '15px 20px',
                   border: `2px solid ${theme.inputBorder}`,
-                  borderRadius: '8px',
-                  fontSize: '14px',
+                  borderRadius: '12px',
+                  fontSize: '16px',
                   backgroundColor: theme.inputBackground,
                   color: theme.inputColor,
                   cursor: 'pointer',
@@ -316,215 +259,145 @@ function HomePage({ isDarkMode, toggleTheme }) {
               </select>
             </div>
             
-            <button
-              onClick={humanizeText}
-              disabled={isProcessing}
-              style={{
-                background: isProcessing 
-                  ? '#9ca3af' 
-                  : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: isProcessing ? 'not-allowed' : 'pointer',
-                marginBottom: '20px',
-                width: '100%',
-                maxWidth: '400px',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              {isProcessing ? '🔄 Processing...' : '✨ Humanize Text'}
-            </button>
+            {/* Process Button */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={humanizeText}
+                disabled={isProcessing}
+                style={{
+                  background: isProcessing 
+                    ? '#9ca3af' 
+                    : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '16px 32px',
+                  borderRadius: '12px',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  cursor: isProcessing ? 'not-allowed' : 'pointer',
+                  width: '100%',
+                  maxWidth: '400px',
+                  transition: 'all 0.3s ease',
+                  boxShadow: isProcessing ? 'none' : '0 4px 16px rgba(139, 92, 246, 0.3)'
+                }}
+              >
+                {isProcessing ? '🔄 Humanizing your text...' : '✨ Humanize Text'}
+              </button>
+            </div>
 
+            {/* Output Section */}
             {output && (
               <div>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '12px', 
+                  fontWeight: '600', 
+                  color: theme.labelColor,
+                  fontSize: '16px'
+                }}>
+                  ✨ Humanized Result:
+                </label>
                 <div style={{
                   background: theme.outputBackground,
-                  padding: '20px',
-                  borderRadius: '8px',
+                  padding: '25px',
+                  borderRadius: '12px',
                   border: `2px solid ${theme.outputBorder}`,
                   whiteSpace: 'pre-wrap',
-                  marginBottom: '15px',
+                  marginBottom: '20px',
                   fontSize: '16px',
-                  lineHeight: '1.6',
+                  lineHeight: '1.7',
                   transition: 'all 0.3s ease',
-                  boxSizing: 'border-box'
+                  boxSizing: 'border-box',
+                  minHeight: '200px'
                 }}>
                   {output}
                 </div>
                 
-                <button
-                  onClick={() => copyToClipboard(output)}
-                  style={{
-                    background: '#10b981',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '6px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    width: '100%',
-                    maxWidth: '400px',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  📋 Copy to Clipboard
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* AI Writer Tool */}
-        {currentTool === 'writer' && (
-          <div style={{ 
-            background: theme.cardBackground, 
-            padding: 'clamp(20px, 3vw, 40px)', 
-            borderRadius: '15px', 
-            boxShadow: isDarkMode 
-              ? '0 4px 20px rgba(0,0,0,0.3)' 
-              : '0 4px 20px rgba(0,0,0,0.1)',
-            border: `1px solid ${theme.cardBorder}`,
-            transition: 'all 0.3s ease',
-            maxWidth: '100%',
-            boxSizing: 'border-box'
-          }}>
-            <h2 style={{ 
-              marginBottom: '20px', 
-              color: theme.color,
-              fontSize: 'clamp(1.2rem, 2vw, 1.8rem)'
-            }}>
-              AI Writer
-            </h2>
-            
-            <textarea
-              value={writerPrompt}
-              onChange={(e) => setWriterPrompt(e.target.value)}
-              placeholder="Describe what you want to write about..."
-              style={{
-                width: '100%',
-                height: 'clamp(120px, 15vh, 200px)',
-                padding: '15px',
-                border: `2px solid ${theme.inputBorder}`,
-                borderRadius: '8px',
-                fontSize: '16px',
-                resize: 'vertical',
-                marginBottom: '15px',
-                fontFamily: 'inherit',
-                backgroundColor: theme.inputBackground,
-                color: theme.inputColor,
-                transition: 'all 0.3s ease',
-                boxSizing: 'border-box'
-              }}
-            />
-            
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '8px', 
-                fontWeight: '600', 
-                color: theme.labelColor,
-                fontSize: '14px'
-              }}>
-                Content Type:
-              </label>
-              <select
-                value={writerType}
-                onChange={(e) => setWriterType(e.target.value)}
-                style={{
-                  width: '100%',
-                  maxWidth: '400px',
-                  padding: '10px 15px',
-                  border: `2px solid ${theme.inputBorder}`,
-                  borderRadius: '8px',
-                  fontSize: '14px',
-                  backgroundColor: theme.inputBackground,
-                  color: theme.inputColor,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                <option value="article">📰 Article</option>
-                <option value="blog">✍️ Blog Post</option>
-                <option value="email">📧 Email</option>
-                <option value="story">📚 Creative Story</option>
-              </select>
-            </div>
-            
-            <button
-              onClick={generateContent}
-              disabled={isGenerating}
-              style={{
-                background: isGenerating 
-                  ? '#9ca3af' 
-                  : 'linear-gradient(135deg, #059669, #047857)',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: isGenerating ? 'not-allowed' : 'pointer',
-                marginBottom: '20px',
-                width: '100%',
-                maxWidth: '400px',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              {isGenerating ? '🔄 Generating...' : '✨ Generate Content'}
-            </button>
-
-            {writerOutput && (
-              <div>
-                <div style={{
-                  background: theme.outputBackground,
-                  padding: '20px',
-                  borderRadius: '8px',
-                  border: `2px solid #059669`,
-                  whiteSpace: 'pre-wrap',
-                  marginBottom: '15px',
-                  fontSize: '16px',
-                  lineHeight: '1.6',
-                  transition: 'all 0.3s ease',
-                  boxSizing: 'border-box'
-                }}>
-                  {writerOutput}
+                <div style={{ textAlign: 'center' }}>
+                  <button
+                    onClick={() => copyToClipboard(output)}
+                    style={{
+                      background: '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      width: '100%',
+                      maxWidth: '400px',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+                    }}
+                  >
+                    📋 Copy to Clipboard
+                  </button>
                 </div>
-                
-                <button
-                  onClick={() => copyToClipboard(writerOutput)}
-                  style={{
-                    background: '#059669',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '6px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    width: '100%',
-                    maxWidth: '400px',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  📋 Copy to Clipboard
-                </button>
               </div>
             )}
           </div>
-        )}
+        </div>
+
+        {/* Features Section */}
+        <div style={{
+          marginTop: '50px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px',
+          maxWidth: '1000px',
+          margin: '50px auto 0'
+        }}>
+          <div style={{
+            background: theme.cardBackground,
+            padding: '25px',
+            borderRadius: '15px',
+            border: `1px solid ${theme.cardBorder}`,
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🎯</div>
+            <h3 style={{ margin: '0 0 10px 0', color: theme.color }}>Natural Language</h3>
+            <p style={{ margin: 0, color: theme.mutedColor, fontSize: '14px' }}>
+              Transform robotic AI text into natural, conversational language that sounds human
+            </p>
+          </div>
+          
+          <div style={{
+            background: theme.cardBackground,
+            padding: '25px',
+            borderRadius: '15px',
+            border: `1px solid ${theme.cardBorder}`,
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>⚡</div>
+            <h3 style={{ margin: '0 0 10px 0', color: theme.color }}>Instant Results</h3>
+            <p style={{ margin: 0, color: theme.mutedColor, fontSize: '14px' }}>
+              Get humanized text in seconds with our advanced AI processing technology
+            </p>
+          </div>
+          
+          <div style={{
+            background: theme.cardBackground,
+            padding: '25px',
+            borderRadius: '15px',
+            border: `1px solid ${theme.cardBorder}`,
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🎨</div>
+            <h3 style={{ margin: '0 0 10px 0', color: theme.color }}>Multiple Styles</h3>
+            <p style={{ margin: 0, color: theme.mutedColor, fontSize: '14px' }}>
+              Choose from natural, professional, casual, or academic writing styles
+            </p>
+          </div>
+        </div>
 
         <div style={{ 
-          marginTop: '30px', 
+          marginTop: '40px', 
           textAlign: 'center', 
           color: theme.mutedColor,
           fontSize: '14px' 
         }}>
-          🚀 Built with React • {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'} • {currentTool === 'humanizer' ? 'AI Humanizer' : 'AI Writer'} Active
+          🚀 Built with React • {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'} • AI Text Humanization
         </div>
       </div>
     </div>
