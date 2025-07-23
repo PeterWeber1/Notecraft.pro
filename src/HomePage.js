@@ -125,9 +125,9 @@ function HomePage({ isDarkMode, toggleTheme }) {
       boxSizing: 'border-box'
     }}>
       <div style={{
-        maxWidth: '1400px',
+        maxWidth: 'clamp(320px, 95vw, 1400px)',
         margin: '0 auto',
-        padding: '20px',
+        padding: 'clamp(12px, 3vw, 20px)',
         boxSizing: 'border-box'
       }}>
         {/* Header with theme toggle and link to notepad */}

@@ -16,9 +16,14 @@
       /* Hide scrollbars for all browsers */
       ::-webkit-scrollbar { display: none; }
       body { scrollbar-width: none; -ms-overflow-style: none; }
-      body.notepad-scrollable, html.notepad-scrollable {
-        overflow: auto !important;
-        height: 100%;
+      
+      /* Mobile responsive fixes */
+      @media (max-width: 768px) {
+        html, body {
+          overflow: auto !important;
+          height: auto;
+          min-height: 100vh;
+        }
       }
     </style>
 </head>
