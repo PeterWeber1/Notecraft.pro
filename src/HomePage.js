@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-function HomePage({ isDarkMode, toggleTheme }) {
-  const [faqOpen, setFaqOpen] = useState(null);
+function HomePage() {
+  // Always use light theme
   const theme = {
-    background: isDarkMode ? '#0f0f23' : '#ffffff',
-    text: isDarkMode ? '#ffffff' : '#1a1a1a',
+    background: '#ffffff',
+    text: '#1a1a1a',
     primary: '#6366f1',
-    secondary: isDarkMode ? '#23233a' : '#f3f4f6',
+    secondary: '#f3f4f6',
     accent: '#fbbf24',
-    muted: isDarkMode ? '#9ca3af' : '#6b7280',
-    border: isDarkMode ? '#374151' : '#e5e7eb',
-    card: isDarkMode ? '#1f2937' : '#ffffff',
+    muted: '#6b7280',
+    border: '#e5e7eb',
+    card: '#ffffff',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
   };
 
+  const [faqOpen, setFaqOpen] = React.useState(null);
   const faqs = [
     {
       q: 'What is Notecraft Pro?',
