@@ -46,7 +46,6 @@ function HomePage({ isDarkMode, toggleTheme }) {
           <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.primary }}>Notecraft Pro</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <Link to="/notepad" style={{ textDecoration: 'none', color: theme.text, fontWeight: '500', padding: '0.5rem 1rem', borderRadius: '0.5rem', transition: 'all 0.2s' }}>Try Now</Link>
-            <button onClick={toggleTheme} style={{ background: 'none', border: 'none', color: theme.text, cursor: 'pointer', padding: '0.5rem', borderRadius: '0.5rem', fontSize: '1.2rem' }}>{isDarkMode ? '☀️' : '🌙'}</button>
           </div>
         </div>
       </nav>
