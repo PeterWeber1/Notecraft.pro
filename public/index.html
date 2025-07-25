@@ -6,23 +6,45 @@
     <title>AI Writing Platform</title>
     <style>
       html, body {
-        overflow: hidden !important;
-        height: 100%;
-        width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
-      /* Hide scrollbars for all browsers */
-      ::-webkit-scrollbar { display: none; }
-      body { scrollbar-width: none; -ms-overflow-style: none; }
+      /* Custom scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+      body { 
+        scrollbar-width: thin;
+        scrollbar-color: #c1c1c1 #f1f1f1;
+      }
       
-      /* Mobile responsive fixes */
-      @media (max-width: 768px) {
-        html, body {
-          overflow: auto !important;
-          height: auto;
-          min-height: 100vh;
+      /* Dark mode scrollbar */
+      @media (prefers-color-scheme: dark) {
+        ::-webkit-scrollbar-track {
+          background: #2d2d2d;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #555;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #777;
+        }
+        body {
+          scrollbar-color: #555 #2d2d2d;
         }
       }
     </style>
