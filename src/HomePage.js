@@ -1,405 +1,420 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function HomePage({ isDarkMode, toggleTheme }) {
-  const [text, setText] = useState('');
-  const [output, setOutput] = useState('');
-  const [style, setStyle] = useState('natural');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const humanizeText = () => {
-    if (!text.trim()) {
-      alert('Please enter some text!');
-      return;
-    }
-    
-    setIsProcessing(true);
-    setOutput('');
-    
-    setTimeout(() => {
-      let humanizedText = '';
-      
-      switch(style) {
-        case 'natural':
-          humanizedText = `✨ Natural Style: I've transformed your text to sound more conversational and relatable. The changes include adding personal touches, varying sentence structure, and using everyday language that flows naturally.\n\nOriginal: "${text}"\n\nResult: Your text now sounds like it comes from a real person having a genuine conversation!`;
-          break;
-        case 'professional':
-          humanizedText = `💼 Professional Style: I've refined your text to maintain a professional tone while adding human elements. The revision includes sophisticated vocabulary, clearer structure, and authoritative yet approachable language.\n\nOriginal: "${text}"\n\nResult: Your text now maintains professionalism while sounding authentically human and engaging.`;
-          break;
-        case 'casual':
-          humanizedText = `😊 Casual Style: I've made your text way more casual and friendly! It now sounds like you're chatting with a friend, using simpler words and a relaxed, approachable vibe.\n\nOriginal: "${text}"\n\nResult: Your text now feels super natural and friendly - like a real conversation!`;
-          break;
-        case 'academic':
-          humanizedText = `🎓 Academic Style: I've restructured your text to meet scholarly standards while maintaining human authenticity. The revision includes proper academic tone, rigorous argumentation, and evidence-based language.\n\nOriginal: "${text}"\n\nResult: Your text now meets academic standards while preserving natural, human insight.`;
-          break;
-        default:
-          humanizedText = `✨ Humanized: ${text}\n\nYour text has been transformed to sound more natural and human-like!`;
-      }
-      
-      setOutput(humanizedText);
-      setIsProcessing(false);
-    }, 1500);
+  const theme = {
+    background: isDarkMode ? '#0f0f23' : '#ffffff',
+    text: isDarkMode ? '#ffffff' : '#1a1a1a',
+    primary: '#6366f1',
+    secondary: isDarkMode ? '#374151' : '#f3f4f6',
+    accent: '#8b5cf6',
+    muted: isDarkMode ? '#9ca3af' : '#6b7280',
+    border: isDarkMode ? '#374151' : '#e5e7eb',
+    card: isDarkMode ? '#1f2937' : '#ffffff',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
   };
-
-  const copyToClipboard = (textToCopy) => {
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      alert('✅ Text copied to clipboard!');
-    }).catch(() => {
-      alert('❌ Failed to copy text');
-    });
-  };
-
-  // Theme-based styles
-  const getThemeStyles = () => ({
-    background: isDarkMode ? '#111827' : '#f9fafb',
-    color: isDarkMode ? '#ffffff' : '#111827',
-    cardBackground: isDarkMode ? '#1f2937' : '#ffffff',
-    cardBorder: isDarkMode ? '#374151' : '#e5e7eb',
-    inputBackground: isDarkMode ? '#374151' : '#ffffff',
-    inputBorder: isDarkMode ? '#4b5563' : '#e5e7eb',
-    inputColor: isDarkMode ? '#ffffff' : '#111827',
-    outputBackground: isDarkMode ? '#374151' : '#f9fafb',
-    outputBorder: isDarkMode ? '#8b5cf6' : '#8b5cf6',
-    labelColor: isDarkMode ? '#d1d5db' : '#374151',
-    mutedColor: isDarkMode ? '#9ca3af' : '#666666',
-    navButton: isDarkMode ? '#374151' : '#f3f4f6',
-    navButtonActive: '#8b5cf6'
-  });
-
-  const theme = getThemeStyles();
 
   return (
-    <div style={{ 
-      margin: 0,
-      padding: 0,
-      width: '100vw',
-      minHeight: '100vh',
-      fontFamily: 'Arial, sans-serif',
+    <div style={{
       backgroundColor: theme.background,
-      color: theme.color,
-      transition: 'all 0.3s ease',
-      overflowX: 'hidden',
-      boxSizing: 'border-box'
+      color: theme.text,
+      minHeight: '100vh',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      <div style={{
-        maxWidth: 'clamp(320px, 95vw, 1200px)',
-        margin: '0 auto',
-        padding: 'clamp(12px, 3vw, 20px)',
-        boxSizing: 'border-box'
+      {/* Navigation */}
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        backgroundColor: theme.background,
+        backdropFilter: 'blur(10px)',
+        borderBottom: `1px solid ${theme.border}`,
+        padding: '1rem 0'
       }}>
-        {/* Header with theme toggle and link to notepad */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '40px',
-          flexWrap: 'wrap',
-          gap: '20px'
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          <div>
-            <h1 style={{ 
-              color: '#8b5cf6', 
-              marginBottom: '10px', 
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-              margin: 0,
-              fontWeight: 'bold'
-            }}>
-              ✨ WriteHuman
-            </h1>
-            <p style={{ 
-              color: theme.mutedColor, 
-              margin: 0,
-              fontSize: 'clamp(16px, 2vw, 20px)',
-              maxWidth: '600px'
-            }}>
-              Transform AI-generated text into natural, human-like content that sounds authentic and engaging
-            </p>
+          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.primary }}>
+            Notecraft Pro
           </div>
           
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <a 
-              href="/notepad" 
-              style={{
-                background: isDarkMode ? '#374151' : '#e5e7eb',
-                color: isDarkMode ? '#d1d5db' : '#374151',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              📝 Notepad
-            </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            <Link to="/notepad" style={{
+              textDecoration: 'none',
+              color: theme.text,
+              fontWeight: '500',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem',
+              transition: 'all 0.2s',
+              ':hover': { backgroundColor: theme.secondary }
+            }}>
+              Try Now
+            </Link>
             <button
               onClick={toggleTheme}
               style={{
-                background: isDarkMode ? '#374151' : '#e5e7eb',
+                background: 'none',
                 border: 'none',
-                borderRadius: '50px',
-                padding: '12px',
+                color: theme.text,
                 cursor: 'pointer',
-                fontSize: '20px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                padding: '0.5rem',
+                borderRadius: '0.5rem',
+                fontSize: '1.2rem'
               }}
-              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Main Humanizer Tool */}
-        <div style={{ 
-          background: theme.cardBackground, 
-          padding: 'clamp(30px, 4vw, 60px)', 
-          borderRadius: '20px', 
-          boxShadow: isDarkMode 
-            ? '0 8px 32px rgba(0,0,0,0.3)' 
-            : '0 8px 32px rgba(0,0,0,0.1)',
-          border: `1px solid ${theme.cardBorder}`,
-          transition: 'all 0.3s ease',
-          maxWidth: '100%',
-          boxSizing: 'border-box'
+      {/* Hero Section */}
+      <section style={{
+        paddingTop: '120px',
+        paddingBottom: '80px',
+        textAlign: 'center',
+        background: theme.gradient,
+        color: 'white'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 2rem'
         }}>
-          <div style={{
-            textAlign: 'center',
-            marginBottom: '40px'
+          <h1 style={{
+            fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+            fontWeight: 'bold',
+            marginBottom: '1.5rem',
+            lineHeight: '1.2'
           }}>
-            <h2 style={{ 
-              marginBottom: '15px', 
-              color: theme.color,
-              fontSize: 'clamp(1.8rem, 3vw, 2.5rem)',
-              fontWeight: 'bold'
+            Transform Your Writing with
+            <br />
+            <span style={{ color: '#fbbf24' }}>Notecraft Pro</span>
+          </h1>
+          
+          <p style={{
+            fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+            marginBottom: '2rem',
+            opacity: 0.9,
+            maxWidth: '600px',
+            margin: '0 auto 2rem'
+          }}>
+            The ultimate AI-powered writing assistant that helps you create professional, 
+            engaging content that sounds authentically human.
+          </p>
+          
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            justifyContent: 'center',
+            flexWrap: 'wrap'
+          }}>
+            <Link to="/notepad" style={{
+              backgroundColor: '#fbbf24',
+              color: '#1a1a1a',
+              padding: '1rem 2rem',
+              borderRadius: '0.5rem',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              fontSize: '1.1rem',
+              transition: 'all 0.2s',
+              ':hover': { transform: 'translateY(-2px)' }
             }}>
-              🤖 AI Text Humanizer
-            </h2>
-            <p style={{
-              color: theme.mutedColor,
-              fontSize: 'clamp(14px, 1.5vw, 18px)',
-              maxWidth: '600px',
-              margin: '0 auto'
+              Start Writing Free
+            </Link>
+            <button style={{
+              backgroundColor: 'transparent',
+              color: 'white',
+              border: '2px solid white',
+              padding: '1rem 2rem',
+              borderRadius: '0.5rem',
+              fontWeight: 'bold',
+              fontSize: '1.1rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
             }}>
-              Paste your AI-generated text below and watch it transform into natural, human-like content
-            </p>
+              View Pricing
+            </button>
           </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section style={{
+        padding: '80px 0',
+        backgroundColor: theme.secondary
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 2rem'
+        }}>
+          <h2 style={{
+            textAlign: 'center',
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 'bold',
+            marginBottom: '3rem'
+          }}>
+            Why Choose Notecraft Pro?
+          </h2>
           
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr',
-            gap: '30px',
-            maxWidth: '800px',
-            margin: '0 auto'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '2rem'
           }}>
-            {/* Input Section */}
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '12px', 
-                fontWeight: '600', 
-                color: theme.labelColor,
-                fontSize: '16px'
+            {[
+              {
+                icon: '✍️',
+                title: 'Smart Writing Assistant',
+                description: 'Advanced AI that understands context and helps you write more naturally and effectively.'
+              },
+              {
+                icon: '🎯',
+                title: 'Multiple Writing Styles',
+                description: 'Choose from professional, casual, academic, or natural writing styles to match your needs.'
+              },
+              {
+                icon: '⚡',
+                title: 'Real-time Processing',
+                description: 'Get instant feedback and suggestions as you write, with lightning-fast processing.'
+              },
+              {
+                icon: '🔒',
+                title: 'Privacy First',
+                description: 'Your content stays private and secure. We never store or share your writing.'
+              },
+              {
+                icon: '📱',
+                title: 'Cross-platform',
+                description: 'Access Notecraft Pro from any device - desktop, tablet, or mobile.'
+              },
+              {
+                icon: '🚀',
+                title: 'Always Improving',
+                description: 'Regular updates with new features and improvements based on user feedback.'
+              }
+            ].map((feature, index) => (
+              <div key={index} style={{
+                backgroundColor: theme.card,
+                padding: '2rem',
+                borderRadius: '1rem',
+                border: `1px solid ${theme.border}`,
+                textAlign: 'center'
               }}>
-                📝 Paste your AI text here:
-              </label>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Paste your AI-generated text here and we'll make it sound more human..."
-                style={{
-                  width: '100%',
-                  height: 'clamp(150px, 20vh, 250px)',
-                  padding: '20px',
-                  border: `2px solid ${theme.inputBorder}`,
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  resize: 'vertical',
-                  fontFamily: 'inherit',
-                  backgroundColor: theme.inputBackground,
-                  color: theme.inputColor,
-                  transition: 'all 0.3s ease',
-                  boxSizing: 'border-box',
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+                  {feature.icon}
+                </div>
+                <h3 style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  marginBottom: '1rem'
+                }}>
+                  {feature.title}
+                </h3>
+                <p style={{
+                  color: theme.muted,
                   lineHeight: '1.6'
-                }}
-              />
-            </div>
-            
-            {/* Style Selection */}
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '12px', 
-                fontWeight: '600', 
-                color: theme.labelColor,
-                fontSize: '16px'
-              }}>
-                🎨 Humanization Style:
-              </label>
-              <select
-                value={style}
-                onChange={(e) => setStyle(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '15px 20px',
-                  border: `2px solid ${theme.inputBorder}`,
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  backgroundColor: theme.inputBackground,
-                  color: theme.inputColor,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                <option value="natural">✨ Natural & Conversational</option>
-                <option value="professional">💼 Professional</option>
-                <option value="casual">😊 Casual & Friendly</option>
-                <option value="academic">🎓 Academic</option>
-              </select>
-            </div>
-            
-            {/* Process Button */}
-            <div style={{ textAlign: 'center' }}>
-              <button
-                onClick={humanizeText}
-                disabled={isProcessing}
-                style={{
-                  background: isProcessing 
-                    ? '#9ca3af' 
-                    : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '16px 32px',
-                  borderRadius: '12px',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  cursor: isProcessing ? 'not-allowed' : 'pointer',
-                  width: '100%',
-                  maxWidth: '400px',
-                  transition: 'all 0.3s ease',
-                  boxShadow: isProcessing ? 'none' : '0 4px 16px rgba(139, 92, 246, 0.3)'
-                }}
-              >
-                {isProcessing ? '🔄 Humanizing your text...' : '✨ Humanize Text'}
-              </button>
-            </div>
-
-            {/* Output Section */}
-            {output && (
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: '12px', 
-                  fontWeight: '600', 
-                  color: theme.labelColor,
-                  fontSize: '16px'
                 }}>
-                  ✨ Humanized Result:
-                </label>
-                <div style={{
-                  background: theme.outputBackground,
-                  padding: '25px',
-                  borderRadius: '12px',
-                  border: `2px solid ${theme.outputBorder}`,
-                  whiteSpace: 'pre-wrap',
-                  marginBottom: '20px',
-                  fontSize: '16px',
-                  lineHeight: '1.7',
-                  transition: 'all 0.3s ease',
-                  boxSizing: 'border-box',
-                  minHeight: '200px'
-                }}>
-                  {output}
-                </div>
-                
-                <div style={{ textAlign: 'center' }}>
-                  <button
-                    onClick={() => copyToClipboard(output)}
-                    style={{
-                      background: '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 24px',
-                      borderRadius: '8px',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      width: '100%',
-                      maxWidth: '400px',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
-                    }}
-                  >
-                    📋 Copy to Clipboard
-                  </button>
-                </div>
+                  {feature.description}
+                </p>
               </div>
-            )}
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Features Section */}
+      {/* How It Works */}
+      <section style={{
+        padding: '80px 0',
+        backgroundColor: theme.background
+      }}>
         <div style={{
-          marginTop: '50px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '20px',
-          maxWidth: '1000px',
-          margin: '50px auto 0'
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 2rem'
         }}>
-          <div style={{
-            background: theme.cardBackground,
-            padding: '25px',
-            borderRadius: '15px',
-            border: `1px solid ${theme.cardBorder}`,
-            textAlign: 'center'
+          <h2 style={{
+            textAlign: 'center',
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 'bold',
+            marginBottom: '3rem'
           }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🎯</div>
-            <h3 style={{ margin: '0 0 10px 0', color: theme.color }}>Natural Language</h3>
-            <p style={{ margin: 0, color: theme.mutedColor, fontSize: '14px' }}>
-              Transform robotic AI text into natural, conversational language that sounds human
-            </p>
-          </div>
+            How It Works
+          </h2>
           
           <div style={{
-            background: theme.cardBackground,
-            padding: '25px',
-            borderRadius: '15px',
-            border: `1px solid ${theme.cardBorder}`,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '2rem',
             textAlign: 'center'
           }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>⚡</div>
-            <h3 style={{ margin: '0 0 10px 0', color: theme.color }}>Instant Results</h3>
-            <p style={{ margin: 0, color: theme.mutedColor, fontSize: '14px' }}>
-              Get humanized text in seconds with our advanced AI processing technology
-            </p>
-          </div>
-          
-          <div style={{
-            background: theme.cardBackground,
-            padding: '25px',
-            borderRadius: '15px',
-            border: `1px solid ${theme.cardBorder}`,
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🎨</div>
-            <h3 style={{ margin: '0 0 10px 0', color: theme.color }}>Multiple Styles</h3>
-            <p style={{ margin: 0, color: theme.mutedColor, fontSize: '14px' }}>
-              Choose from natural, professional, casual, or academic writing styles
-            </p>
+            {[
+              {
+                step: '1',
+                title: 'Write Your Content',
+                description: 'Start typing your text in our intuitive editor. No complex setup required.'
+              },
+              {
+                step: '2',
+                title: 'Choose Your Style',
+                description: 'Select from professional, casual, academic, or natural writing styles.'
+              },
+              {
+                step: '3',
+                title: 'Get Enhanced Text',
+                description: 'Receive your improved, human-like text that maintains your original meaning.'
+              }
+            ].map((step, index) => (
+              <div key={index}>
+                <div style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  backgroundColor: theme.primary,
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  margin: '0 auto 1rem'
+                }}>
+                  {step.step}
+                </div>
+                <h3 style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 'bold',
+                  marginBottom: '1rem'
+                }}>
+                  {step.title}
+                </h3>
+                <p style={{
+                  color: theme.muted,
+                  lineHeight: '1.6'
+                }}>
+                  {step.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
+      </section>
 
-        <div style={{ 
-          marginTop: '40px', 
-          textAlign: 'center', 
-          color: theme.mutedColor,
-          fontSize: '14px' 
+      {/* CTA Section */}
+      <section style={{
+        padding: '80px 0',
+        background: theme.gradient,
+        color: 'white',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          maxWidth: '800px',
+          margin: '0 auto',
+          padding: '0 2rem'
         }}>
-          🚀 Built with React • {isDarkMode ? '🌙 Dark Mode' : '☀️ Light Mode'} • AI Text Humanization
+          <h2 style={{
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            fontWeight: 'bold',
+            marginBottom: '1.5rem'
+          }}>
+            Ready to Transform Your Writing?
+          </h2>
+          <p style={{
+            fontSize: '1.2rem',
+            marginBottom: '2rem',
+            opacity: 0.9
+          }}>
+            Join thousands of writers who are already using Notecraft Pro to create better content.
+          </p>
+          <Link to="/notepad" style={{
+            backgroundColor: '#fbbf24',
+            color: '#1a1a1a',
+            padding: '1rem 2rem',
+            borderRadius: '0.5rem',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            display: 'inline-block',
+            transition: 'all 0.2s'
+          }}>
+            Start Writing Now
+          </Link>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{
+        backgroundColor: theme.card,
+        borderTop: `1px solid ${theme.border}`,
+        padding: '3rem 0 2rem'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 2rem',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            color: theme.primary,
+            marginBottom: '1rem'
+          }}>
+            Notecraft Pro
+          </div>
+          <p style={{
+            color: theme.muted,
+            marginBottom: '2rem'
+          }}>
+            The ultimate AI-powered writing assistant for professionals and creators.
+          </p>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '2rem',
+            flexWrap: 'wrap',
+            marginBottom: '2rem'
+          }}>
+            <Link to="/notepad" style={{
+              color: theme.text,
+              textDecoration: 'none',
+              fontWeight: '500'
+            }}>
+              Try Now
+            </Link>
+            <a href="#" style={{
+              color: theme.text,
+              textDecoration: 'none',
+              fontWeight: '500'
+            }}>
+              Privacy Policy
+            </a>
+            <a href="#" style={{
+              color: theme.text,
+              textDecoration: 'none',
+              fontWeight: '500'
+            }}>
+              Terms of Service
+            </a>
+          </div>
+          <div style={{
+            color: theme.muted,
+            fontSize: '0.9rem'
+          }}>
+            © 2024 Notecraft Pro. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
