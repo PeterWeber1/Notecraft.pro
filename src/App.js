@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import Notepad from './Notepad';
+import PrivacyPolicy from './PrivacyPolicy';
+import TermsOfService from './TermsOfService';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -29,6 +31,14 @@ function App() {
         <Route 
           path="/notepad" 
           element={<Notepad isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} 
+        />
+        <Route 
+          path="/privacy" 
+          element={<PrivacyPolicy />} 
+        />
+        <Route 
+          path="/terms" 
+          element={<TermsOfService />} 
         />
       </Routes>
     </Router>

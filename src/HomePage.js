@@ -203,11 +203,11 @@ function HomePage({ isDarkMode, toggleTheme }) {
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
             <Link to="/notepad" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Try Now</Link>
-            <a href="#" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Privacy Policy</a>
-            <a href="#" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Terms of Service</a>
+            <Link to="/privacy" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Privacy Policy</Link>
+            <Link to="/terms" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Terms of Service</Link>
           </div>
           <div style={{ color: theme.muted, fontSize: '0.9rem' }}>
-            © 2024 Notecraft Pro. All rights reserved.
+            © {new Date().getFullYear()} Notecraft Pro. All rights reserved.
           </div>
         </div>
       </footer>
