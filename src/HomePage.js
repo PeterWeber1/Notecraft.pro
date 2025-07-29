@@ -62,8 +62,42 @@ function HomePage() {
             Turn AI into natural human writing with the world’s most advanced AI Humanizer.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            <input type="text" placeholder="Paste your AI-generated text or try a sample" style={{ width: '320px', maxWidth: '90vw', padding: '1rem', borderRadius: '0.5rem', border: 'none', fontSize: '1rem' }} disabled />
-            <button style={{ background: theme.accent, color: '#1a1a1a', border: 'none', borderRadius: '0.5rem', padding: '1rem 2rem', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }}>Humanize</button>
+            <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+              <textarea 
+                placeholder="Paste your AI-generated text here to humanize it..." 
+                style={{ 
+                  width: '100%', 
+                  height: '200px', 
+                  padding: '1.5rem', 
+                  borderRadius: '0.75rem', 
+                  border: '2px solid rgba(255,255,255,0.2)', 
+                  fontSize: '1.1rem', 
+                  backgroundColor: 'rgba(255,255,255,0.1)', 
+                  color: 'white',
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                  transition: 'all 0.2s'
+                }} 
+                disabled 
+              />
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                <button style={{ 
+                  background: theme.accent, 
+                  color: '#1a1a1a', 
+                  border: 'none', 
+                  borderRadius: '0.5rem', 
+                  padding: '1rem 3rem', 
+                  fontWeight: 'bold', 
+                  fontSize: '1.2rem', 
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}>
+                  Humanize Text
+                </button>
+              </div>
+            </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
             <span style={{ background: 'rgba(0,0,0,0.15)', borderRadius: '0.5rem', padding: '0.5rem 1rem', fontWeight: 500 }}>Enhanced Model</span>
