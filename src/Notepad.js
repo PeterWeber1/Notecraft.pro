@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import AIWritingAssistant from './AIWritingAssistant';
 
 function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [text, setText] = useState('');
@@ -15,6 +16,19 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const editorRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [formatState, setFormatState] = useState({});
+  
+  // Tier-based features
+  const [selectedTier, setSelectedTier] = useState('basic');
+  const [aiScore, setAiScore] = useState(0);
+  const [readingTime, setReadingTime] = useState(0);
+  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
+  const [writingStyle, setWritingStyle] = useState('professional');
+  const [tone, setTone] = useState('neutral');
+  const [targetAudience, setTargetAudience] = useState('general');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showExportOptions, setShowExportOptions] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
 
   // Theme-based styles
   const getThemeStyles = () => ({
@@ -28,7 +42,10 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     labelColor: isDarkMode ? '#d1d5db' : '#374151',
     mutedColor: isDarkMode ? '#9ca3af' : '#666666',
     editorBackground: isDarkMode ? '#111827' : '#f9fafb',
-    toolbarBackground: isDarkMode ? '#111827' : '#f9fafb'
+    toolbarBackground: isDarkMode ? '#111827' : '#f9fafb',
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444'
   });
 
   const theme = getThemeStyles();
@@ -67,6 +84,38 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
     { value: '2', label: '2.0' }
   ];
 
+  const getTierFeatures = (tier) => {
+    const features = {
+      basic: {
+        wordLimit: 500,
+        features: ['Basic formatting', 'Word count', 'Reading time', 'Auto-save'],
+        color: theme.primary || '#6366f1',
+        canExport: false,
+        canAiDetect: false,
+        canAdvancedFormat: false
+      },
+      pro: {
+        wordLimit: 2000,
+        features: ['Advanced formatting', 'AI detection', 'Export options', 'Style customization'],
+        color: theme.accent || '#fbbf24',
+        canExport: true,
+        canAiDetect: true,
+        canAdvancedFormat: true
+      },
+      ultra: {
+        wordLimit: 10000,
+        features: ['Ultra formatting', 'All Pro features', 'Bulk processing', 'Priority support'],
+        color: '#8b5cf6',
+        canExport: true,
+        canAiDetect: true,
+        canAdvancedFormat: true
+      }
+    };
+    return features[tier];
+  };
+
+  const currentTier = getTierFeatures(selectedTier);
+
   // Load saved notes from localStorage on mount
   useEffect(() => {
     try {
@@ -86,6 +135,22 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
       console.log('localStorage not available');
     }
   }, []);
+
+  // Calculate text statistics including AI score and reading time
+  useEffect(() => {
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const readingTimeMinutes = Math.ceil(words / 200); // Average reading speed
+    
+    setReadingTime(readingTimeMinutes);
+    
+    // Simulate AI detection score (in real app, this would be API call)
+    if (text.length > 50 && currentTier.canAiDetect) {
+      const randomScore = Math.floor(Math.random() * 40) + 10; // 10-50% AI score
+      setAiScore(randomScore);
+    } else {
+      setAiScore(0);
+    }
+  }, [text, currentTier.canAiDetect]);
 
   // Execute formatting command
   const formatText = (command, value = null) => {
@@ -206,6 +271,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
         localStorage.setItem('notepadContent', plainText);
         localStorage.setItem('notepadHtml', html);
         setSavedStatus('✅ Saved');
+        setLastSaved(new Date());
         
         // Clear saved status after 2 seconds
         setTimeout(() => setSavedStatus(''), 2000);
@@ -214,6 +280,50 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
       }
     }
   };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + S to save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveCurrentNote();
+      }
+      
+      // Ctrl/Cmd + Z to undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault();
+        document.execCommand('undo');
+      }
+      
+      // Ctrl/Cmd + Y to redo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        e.preventDefault();
+        document.execCommand('redo');
+      }
+      
+      // Ctrl/Cmd + B for bold
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        formatText('bold');
+      }
+      
+      // Ctrl/Cmd + I for italic
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        e.preventDefault();
+        formatText('italic');
+      }
+      
+      // Ctrl/Cmd + U for underline
+      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+        e.preventDefault();
+        formatText('underline');
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Handle paste events
   const handlePaste = (e) => {
@@ -523,6 +633,37 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           </div>
           
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {/* Tier Selection */}
+            <div style={{
+              display: 'flex',
+              gap: '4px',
+              background: theme.cardBackground,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: '6px',
+              padding: '2px'
+            }}>
+              {['basic', 'pro', 'ultra'].map((tier) => (
+                <button
+                  key={tier}
+                  onClick={() => setSelectedTier(tier)}
+                  style={{
+                    background: selectedTier === tier ? getTierFeatures(tier).color : 'transparent',
+                    color: selectedTier === tier ? '#ffffff' : theme.color,
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '6px 12px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    textTransform: 'capitalize',
+                    fontSize: '0.8rem'
+                  }}
+                >
+                  {tier}
+                </button>
+              ))}
+            </div>
+            
             <a 
               href="/" 
               style={{
@@ -1054,30 +1195,340 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
             }}
           />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '10px 0' }}>
-            <div style={{ color: theme.labelColor, fontSize: '14px' }}>
-              {text.length} characters • {text.split(/\s+/).filter(word => word.length > 0).length} words • {text.split('\n').length} lines
+          {/* Enhanced Statistics */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            margin: '10px 0',
+            padding: '12px',
+            background: theme.cardBackground,
+            border: `1px solid ${theme.cardBorder}`,
+            borderRadius: '8px',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '16px', 
+              flexWrap: 'wrap',
+              fontSize: '14px',
+              color: theme.labelColor
+            }}>
+              <span>Characters: {text.length}</span>
+              <span>Words: {text.split(/\s+/).filter(word => word.length > 0).length}/{currentTier.wordLimit}</span>
+              <span>Lines: {text.split('\n').length}</span>
+              <span>Reading time: {readingTime} min</span>
+              {currentTier.canAiDetect && aiScore > 0 && (
+                <span style={{ 
+                  color: aiScore > 30 ? theme.error : aiScore > 15 ? theme.warning : theme.success,
+                  fontWeight: 'bold'
+                }}>
+                  AI Score: {aiScore}%
+                </span>
+              )}
             </div>
-            <button
-              onClick={clearNotes}
-              title="Clear Notes"
-              style={{
-                background: 'none',
-                border: 'none',
-                color: isDarkMode ? '#d1d5db' : '#374151',
-                fontSize: 20,
-                cursor: 'pointer',
-                padding: 0,
-                zIndex: 2,
-                opacity: 0.7,
-                transition: 'opacity 0.2s',
-              }}
-              onMouseEnter={e => e.currentTarget.style.opacity = 1}
-              onMouseLeave={e => e.currentTarget.style.opacity = 0.7}
-            >
-              🗑️
-            </button>
+            
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button
+                onClick={copyText}
+                disabled={!text}
+                style={{
+                  background: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`,
+                  color: theme.color,
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  cursor: text ? 'pointer' : 'not-allowed',
+                  fontSize: '12px',
+                  opacity: text ? 1 : 0.5
+                }}
+              >
+                Copy
+              </button>
+              <button
+                onClick={() => setShowKeyboardShortcuts(!showKeyboardShortcuts)}
+                style={{
+                  background: theme.cardBackground,
+                  border: `1px solid ${theme.cardBorder}`,
+                  color: theme.color,
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                ⌨️
+              </button>
+              <button
+                onClick={clearNotes}
+                title="Clear Notes"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: isDarkMode ? '#d1d5db' : '#374151',
+                  fontSize: 20,
+                  cursor: 'pointer',
+                  padding: 0,
+                  opacity: 0.7,
+                  transition: 'opacity 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                onMouseLeave={e => e.currentTarget.style.opacity = 0.7}
+              >
+                🗑️
+              </button>
+            </div>
           </div>
+
+          {/* Status Bar */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '8px 12px',
+            background: theme.background,
+            border: `1px solid ${theme.cardBorder}`,
+            borderRadius: '6px',
+            fontSize: '12px',
+            color: theme.mutedColor,
+            marginBottom: '16px'
+          }}>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              <span>Auto-save: {lastSaved ? lastSaved.toLocaleTimeString() : 'Never'}</span>
+              <span>Plan: {selectedTier.toUpperCase()}</span>
+              {savedStatus && <span style={{ color: theme.success }}>{savedStatus}</span>}
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <span>Ctrl+S: Save</span>
+              <span>Ctrl+Z: Undo</span>
+              <span>Ctrl+B: Bold</span>
+            </div>
+          </div>
+
+          {/* Keyboard Shortcuts Help */}
+          {showKeyboardShortcuts && (
+            <div style={{
+              marginBottom: '16px',
+              padding: '16px',
+              background: theme.cardBackground,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: '8px'
+            }}>
+              <h4 style={{ 
+                color: theme.color, 
+                fontSize: '1rem', 
+                marginBottom: '12px',
+                fontWeight: 'bold'
+              }}>
+                ⌨️ Keyboard Shortcuts
+              </h4>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '8px',
+                fontSize: '0.9rem'
+              }}>
+                <div><strong>Ctrl+S:</strong> Save note</div>
+                <div><strong>Ctrl+Z:</strong> Undo</div>
+                <div><strong>Ctrl+Y:</strong> Redo</div>
+                <div><strong>Ctrl+B:</strong> Bold</div>
+                <div><strong>Ctrl+I:</strong> Italic</div>
+                <div><strong>Ctrl+U:</strong> Underline</div>
+                <div><strong>Ctrl+C:</strong> Copy</div>
+                <div><strong>Ctrl+V:</strong> Paste</div>
+              </div>
+            </div>
+          )}
+
+          {/* Advanced Features Panel (Pro & Ultra) */}
+          {(selectedTier === 'pro' || selectedTier === 'ultra') && showAdvancedFeatures && (
+            <div style={{
+              marginBottom: '20px',
+              padding: '16px',
+              background: theme.cardBackground,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: '8px'
+            }}>
+              <h3 style={{ 
+                color: theme.color, 
+                fontSize: '1rem', 
+                marginBottom: '12px',
+                fontWeight: 'bold'
+              }}>
+                Advanced Options
+              </h3>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '12px'
+              }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: theme.labelColor }}>Writing Style</label>
+                  <select
+                    value={writingStyle}
+                    onChange={(e) => setWritingStyle(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      border: `1px solid ${theme.inputBorder}`,
+                      background: theme.inputBackground,
+                      color: theme.inputColor,
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    <option value="professional">Professional</option>
+                    <option value="casual">Casual</option>
+                    <option value="academic">Academic</option>
+                    <option value="creative">Creative</option>
+                    <option value="technical">Technical</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: theme.labelColor }}>Tone</label>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      border: `1px solid ${theme.inputBorder}`,
+                      background: theme.inputBackground,
+                      color: theme.inputColor,
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    <option value="neutral">Neutral</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="formal">Formal</option>
+                    <option value="enthusiastic">Enthusiastic</option>
+                    <option value="confident">Confident</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.9rem', color: theme.labelColor }}>Target Audience</label>
+                  <select
+                    value={targetAudience}
+                    onChange={(e) => setTargetAudience(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      border: `1px solid ${theme.inputBorder}`,
+                      background: theme.inputBackground,
+                      color: theme.inputColor,
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    <option value="general">General</option>
+                    <option value="experts">Experts</option>
+                    <option value="beginners">Beginners</option>
+                    <option value="students">Students</option>
+                    <option value="professionals">Professionals</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Export Options Panel (Pro & Ultra) */}
+          {currentTier.canExport && showExportOptions && (
+            <div style={{
+              marginBottom: '20px',
+              padding: '16px',
+              background: theme.cardBackground,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: '8px'
+            }}>
+              <h3 style={{ 
+                color: theme.color, 
+                fontSize: '1rem', 
+                marginBottom: '12px',
+                fontWeight: 'bold'
+              }}>
+                Export Options
+              </h3>
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                flexWrap: 'wrap'
+              }}>
+                <button
+                  onClick={downloadNote}
+                  style={{
+                    background: theme.cardBackground,
+                    border: `1px solid ${theme.cardBorder}`,
+                    color: theme.color,
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  Download TXT
+                </button>
+                <button
+                  onClick={() => {
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'note.html';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('Downloaded note.html');
+                  }}
+                  style={{
+                    background: theme.cardBackground,
+                    border: `1px solid ${theme.cardBorder}`,
+                    color: theme.color,
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  Download HTML
+                </button>
+                {selectedTier === 'ultra' && (
+                  <button
+                    onClick={() => {
+                      const blob = new Blob([text], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'note.json';
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      showToast('Downloaded note.json');
+                    }}
+                    style={{
+                      background: theme.cardBackground,
+                      border: `1px solid ${theme.cardBorder}`,
+                      color: theme.color,
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    Download JSON
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* AI Writing Assistant */}
+          <AIWritingAssistant 
+            text={text} 
+            tier={selectedTier} 
+            isDarkMode={isDarkMode} 
+          />
 
           {/* Saved Notes Section */}
           {savedNotes.length > 0 && (

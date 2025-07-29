@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function HomePage() {
@@ -12,17 +12,33 @@ function HomePage() {
     muted: '#6b7280',
     border: '#e5e7eb',
     card: '#ffffff',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444'
   };
 
   const [faqOpen, setFaqOpen] = React.useState(null);
+  const [text, setText] = useState('');
+  const [wordCount, setWordCount] = useState(0);
+  const [charCount, setCharCount] = useState(0);
+  const [readingTime, setReadingTime] = useState(0);
+  const [aiScore, setAiScore] = useState(0);
+  const [selectedTier, setSelectedTier] = useState('basic');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  const [writingStyle, setWritingStyle] = useState('professional');
+  const [tone, setTone] = useState('neutral');
+  const [targetAudience, setTargetAudience] = useState('general');
+  const textareaRef = useRef(null);
+
   const faqs = [
     {
       q: 'What is Notecraft Pro?',
-      a: 'Notecraft Pro is the world’s most advanced AI humanizer, transforming AI-generated content into authentic, human-like writing.'
+      a: 'Notecraft Pro is the world\'s most advanced AI humanizer, transforming AI-generated content into authentic, human-like writing.'
     },
     {
-      q: 'How does Notecraft Pro differ from other AI humanizer tools?',
+      q: 'How does it work?',
       a: 'Our enhanced model and built-in AI detector ensure your content passes leading AI detection tools and reads naturally.'
     },
     {
@@ -38,6 +54,74 @@ function HomePage() {
       a: 'Notecraft Pro works with content from any AI generator and is tested on GPTZero, Copyleaks, Originality, and more.'
     }
   ];
+
+  // Calculate text statistics
+  useEffect(() => {
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+    const readingTimeMinutes = Math.ceil(words / 200); // Average reading speed
+    
+    setWordCount(words);
+    setCharCount(chars);
+    setReadingTime(readingTimeMinutes);
+    
+    // Simulate AI detection score (in real app, this would be API call)
+    if (text.length > 50) {
+      const randomScore = Math.floor(Math.random() * 40) + 10; // 10-50% AI score
+      setAiScore(randomScore);
+    } else {
+      setAiScore(0);
+    }
+  }, [text]);
+
+  const handleTextChange = (e) => {
+    setText(e.target.value);
+  };
+
+  const clearText = () => {
+    setText('');
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+
+  const copyText = () => {
+    navigator.clipboard.writeText(text);
+  };
+
+  const handleHumanize = () => {
+    if (!text.trim()) return;
+    setIsProcessing(true);
+    
+    // Simulate processing time
+    setTimeout(() => {
+      setIsProcessing(false);
+      // In real app, this would call the AI humanization API
+    }, 2000);
+  };
+
+  const getTierFeatures = (tier) => {
+    const features = {
+      basic: {
+        wordLimit: 500,
+        features: ['Basic humanization', 'Word count', 'Reading time'],
+        color: theme.primary
+      },
+      pro: {
+        wordLimit: 2000,
+        features: ['Advanced humanization', 'Style customization', 'Tone adjustment', 'AI detection', 'Export options'],
+        color: theme.accent
+      },
+      ultra: {
+        wordLimit: 10000,
+        features: ['Ultra humanization', 'All Pro features', 'Bulk processing', 'Priority support', 'Custom styles'],
+        color: '#8b5cf6'
+      }
+    };
+    return features[tier];
+  };
+
+  const currentTier = getTierFeatures(selectedTier);
 
   return (
     <div style={{ backgroundColor: theme.background, color: theme.text, minHeight: '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
@@ -59,51 +143,251 @@ function HomePage() {
             Humanize AI with <span style={{ color: theme.accent }}>Notecraft Pro</span>
           </h1>
           <p style={{ fontSize: '1.3rem', marginBottom: '2rem', opacity: 0.95 }}>
-            Turn AI into natural human writing with the world’s most advanced AI Humanizer.
+            Turn AI into natural human writing with the world's most advanced AI Humanizer.
           </p>
+          
+          {/* Plan Selection */}
+          <div style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+              {['basic', 'pro', 'ultra'].map((tier) => (
+                <button
+                  key={tier}
+                  onClick={() => setSelectedTier(tier)}
+                  style={{
+                    background: selectedTier === tier ? getTierFeatures(tier).color : 'rgba(255,255,255,0.1)',
+                    color: selectedTier === tier ? '#1a1a1a' : 'white',
+                    border: '2px solid rgba(255,255,255,0.2)',
+                    borderRadius: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {tier}
+                </button>
+              ))}
+            </div>
+            <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
+              {currentTier.wordLimit} words • {currentTier.features.join(' • ')}
+            </div>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
             <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
-              <textarea 
-                placeholder="Paste your AI-generated text here to humanize it..." 
-                style={{ 
-                  width: '100%', 
-                  height: '200px', 
-                  padding: '1.5rem', 
-                  borderRadius: '0.75rem', 
-                  border: '2px solid rgba(255,255,255,0.2)', 
-                  fontSize: '1.1rem', 
-                  backgroundColor: 'rgba(255,255,255,0.1)', 
-                  color: 'white',
-                  resize: 'vertical',
-                  fontFamily: 'inherit',
-                  outline: 'none',
-                  transition: 'all 0.2s'
-                }} 
-                disabled 
-              />
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                <button style={{ 
-                  background: theme.accent, 
-                  color: '#1a1a1a', 
-                  border: 'none', 
-                  borderRadius: '0.5rem', 
-                  padding: '1rem 3rem', 
-                  fontWeight: 'bold', 
-                  fontSize: '1.2rem', 
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+              {/* Enhanced Text Area */}
+              <div style={{
+                position: 'relative',
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '0.75rem',
+                border: '2px solid rgba(255,255,255,0.2)',
+                padding: '1rem',
+                backdropFilter: 'blur(10px)'
+              }}>
+                <textarea 
+                  ref={textareaRef}
+                  placeholder="Paste your AI-generated text here to humanize it..." 
+                  value={text}
+                  onChange={handleTextChange}
+                  style={{ 
+                    width: '100%', 
+                    height: '200px', 
+                    padding: '1rem', 
+                    borderRadius: '0.5rem', 
+                    border: 'none',
+                    fontSize: '1.1rem', 
+                    backgroundColor: 'rgba(255,255,255,0.9)', 
+                    color: '#1a1a1a',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                    lineHeight: '1.6'
+                  }} 
+                />
+                
+                {/* Text Statistics */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '1rem',
+                  padding: '0.5rem 1rem',
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.9rem'
                 }}>
-                  Humanize Text
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    <span>Words: {wordCount}/{currentTier.wordLimit}</span>
+                    <span>Characters: {charCount}</span>
+                    <span>Reading time: {readingTime} min</span>
+                    {aiScore > 0 && (
+                      <span style={{ 
+                        color: aiScore > 30 ? theme.error : aiScore > 15 ? theme.warning : theme.success 
+                      }}>
+                        AI Score: {aiScore}%
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={copyText}
+                      disabled={!text}
+                      style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        border: 'none',
+                        borderRadius: '0.25rem',
+                        padding: '0.25rem 0.5rem',
+                        color: 'white',
+                        cursor: text ? 'pointer' : 'not-allowed',
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      Copy
+                    </button>
+                    <button
+                      onClick={clearText}
+                      disabled={!text}
+                      style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        border: 'none',
+                        borderRadius: '0.25rem',
+                        padding: '0.25rem 0.5rem',
+                        color: 'white',
+                        cursor: text ? 'pointer' : 'not-allowed',
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Advanced Options (Pro & Ultra) */}
+              {(selectedTier === 'pro' || selectedTier === 'ultra') && (
+                <div style={{
+                  marginTop: '1rem',
+                  padding: '1rem',
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(255,255,255,0.2)'
+                }}>
+                  <button
+                    onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                    style={{
+                      background: 'rgba(255,255,255,0.2)',
+                      border: 'none',
+                      borderRadius: '0.25rem',
+                      padding: '0.5rem 1rem',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    {showAdvancedOptions ? 'Hide' : 'Show'} Advanced Options
+                  </button>
+                  
+                  {showAdvancedOptions && (
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '1rem',
+                      marginTop: '1rem'
+                    }}>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Writing Style</label>
+                        <select
+                          value={writingStyle}
+                          onChange={(e) => setWritingStyle(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            borderRadius: '0.25rem',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            background: 'rgba(255,255,255,0.9)',
+                            color: '#1a1a1a'
+                          }}
+                        >
+                          <option value="professional">Professional</option>
+                          <option value="casual">Casual</option>
+                          <option value="academic">Academic</option>
+                          <option value="creative">Creative</option>
+                          <option value="technical">Technical</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tone</label>
+                        <select
+                          value={tone}
+                          onChange={(e) => setTone(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            borderRadius: '0.25rem',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            background: 'rgba(255,255,255,0.9)',
+                            color: '#1a1a1a'
+                          }}
+                        >
+                          <option value="neutral">Neutral</option>
+                          <option value="friendly">Friendly</option>
+                          <option value="formal">Formal</option>
+                          <option value="enthusiastic">Enthusiastic</option>
+                          <option value="confident">Confident</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Target Audience</label>
+                        <select
+                          value={targetAudience}
+                          onChange={(e) => setTargetAudience(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            borderRadius: '0.25rem',
+                            border: '1px solid rgba(255,255,255,0.3)',
+                            background: 'rgba(255,255,255,0.9)',
+                            color: '#1a1a1a'
+                          }}
+                        >
+                          <option value="general">General</option>
+                          <option value="experts">Experts</option>
+                          <option value="beginners">Beginners</option>
+                          <option value="students">Students</option>
+                          <option value="professionals">Professionals</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                <button 
+                  onClick={handleHumanize}
+                  disabled={!text.trim() || isProcessing}
+                  style={{ 
+                    background: isProcessing ? theme.muted : theme.accent, 
+                    color: '#1a1a1a', 
+                    border: 'none', 
+                    borderRadius: '0.5rem', 
+                    padding: '1rem 3rem', 
+                    fontWeight: 'bold', 
+                    fontSize: '1.2rem', 
+                    cursor: text.trim() && !isProcessing ? 'pointer' : 'not-allowed',
+                    transition: 'all 0.2s',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    opacity: text.trim() && !isProcessing ? 1 : 0.6
+                  }}
+                >
+                  {isProcessing ? 'Processing...' : 'Humanize Text'}
                 </button>
               </div>
             </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-            <span style={{ background: 'rgba(0,0,0,0.15)', borderRadius: '0.5rem', padding: '0.5rem 1rem', fontWeight: 500 }}>Enhanced Model</span>
-            <span style={{ background: 'rgba(0,0,0,0.15)', borderRadius: '0.5rem', padding: '0.5rem 1rem', fontWeight: 500 }}>Customize</span>
-            <span style={{ background: 'rgba(0,0,0,0.15)', borderRadius: '0.5rem', padding: '0.5rem 1rem', fontWeight: 500 }}>Clear</span>
-            <span style={{ background: 'rgba(0,0,0,0.15)', borderRadius: '0.5rem', padding: '0.5rem 1rem', fontWeight: 500 }}>Words: 0/200</span>
           </div>
         </div>
       </section>
