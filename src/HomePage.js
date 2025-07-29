@@ -1,7 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-function HomePage() {
+function HomePage({ 
+  isDarkMode = false, 
+  toggleTheme = () => {}, 
+  user, 
+  subscription, 
+  getUserTier, 
+  canAccessFeature, 
+  login, 
+  logout, 
+  upgradeSubscription, 
+  setShowLoginModal, 
+  setShowUpgradeModal 
+}) {
   // Always use light theme
   const theme = {
     background: '#ffffff',
@@ -24,13 +36,20 @@ function HomePage() {
   const [charCount, setCharCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
   const [aiScore, setAiScore] = useState(0);
-  const [selectedTier, setSelectedTier] = useState('basic');
+  const [selectedTier, setSelectedTier] = useState(() => getUserTier ? getUserTier() : 'basic');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [writingStyle, setWritingStyle] = useState('professional');
   const [tone, setTone] = useState('neutral');
   const [targetAudience, setTargetAudience] = useState('general');
   const textareaRef = useRef(null);
+
+  // Update selected tier when user subscription changes
+  useEffect(() => {
+    if (getUserTier) {
+      setSelectedTier(getUserTier());
+    }
+  }, [getUserTier, subscription]);
 
   const faqs = [
     {
@@ -131,6 +150,42 @@ function HomePage() {
           <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.primary }}>Notecraft Pro</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <Link to="/notepad" style={{ textDecoration: 'none', color: theme.text, fontWeight: '500', padding: '0.5rem 1rem', borderRadius: '0.5rem', transition: 'all 0.2s' }}>Try Now</Link>
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <span style={{ fontSize: '0.9rem', color: theme.muted }}>
+                  Welcome, {user.name}
+                </span>
+                <button
+                  onClick={logout}
+                  style={{
+                    background: 'transparent',
+                    border: `1px solid ${theme.border}`,
+                    color: theme.text,
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.5rem',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowLoginModal(true)}
+                style={{
+                  background: theme.primary,
+                  border: 'none',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '0.5rem',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -149,28 +204,61 @@ function HomePage() {
           {/* Plan Selection */}
           <div style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-              {['basic', 'pro', 'ultra'].map((tier) => (
-                <button
-                  key={tier}
-                  onClick={() => setSelectedTier(tier)}
-                  style={{
-                    background: selectedTier === tier ? getTierFeatures(tier).color : 'rgba(255,255,255,0.1)',
-                    color: selectedTier === tier ? '#1a1a1a' : 'white',
-                    border: '2px solid rgba(255,255,255,0.2)',
-                    borderRadius: '0.5rem',
-                    padding: '0.5rem 1rem',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    textTransform: 'capitalize'
-                  }}
-                >
-                  {tier}
-                </button>
-              ))}
+              {['basic', 'pro', 'ultra'].map((tier) => {
+                const canAccess = canAccessFeature ? canAccessFeature(tier) : true;
+                const isSelected = selectedTier === tier;
+                
+                return (
+                  <button
+                    key={tier}
+                    onClick={() => {
+                      if (canAccess) {
+                        setSelectedTier(tier);
+                      } else if (tier === 'pro' || tier === 'ultra') {
+                        setShowUpgradeModal(true);
+                      }
+                    }}
+                    style={{
+                      background: isSelected ? getTierFeatures(tier).color : 'rgba(255,255,255,0.1)',
+                      color: isSelected ? '#1a1a1a' : 'white',
+                      border: '2px solid rgba(255,255,255,0.2)',
+                      borderRadius: '0.5rem',
+                      padding: '0.5rem 1rem',
+                      fontWeight: 'bold',
+                      cursor: canAccess ? 'pointer' : 'pointer',
+                      transition: 'all 0.2s',
+                      textTransform: 'capitalize',
+                      opacity: canAccess ? 1 : 0.6,
+                      position: 'relative'
+                    }}
+                  >
+                    {tier}
+                    {!canAccess && (tier === 'pro' || tier === 'ultra') && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '-8px',
+                        right: '-8px',
+                        background: '#ff6b6b',
+                        color: 'white',
+                        fontSize: '0.7rem',
+                        padding: '2px 6px',
+                        borderRadius: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        $
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
             <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
               {currentTier.wordLimit} words • {currentTier.features.join(' • ')}
+              {!user && (
+                <span style={{ marginLeft: '1rem', color: '#ff6b6b' }}>
+                  Sign in to access Pro & Ultra features
+                </span>
+              )}
             </div>
           </div>
 
@@ -266,7 +354,7 @@ function HomePage() {
               </div>
 
               {/* Advanced Options (Pro & Ultra) */}
-              {(selectedTier === 'pro' || selectedTier === 'ultra') && (
+              {(selectedTier === 'pro' || selectedTier === 'ultra') && canAccessFeature && canAccessFeature(selectedTier) && (
                 <div style={{
                   marginTop: '1rem',
                   padding: '1rem',
@@ -363,6 +451,40 @@ function HomePage() {
                       </div>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Upgrade Prompt for Non-Subscribers */}
+              {(selectedTier === 'pro' || selectedTier === 'ultra') && canAccessFeature && !canAccessFeature(selectedTier) && (
+                <div style={{
+                  marginTop: '1rem',
+                  padding: '16px',
+                  background: 'rgba(255,255,255,0.1)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ color: 'white', marginBottom: '12px', fontWeight: 'bold' }}>
+                    🔒 {selectedTier.toUpperCase()} Features Require Subscription
+                  </div>
+                  <div style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '16px', fontSize: '0.9rem' }}>
+                    Upgrade to {selectedTier} to access advanced features like AI detection, export options, and style customization.
+                  </div>
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    style={{
+                      background: '#ff6b6b',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 24px',
+                      borderRadius: '0.5rem',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    Upgrade Now
+                  </button>
                 </div>
               )}
 

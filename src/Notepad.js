@@ -1,7 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AIWritingAssistant from './AIWritingAssistant';
 
-function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
+function Notepad({ 
+  isDarkMode = false, 
+  toggleTheme = () => {}, 
+  user, 
+  subscription, 
+  getUserTier, 
+  canAccessFeature, 
+  login, 
+  logout, 
+  upgradeSubscription, 
+  setShowLoginModal, 
+  setShowUpgradeModal 
+}) {
   const [text, setText] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -18,7 +30,14 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
   const [formatState, setFormatState] = useState({});
   
   // Tier-based features
-  const [selectedTier, setSelectedTier] = useState('basic');
+  const [selectedTier, setSelectedTier] = useState(() => getUserTier ? getUserTier() : 'basic');
+
+  // Update selected tier when user subscription changes
+  useEffect(() => {
+    if (getUserTier) {
+      setSelectedTier(getUserTier());
+    }
+  }, [getUserTier, subscription]);
   const [aiScore, setAiScore] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
   const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
@@ -633,6 +652,45 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           </div>
           
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {/* User Authentication */}
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '0.8rem', color: theme.mutedColor }}>
+                  {user.name}
+                </span>
+                <button
+                  onClick={logout}
+                  style={{
+                    background: 'transparent',
+                    border: `1px solid ${theme.cardBorder}`,
+                    color: theme.color,
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '0.7rem'
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowLoginModal(true)}
+                style={{
+                  background: theme.primary,
+                  border: 'none',
+                  color: 'white',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.7rem',
+                  fontWeight: '500'
+                }}
+              >
+                Sign In
+              </button>
+            )}
+            
             {/* Tier Selection */}
             <div style={{
               display: 'flex',
@@ -642,26 +700,54 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
               borderRadius: '6px',
               padding: '2px'
             }}>
-              {['basic', 'pro', 'ultra'].map((tier) => (
-                <button
-                  key={tier}
-                  onClick={() => setSelectedTier(tier)}
-                  style={{
-                    background: selectedTier === tier ? getTierFeatures(tier).color : 'transparent',
-                    color: selectedTier === tier ? '#ffffff' : theme.color,
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '6px 12px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    textTransform: 'capitalize',
-                    fontSize: '0.8rem'
-                  }}
-                >
-                  {tier}
-                </button>
-              ))}
+              {['basic', 'pro', 'ultra'].map((tier) => {
+                const canAccess = canAccessFeature ? canAccessFeature(tier) : true;
+                const isSelected = selectedTier === tier;
+                
+                return (
+                  <button
+                    key={tier}
+                    onClick={() => {
+                      if (canAccess) {
+                        setSelectedTier(tier);
+                      } else if (tier === 'pro' || tier === 'ultra') {
+                        setShowUpgradeModal(true);
+                      }
+                    }}
+                    style={{
+                      background: isSelected ? getTierFeatures(tier).color : 'transparent',
+                      color: isSelected ? '#ffffff' : theme.color,
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '6px 12px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      textTransform: 'capitalize',
+                      fontSize: '0.8rem',
+                      opacity: canAccess ? 1 : 0.6,
+                      position: 'relative'
+                    }}
+                  >
+                    {tier}
+                    {!canAccess && (tier === 'pro' || tier === 'ultra') && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '-4px',
+                        right: '-4px',
+                        background: '#ff6b6b',
+                        color: 'white',
+                        fontSize: '0.6rem',
+                        padding: '1px 4px',
+                        borderRadius: '8px',
+                        fontWeight: 'bold'
+                      }}>
+                        $
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
             
             <a 
@@ -1436,7 +1522,7 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           )}
 
           {/* Export Options Panel (Pro & Ultra) */}
-          {currentTier.canExport && showExportOptions && (
+          {currentTier.canExport && canAccessFeature && canAccessFeature('pro') && showExportOptions && (
             <div style={{
               marginBottom: '20px',
               padding: '16px',
@@ -1524,11 +1610,44 @@ function Notepad({ isDarkMode = false, toggleTheme = () => {} }) {
           )}
 
           {/* AI Writing Assistant */}
-          <AIWritingAssistant 
-            text={text} 
-            tier={selectedTier} 
-            isDarkMode={isDarkMode} 
-          />
+          {canAccessFeature && canAccessFeature('pro') ? (
+            <AIWritingAssistant 
+              text={text} 
+              tier={selectedTier} 
+              isDarkMode={isDarkMode} 
+            />
+          ) : (
+            <div style={{
+              padding: '16px',
+              background: theme.cardBackground,
+              border: `1px solid ${theme.cardBorder}`,
+              borderRadius: '8px',
+              marginTop: '16px',
+              textAlign: 'center'
+            }}>
+              <div style={{ color: theme.color, marginBottom: '12px', fontWeight: 'bold' }}>
+                🔒 AI Writing Assistant Requires Pro Subscription
+              </div>
+              <div style={{ color: theme.mutedColor, marginBottom: '16px', fontSize: '0.9rem' }}>
+                Upgrade to Pro to access AI-powered grammar checking, style suggestions, and readability analysis.
+              </div>
+              <button
+                onClick={() => setShowUpgradeModal(true)}
+                style={{
+                  background: theme.primary,
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 24px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Upgrade to Pro
+              </button>
+            </div>
+          )}
 
           {/* Saved Notes Section */}
           {savedNotes.length > 0 && (
