@@ -291,7 +291,8 @@ function HomePage({
                     fontFamily: 'inherit',
                     outline: 'none',
                     transition: 'all 0.2s',
-                    lineHeight: '1.6'
+                    lineHeight: '1.6',
+                    boxSizing: 'border-box'
                   }} 
                 />
                 
