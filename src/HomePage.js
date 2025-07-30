@@ -145,26 +145,114 @@ function HomePage({
   return (
     <div style={{ backgroundColor: theme.background, color: theme.text, minHeight: '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       {/* Navigation */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000, backgroundColor: theme.background, borderBottom: `1px solid ${theme.border}`, padding: '1rem 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.primary }}>Notecraft Pro</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <Link to="/notepad" style={{ textDecoration: 'none', color: theme.text, fontWeight: '500', padding: '0.5rem 1rem', borderRadius: '0.5rem', transition: 'all 0.2s' }}>Try Now</Link>
+      <nav style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        zIndex: 1000, 
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+        padding: '1rem 0'
+      }}>
+        <div style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto', 
+          padding: '0 2rem', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center' 
+        }}>
+          <div style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: 'bold', 
+            color: 'white' 
+          }}>
+            Notecraft Pro
+          </div>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '1rem' 
+          }}>
+            <Link 
+              to="/notepad" 
+              style={{ 
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: '500',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              Notepad
+            </Link>
+            <button
+              onClick={() => setShowUpgradeModal(true)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: '500',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)',
+                cursor: 'pointer',
+                fontFamily: 'inherit'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              Pricing
+            </button>
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '0.9rem', color: theme.muted }}>
+                <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.8)' }}>
                   Welcome, {user.name}
                 </span>
                 <button
                   onClick={logout}
                   style={{
-                    background: 'transparent',
-                    border: `1px solid ${theme.border}`,
-                    color: theme.text,
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.5rem',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    border: 'none',
+                    color: '#667eea',
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    fontSize: '0.9rem'
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'white';
+                    e.target.style.color = '#764ba2';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.9)';
+                    e.target.style.color = '#667eea';
                   }}
                 >
                   Sign Out
@@ -174,16 +262,25 @@ function HomePage({
               <button
                 onClick={() => setShowLoginModal(true)}
                 style={{
-                  background: theme.primary,
+                  background: 'rgba(255, 255, 255, 0.9)',
                   border: 'none',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '0.5rem',
+                  color: '#667eea',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '8px',
                   cursor: 'pointer',
-                  fontWeight: '500'
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'white';
+                  e.target.style.color = '#764ba2';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.9)';
+                  e.target.style.color = '#667eea';
                 }}
               >
-                Sign In
+                Login
               </button>
             )}
           </div>
