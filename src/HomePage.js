@@ -108,15 +108,58 @@ function HomePage({
     navigator.clipboard.writeText(text);
   };
 
-  const handleHumanize = () => {
+  const handleHumanize = async () => {
     if (!text.trim()) return;
     setIsProcessing(true);
     
-    // Simulate processing time
-    setTimeout(() => {
+    try {
+      // Determine which API endpoint to use based on selected tier and advanced options
+      const endpoint = (selectedTier === 'pro' || selectedTier === 'ultra') && showAdvancedOptions 
+        ? '/api/humanize-advanced' 
+        : '/api/humanize';
+      
+      const requestBody = {
+        text: text,
+        tone: tone,
+        style: writingStyle,
+        targetAudience: targetAudience,
+        length: 'maintain',
+        creativity: 'balanced'
+      };
+      
+      // Use the deployed backend URL (you'll need to update this with your Render URL)
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setText(result.humanizedText);
+        setWordCount(result.wordCount);
+        setCharCount(result.characterCount);
+        
+        // Show success message
+        alert('Text humanized successfully!');
+      } else {
+        throw new Error(result.error || 'Failed to humanize text');
+      }
+      
+    } catch (error) {
+      console.error('Humanize error:', error);
+      alert(`Error: ${error.message}`);
+    } finally {
       setIsProcessing(false);
-      // In real app, this would call the AI humanization API
-    }, 2000);
+    }
   };
 
   const getTierFeatures = (tier) => {
