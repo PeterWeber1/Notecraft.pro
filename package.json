@@ -31,17 +31,7 @@
       "last 1 safari version"
     ]
   },
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PeterWeber1/ai-writing-simple.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/PeterWeber1/ai-writing-simple/issues"
-  },
-  "homepage": "https://github.com/PeterWeber1/ai-writing-simple#readme",
+
+  "homepage": ".",
   "description": ""
 }
