@@ -769,17 +769,16 @@ function HomePage({
       <section style={{ padding: '60px 0', background: theme.secondary }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
           <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Why Notecraft Pro?</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem', justifyContent: 'center' }}>
             {[
-              { icon: '🛡️', title: 'Built-in AI Detection', desc: 'Notecraft Pro’s trusted AI Detector ensures your text is human. If it doesn’t pass, you can retry your request for free.' },
-              { icon: '✨', title: 'Effortlessly Humanize AI Text', desc: 'Refine AI-generated text into authentic, human-quality writing. Paste from any AI platform—our tool enhances it with natural phrasing and emotional depth.' },
-              { icon: '⚡', title: 'Engage Your Readers in Seconds', desc: 'Instantly improve AI text and protect your authenticity. Notecraft Pro transforms any AI text into human-like content—extensively tested on leading detectors.' },
-              { icon: '📝', title: 'Create Engaging Content', desc: 'Produce human-quality content with Notecraft Pro’s advanced AI humanizer—text that reads naturally, even on leading AI detectors.' },
-              { icon: '🏆', title: 'Quality Humanizer Output', desc: 'No more grammatical errors or low-quality output. Notecraft Pro delivers the highest quality outputs in the industry.' }
+              { title: 'Built-in AI Detection', desc: 'Notecraft Pro\'s trusted AI Detector ensures your text is human. If it doesn\'t pass, you can retry your request for free.' },
+              { title: 'Effortlessly Humanize AI Text', desc: 'Refine AI-generated text into authentic, human-quality writing. Paste from any AI platform—our tool enhances it with natural phrasing and emotional depth.' },
+              { title: 'Engage Your Readers in Seconds', desc: 'Instantly improve AI text and protect your authenticity. Notecraft Pro transforms any AI text into human-like content—extensively tested on leading detectors.' },
+              { title: 'Create Engaging Content', desc: 'Produce human-quality content with Notecraft Pro\'s advanced AI humanizer—text that reads naturally, even on leading AI detectors.' },
+              { title: 'Quality Humanizer Output', desc: 'No more grammatical errors or low-quality output. Notecraft Pro delivers the highest quality outputs in the industry.' }
             ].map((f, i) => (
-              <div key={i} style={{ background: theme.card, borderRadius: '1rem', padding: '2rem', border: `1px solid ${theme.border}` }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{f.icon}</div>
-                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>{f.title}</div>
+              <div key={i} style={{ background: theme.card, borderRadius: '1rem', padding: '2rem', border: `1px solid ${theme.border}`, textAlign: 'center' }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>{f.title}</div>
                 <div style={{ color: theme.muted }}>{f.desc}</div>
               </div>
             ))}
