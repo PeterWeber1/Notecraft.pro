@@ -32,6 +32,7 @@ function HomePage({
 
   const [faqOpen, setFaqOpen] = React.useState(null);
   const [text, setText] = useState('');
+  const [humanizedText, setHumanizedText] = useState(''); // NEW: separate state for humanized text
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
@@ -144,9 +145,7 @@ function HomePage({
       const result = await response.json();
       
       if (result.success) {
-        setText(result.humanizedText);
-        setWordCount(result.wordCount);
-        setCharCount(result.characterCount);
+        setHumanizedText(result.humanizedText);
         
         // Show success message
         alert('Text humanized successfully!');
@@ -650,6 +649,83 @@ function HomePage({
                   {isProcessing ? 'Processing...' : 'Humanize Text'}
                 </button>
               </div>
+
+              {/* Humanized Text Output */}
+              {humanizedText && (
+                <div style={{ marginTop: '2rem' }}>
+                  <div style={{
+                    position: 'relative',
+                    background: 'rgba(255,255,255,0.1)',
+                    borderRadius: '0.75rem',
+                    border: '2px solid rgba(255,255,255,0.2)',
+                    padding: '1rem',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '1rem',
+                      padding: '0.5rem 1rem',
+                      background: 'rgba(255,255,255,0.1)',
+                      borderRadius: '0.5rem',
+                      fontSize: '0.9rem'
+                    }}>
+                      <span style={{ fontWeight: 'bold', color: 'white' }}>✨ Humanized Result:</span>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          onClick={() => navigator.clipboard.writeText(humanizedText)}
+                          style={{
+                            background: 'rgba(255,255,255,0.2)',
+                            border: 'none',
+                            borderRadius: '0.25rem',
+                            padding: '0.25rem 0.5rem',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          Copy
+                        </button>
+                        <button
+                          onClick={() => setHumanizedText('')}
+                          style={{
+                            background: 'rgba(255,255,255,0.2)',
+                            border: 'none',
+                            borderRadius: '0.25rem',
+                            padding: '0.25rem 0.5rem',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                    <textarea 
+                      value={humanizedText}
+                      readOnly
+                      style={{ 
+                        width: '100%', 
+                        height: '200px', 
+                        padding: '1rem', 
+                        borderRadius: '0.5rem', 
+                        border: 'none',
+                        fontSize: '1.1rem', 
+                        backgroundColor: 'rgba(255,255,255,0.9)', 
+                        color: '#1a1a1a',
+                        resize: 'vertical',
+                        fontFamily: 'inherit',
+                        outline: 'none',
+                        transition: 'all 0.2s',
+                        lineHeight: '1.6',
+                        boxSizing: 'border-box'
+                      }} 
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
