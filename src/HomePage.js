@@ -769,13 +769,16 @@ function HomePage({
       <section style={{ padding: '60px 0', background: theme.secondary }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
           <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Why Notecraft Pro?</h2>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
             gap: '2rem', 
             justifyContent: 'center',
             maxWidth: '1200px',
-            margin: '0 auto'
+            margin: '0 auto',
+            placeItems: 'center',
+            gridAutoFlow: 'row dense'
           }}>
             {[
               { title: 'Built-in AI Detection', desc: 'Notecraft Pro\'s trusted AI Detector ensures your text is human. If it doesn\'t pass, you can retry your request for free.' },
@@ -800,6 +803,7 @@ function HomePage({
                 <div style={{ color: theme.muted, lineHeight: '1.6' }}>{f.desc}</div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </section>
