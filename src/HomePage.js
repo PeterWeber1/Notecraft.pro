@@ -824,39 +824,52 @@ function HomePage({
               <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Engage Your Readers in Seconds</div>
               <div style={{ color: theme.muted, lineHeight: '1.6' }}>Instantly improve AI text and protect your authenticity. Notecraft Pro transforms any AI text into human-like content—extensively tested on leading detectors.</div>
             </div>
-            {/* Second row - 2 cards centered */}
-            <div style={{ 
-              background: theme.card, 
-              borderRadius: '1rem', 
-              padding: '2rem', 
-              border: `1px solid ${theme.border}`, 
-              textAlign: 'center',
-              height: 'fit-content',
-              minHeight: '200px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              gridColumn: '2'
-            }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Create Engaging Content</div>
-              <div style={{ color: theme.muted, lineHeight: '1.6' }}>Produce human-quality content with Notecraft Pro's advanced AI humanizer—text that reads naturally, even on leading AI detectors.</div>
-            </div>
-            <div style={{ 
-              background: theme.card, 
-              borderRadius: '1rem', 
-              padding: '2rem', 
-              border: `1px solid ${theme.border}`, 
-              textAlign: 'center',
-              height: 'fit-content',
-              minHeight: '200px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              gridColumn: '3'
-            }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Quality Humanizer Output</div>
-              <div style={{ color: theme.muted, lineHeight: '1.6' }}>No more grammatical errors or low-quality output. Notecraft Pro delivers the highest quality outputs in the industry.</div>
-            </div>
+                         {/* Second row - 3 cards for balance */}
+             <div style={{ 
+               background: theme.card, 
+               borderRadius: '1rem', 
+               padding: '2rem', 
+               border: `1px solid ${theme.border}`, 
+               textAlign: 'center',
+               height: 'fit-content',
+               minHeight: '200px',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'center'
+             }}>
+               <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Create Engaging Content</div>
+               <div style={{ color: theme.muted, lineHeight: '1.6' }}>Produce human-quality content with Notecraft Pro's advanced AI humanizer—text that reads naturally, even on leading AI detectors.</div>
+             </div>
+             <div style={{ 
+               background: theme.card, 
+               borderRadius: '1rem', 
+               padding: '2rem', 
+               border: `1px solid ${theme.border}`, 
+               textAlign: 'center',
+               height: 'fit-content',
+               minHeight: '200px',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'center'
+             }}>
+               <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Quality Humanizer Output</div>
+               <div style={{ color: theme.muted, lineHeight: '1.6' }}>No more grammatical errors or low-quality output. Notecraft Pro delivers the highest quality outputs in the industry.</div>
+             </div>
+             <div style={{ 
+               background: theme.card, 
+               borderRadius: '1rem', 
+               padding: '2rem', 
+               border: `1px solid ${theme.border}`, 
+               textAlign: 'center',
+               height: 'fit-content',
+               minHeight: '200px',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'center'
+             }}>
+               <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', fontSize: '1.1rem' }}>Advanced Analytics</div>
+               <div style={{ color: theme.muted, lineHeight: '1.6' }}>Track your writing performance with detailed analytics and insights to improve your content quality over time.</div>
+             </div>
 
           </div>
         </div>
