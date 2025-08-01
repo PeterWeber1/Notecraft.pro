@@ -80,18 +80,18 @@ function SubscriptionManager({ children, isDarkMode = false }) {
     const features = {
       basic: {
         wordLimit: 500,
-        features: ['Basic formatting', 'Word count', 'Reading time', 'Auto-save'],
+        features: ['Basic humanization', 'Word count', 'Reading time', 'Auto-save'],
         price: 0
       },
       pro: {
         wordLimit: 2000,
-        features: ['Advanced formatting', 'AI detection', 'Export options', 'Style customization'],
-        price: 9.99
+        features: ['Advanced humanization', 'AI detection', 'Export options', 'Style customization'],
+        price: 29.99
       },
       ultra: {
         wordLimit: 10000,
-        features: ['Ultra formatting', 'All Pro features', 'Bulk processing', 'Priority support'],
-        price: 19.99
+        features: ['Ultra humanization', 'All Pro features', 'Bulk processing', 'Priority support'],
+        price: 59.99
       }
     };
     return features[plan];
@@ -270,13 +270,13 @@ function UpgradeForm({ onUpgrade, onClose, theme }) {
   const plans = [
     {
       name: 'Pro',
-      price: 9.99,
+      price: 29.99,
       features: ['2,000 words per document', 'AI detection', 'Export options', 'Style customization'],
       color: theme.accent
     },
     {
       name: 'Ultra',
-      price: 19.99,
+      price: 59.99,
       features: ['10,000 words per document', 'All Pro features', 'Bulk processing', 'Priority support'],
       color: '#8b5cf6'
     }

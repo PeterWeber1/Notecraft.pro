@@ -792,9 +792,9 @@ function HomePage({
           <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Choose the plan that’s right for you.</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center' }}>
             {[
-              { name: 'Basic', price: '$12', period: 'Per month, billed annually', features: ['80 humanizer requests/month', '600 words per request', 'Access to Enhanced Model', 'Basic customer support'], badge: 'Best for light users' },
-              { name: 'Pro', price: '$18', period: 'Per month, billed annually', features: ['200 humanizer requests/month', '1200 words per request', 'Access to Enhanced Model', 'Priority access to new features', 'Priority customer support'], badge: 'Best for most users', highlight: true },
-              { name: 'Ultra', price: '$36', period: 'Per month, billed annually', features: ['Unlimited requests per month', '3000 words per request', 'Access to Enhanced Model', 'Priority access to new features', 'Priority customer support'], badge: 'Best for power users' }
+              { name: 'Basic', price: '$0', period: 'Free tier', features: ['500 words per request', 'Basic humanization', 'Word count & reading time', 'Auto-save'], badge: 'Best for light users' },
+              { name: 'Pro', price: '$29.99', period: 'Per month', features: ['2000 words per request', 'Advanced humanization', 'AI detection', 'Export options', 'Style customization'], badge: 'Best for most users', highlight: true },
+              { name: 'Ultra', price: '$59.99', period: 'Per month', features: ['10000 words per request', 'Ultra humanization', 'All Pro features', 'Bulk processing', 'Priority support'], badge: 'Best for power users' }
             ].map((plan, i) => (
               <div key={i} style={{ background: plan.highlight ? theme.primary : theme.card, color: plan.highlight ? '#fff' : theme.text, borderRadius: '1rem', padding: '2rem', minWidth: '260px', maxWidth: '320px', border: `2px solid ${plan.highlight ? theme.primary : theme.border}`, boxShadow: plan.highlight ? '0 4px 24px rgba(99,102,241,0.15)' : 'none', position: 'relative' }}>
                 <div style={{ position: 'absolute', top: '-1.5rem', left: '50%', transform: 'translateX(-50%)', background: theme.accent, color: '#1a1a1a', borderRadius: '1rem', padding: '0.3rem 1.2rem', fontWeight: 600, fontSize: '0.95rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>{plan.badge}</div>
@@ -809,7 +809,7 @@ function HomePage({
             ))}
           </div>
           <div style={{ textAlign: 'center', color: theme.muted, marginTop: '2rem', fontSize: '1rem' }}>
-            Not ready to commit? All users can submit 3 requests per month for free, up to 200 words each.
+            Not ready to commit? All users can submit unlimited requests for free, up to 500 words each.
           </div>
         </div>
       </section>
