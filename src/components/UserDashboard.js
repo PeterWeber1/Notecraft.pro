@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAccount } from '../AccountManager';
+import { useAccount } from '../AccountManager.js';
 
 export function UserDashboard({ theme }) {
   const { 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAccount } from '../AccountManager';
+import { useAccount } from '../AccountManager.js';
 
 // Enhanced Login Modal
 export function LoginModal({ isOpen, onClose, theme }) {

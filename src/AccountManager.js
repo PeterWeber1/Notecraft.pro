@@ -452,7 +452,7 @@ function AccountManager({ children, isDarkMode = false }) {
 
   return (
     <AccountContext.Provider value={contextValue}>
-      {children}
+      {typeof children === 'function' ? children(contextValue) : children}
       
       {/* Error Display */}
       {error && (

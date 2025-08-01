@@ -5,7 +5,7 @@ import Notepad from './Notepad';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 import AccountManager from './AccountManager';
-import { LoginModal, RegisterModal, ProfileModal, BillingModal } from './components/AccountModals';
+import { LoginModal, RegisterModal, ProfileModal, BillingModal } from './components/AccountModals.js';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
