@@ -1,0 +1,15 @@
+# Ignore FastAPI backend - will be deployed to Render separately
+api/
+server/
+
+# Ignore Python files
+*.py
+__pycache__/
+*.pyc
+
+# Ignore large dependencies
+node_modules/.cache/
+
+# Development files
+.env
+test_integration.js
