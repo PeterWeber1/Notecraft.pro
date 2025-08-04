@@ -64,28 +64,16 @@ async def humanize(req: Request, payload: Payload):
     try:
         tokenizer, model = get_pipe()
         
-        # Create a comprehensive prompt for humanization
-        system_prompt = f"""Rewrite the following text to make it sound more human and natural while preserving the original meaning.
-
-Instructions:
-- Make it sound conversational and authentic
-- Use natural language patterns
-- Maintain the {payload.tone} tone
-- Keep the {payload.style} writing style
-- {'Make it more concise' if payload.length == 'shorter' else 'Expand with more detail' if payload.length == 'longer' else 'Maintain similar length'}
-- Remove any robotic or AI-like phrasing
-- Add personality and warmth to the writing
-
-Text to humanize: {payload.text}
-
-Humanized version:"""
+        # Create a simple, effective prompt for FLAN-T5
+        system_prompt = f"Rewrite this text to sound more natural and human-like: {payload.text}"
         
         # Tokenize the input
         inputs = tokenizer(
             system_prompt,
             return_tensors="pt",
             max_length=512,  # Limit input length
-            truncation=True
+            truncation=True,
+            padding=True
         )
         
         # Generate humanized text
@@ -103,8 +91,12 @@ Humanized version:"""
         humanized_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
         
         # Clean up the output - remove the prompt part if it's included
-        if "Humanized version:" in humanized_text:
-            humanized_text = humanized_text.split("Humanized version:")[-1].strip()
+        if system_prompt in humanized_text:
+            humanized_text = humanized_text.replace(system_prompt, "").strip()
+        
+        # If the output is empty or too short, provide a fallback
+        if not humanized_text.strip() or len(humanized_text.strip()) < 10:
+            humanized_text = payload.text  # Fallback to original text
         
         return {
             "success": True,

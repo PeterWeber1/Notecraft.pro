@@ -11,22 +11,22 @@ def test_api():
     base_url = "http://localhost:8000"
     
     # Test health endpoint
-    print("🔍 Testing health endpoint...")
+    print("Testing health endpoint...")
     try:
         response = requests.get(f"{base_url}/healthz")
         if response.status_code == 200:
-            print("✅ Health check passed!")
+            print("[PASS] Health check passed!")
             print(f"Response: {response.json()}")
         else:
-            print(f"❌ Health check failed: {response.status_code}")
+            print(f"[FAIL] Health check failed: {response.status_code}")
             return False
     except requests.RequestException as e:
-        print(f"❌ Error connecting to server: {e}")
+        print(f"[ERROR] Error connecting to server: {e}")
         print("Make sure the FastAPI server is running with: python main.py")
         return False
     
     # Test humanize endpoint
-    print("\n🤖 Testing humanize endpoint...")
+    print("\nTesting humanize endpoint...")
     test_text = "This is an AI-generated text that needs humanization. It might sound robotic and needs to be more natural."
     
     payload = {
@@ -45,30 +45,30 @@ def test_api():
         
         if response.status_code == 200:
             result = response.json()
-            print("✅ Humanization successful!")
+            print("[PASS] Humanization successful!")
             print(f"Original: {result['originalText']}")
             print(f"Humanized: {result['humanizedText']}")
             print(f"Word count: {result['wordCount']}")
             print(f"Character count: {result['characterCount']}")
         else:
-            print(f"❌ Humanization failed: {response.status_code}")
+            print(f"[FAIL] Humanization failed: {response.status_code}")
             print(f"Error: {response.text}")
             return False
             
     except requests.RequestException as e:
-        print(f"❌ Error during humanization: {e}")
+        print(f"[ERROR] Error during humanization: {e}")
         return False
     
     return True
 
 if __name__ == "__main__":
-    print("🚀 Starting FastAPI Humanizer API Test")
+    print("Starting FastAPI Humanizer API Test")
     print("=" * 50)
     
     success = test_api()
     
     if success:
-        print("\n🎉 All tests passed! The FastAPI server is working correctly.")
+        print("\n[SUCCESS] All tests passed! The FastAPI server is working correctly.")
     else:
-        print("\n💥 Tests failed. Please check the server and try again.")
+        print("\n[FAILED] Tests failed. Please check the server and try again.")
         sys.exit(1)

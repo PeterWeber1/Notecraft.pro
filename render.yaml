@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: notecraft-pro-api
+    env: python
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MODEL_REPO
+        value: google/flan-t5-small
+      - key: API_SECRET
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0
