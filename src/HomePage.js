@@ -141,9 +141,6 @@ function HomePage({
       
       if (result.success) {
         setHumanizedText(result.humanizedText);
-        
-        // Show success message
-        alert('Text humanized successfully!');
       } else {
         throw new Error(result.error || 'Failed to humanize text');
       }
@@ -623,31 +620,9 @@ function HomePage({
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                <button 
-                  onClick={handleHumanize}
-                  disabled={!text.trim() || isProcessing}
-                  style={{ 
-                    background: isProcessing ? theme.muted : theme.accent, 
-                    color: '#1a1a1a', 
-                    border: 'none', 
-                    borderRadius: '0.5rem', 
-                    padding: '1rem 3rem', 
-                    fontWeight: 'bold', 
-                    fontSize: '1.2rem', 
-                    cursor: text.trim() && !isProcessing ? 'pointer' : 'not-allowed',
-                    transition: 'all 0.2s',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    opacity: text.trim() && !isProcessing ? 1 : 0.6
-                  }}
-                >
-                  {isProcessing ? 'Processing...' : 'Humanize Text'}
-                </button>
-              </div>
-
-              {/* Humanized Text Output */}
+              {/* Humanized Text Output - Shows right below input */}
               {humanizedText && (
-                <div style={{ marginTop: '2rem' }}>
+                <div style={{ marginTop: '1rem' }}>
                   <div style={{
                     position: 'relative',
                     background: 'rgba(255,255,255,0.1)',
@@ -721,6 +696,28 @@ function HomePage({
                   </div>
                 </div>
               )}
+
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                <button 
+                  onClick={handleHumanize}
+                  disabled={!text.trim() || isProcessing}
+                  style={{ 
+                    background: isProcessing ? theme.muted : theme.accent, 
+                    color: '#1a1a1a', 
+                    border: 'none', 
+                    borderRadius: '0.5rem', 
+                    padding: '1rem 3rem', 
+                    fontWeight: 'bold', 
+                    fontSize: '1.2rem', 
+                    cursor: text.trim() && !isProcessing ? 'pointer' : 'not-allowed',
+                    transition: 'all 0.2s',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    opacity: text.trim() && !isProcessing ? 1 : 0.6
+                  }}
+                >
+                  {isProcessing ? 'Processing...' : 'Humanize Text'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
