@@ -9,10 +9,10 @@ from main import app
 if __name__ == "__main__":
     # Set default environment variables for development
     if not os.getenv("MODEL_REPO"):
-        os.environ["MODEL_REPO"] = "google/flan-t5-small"
+        os.environ["MODEL_REPO"] = "google/flan-t5-base"
     
     print("Starting Notecraft Pro Humanizer API")
-    print(f"Model: {os.getenv('MODEL_REPO', 'google/flan-t5-small')}")
+    print(f"Model: {os.getenv('MODEL_REPO', 'google/flan-t5-base')}")
     print(f"Authentication: {'Enabled' if os.getenv('API_SECRET') else 'Disabled (Development)'}")
     print("=" * 60)
     

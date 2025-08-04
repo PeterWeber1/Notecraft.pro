@@ -35,7 +35,7 @@ def get_model():
         return _tokenizer_cache, _model_cache
     
     try:
-        # Use a smaller model for Vercel deployment
+        # Use FLAN-T5-base for better instruction following
         repo = os.getenv("MODEL_REPO", "google/flan-t5-base")
         print(f"Loading model: {repo}")
         
@@ -143,35 +143,35 @@ async def humanize(req: Request, payload: Payload):
                 "note": "Using fallback humanization (model not available)"
             }
         
-        # Create a simple, effective prompt for FLAN-T5
-        system_prompt = f"Rewrite this text to sound more natural and human-like: {payload.text}"
+        # Create a better instruction prompt for FLAN-T5
+        instruction_prompt = f"Make this text sound more human and conversational: {payload.text}"
         
-        # Tokenize the input with smaller limits for Vercel
+        # Tokenize the input for seq2seq model
         inputs = tokenizer(
-            system_prompt,
+            instruction_prompt,
             return_tensors="pt",
-            max_length=256,  # Reduced from 512
+            max_length=256,
             truncation=True,
             padding=True
         )
         
-        # Generate humanized text with reduced parameters
+        # Generate humanized text with seq2seq model
         with torch.no_grad():
             outputs = model.generate(
                 inputs.input_ids,
-                max_new_tokens=128,  # Reduced from 256
+                attention_mask=inputs.attention_mask,
+                max_new_tokens=len(payload.text.split()) + 20,  # Dynamic length
+                min_length=len(payload.text.split()),  # Minimum length
                 temperature=0.7,
                 top_p=0.9,
                 do_sample=True,
-                pad_token_id=tokenizer.eos_token_id
+                num_return_sequences=1,
+                repetition_penalty=1.1,
+                length_penalty=1.0
             )
         
         # Decode the output
         humanized_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        
-        # Clean up the output - remove the prompt part if it's included
-        if system_prompt in humanized_text:
-            humanized_text = humanized_text.replace(system_prompt, "").strip()
         
         # If the output is empty or too short, provide a fallback
         if not humanized_text.strip() or len(humanized_text.strip()) < 10:

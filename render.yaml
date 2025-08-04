@@ -10,7 +10,7 @@ services:
       cd api && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MODEL_REPO
-        value: google/flan-t5-small
+        value: google/flan-t5-base
       - key: API_SECRET
         generateValue: true
       - key: PYTHON_VERSION
