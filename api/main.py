@@ -72,14 +72,15 @@ def verify(req: Request):
     if not auth_header or auth_header != f"Bearer {api_secret}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-def advanced_humanization_pipeline(text: str, tone: str = "neutral", style: str = "professional") -> str:
+def advanced_humanization_pipeline(text: str, tone: str = "neutral", style: str = "professional", preserve_length: bool = True) -> str:
     """Advanced humanization pipeline for StealthWriter-level quality"""
     import re
     import random
     
     result = text
+    original_word_count = len(text.split())
     
-    # 1. Strategic contractions (context-aware)
+    # 1. Strategic contractions (context-aware) - length neutral transformations
     contractions = [
         (r"\bI am\b", "I'm"),
         (r"\byou are\b", "you're"), 
@@ -129,18 +130,31 @@ def advanced_humanization_pipeline(text: str, tone: str = "neutral", style: str 
             replacement = random.choice(synonyms)
             result = re.sub(pattern, replacement, result, flags=re.IGNORECASE, count=1)
     
-    # 4. Sentence structure variation
-    sentences = result.split('. ')
-    for i in range(len(sentences) - 1):
-        if len(sentences[i].split()) < 6 and len(sentences[i+1].split()) < 6:
-            # Combine short sentences occasionally
-            if random.random() < 0.3:
-                connector = random.choice([", and", ", but", ", so", "; however,"])
-                sentences[i] = sentences[i] + connector + " " + sentences[i+1].lower()
-                sentences.pop(i+1)
-                break
-    
-    result = '. '.join(sentences)
+    # 4. Sentence structure variation (length-aware)
+    if preserve_length:
+        # Only do length-neutral sentence restructuring
+        sentences = result.split('. ')
+        for i in range(len(sentences)):
+            # Internal sentence restructuring without changing length
+            words = sentences[i].split()
+            if len(words) > 6 and random.random() < 0.3:
+                # Reorder clauses without adding/removing words
+                if ', ' in sentences[i] and not sentences[i].lower().startswith(('however', 'therefore', 'additionally')):
+                    parts = sentences[i].split(', ', 1)
+                    if len(parts) == 2 and len(parts[1].split()) > 3:
+                        sentences[i] = f"{parts[1].capitalize()}, {parts[0].lower()}"
+        result = '. '.join(sentences)
+    else:
+        # Original sentence combination logic
+        sentences = result.split('. ')
+        for i in range(len(sentences) - 1):
+            if len(sentences[i].split()) < 6 and len(sentences[i+1].split()) < 6:
+                if random.random() < 0.3:
+                    connector = random.choice([", and", ", but", ", so", "; however,"])
+                    sentences[i] = sentences[i] + connector + " " + sentences[i+1].lower()
+                    sentences.pop(i+1)
+                    break
+        result = '. '.join(sentences)
     
     # 5. Natural flow improvements based on tone and style
     if tone == "friendly":
@@ -176,6 +190,63 @@ def advanced_humanization_pipeline(text: str, tone: str = "neutral", style: str 
                                         random.choice(['And', 'But']), 
                                         sentences[i], flags=re.IGNORECASE)
         result = '. '.join(sentences)
+    
+    # 8. Length preservation enforcement (StealthWriter-level)
+    if preserve_length:
+        current_word_count = len(result.split())
+        
+        # If text is too long, trim by removing least important words
+        if current_word_count > original_word_count:
+            words = result.split()
+            # Remove filler words first
+            filler_words = ['really', 'very', 'quite', 'rather', 'actually', 'basically', 'essentially', 'particularly']
+            words_to_remove = current_word_count - original_word_count
+            
+            for filler in filler_words:
+                if words_to_remove <= 0:
+                    break
+                while filler in words and words_to_remove > 0:
+                    words.remove(filler)
+                    words_to_remove -= 1
+            
+            # If still too long, remove duplicate adjectives/adverbs
+            if words_to_remove > 0:
+                i = 0
+                while i < len(words) - 1 and words_to_remove > 0:
+                    if words[i].endswith(('ly', 'ing')) and len(words[i]) > 4:
+                        if random.random() < 0.5:
+                            words.pop(i)
+                            words_to_remove -= 1
+                            continue
+                    i += 1
+            
+            result = ' '.join(words[:original_word_count])
+        
+        # If text is too short, add natural words
+        elif current_word_count < original_word_count:
+            words = result.split()
+            words_to_add = original_word_count - current_word_count
+            
+            # Add natural qualifiers in appropriate places
+            natural_additions = ['certainly', 'definitely', 'clearly', 'obviously', 'naturally', 'surely']
+            
+            for i in range(min(words_to_add, len(natural_additions))):
+                if words_to_add <= 0:
+                    break
+                    
+                # Find a good place to insert (after "is", "are", "was", "were")
+                for j, word in enumerate(words):
+                    if word.lower() in ['is', 'are', 'was', 'were', 'can', 'will', 'should'] and j < len(words) - 1:
+                        words.insert(j + 1, natural_additions[i])
+                        words_to_add -= 1
+                        break
+                else:
+                    # If no good place found, add at the beginning of a sentence
+                    words.insert(0, natural_additions[i].capitalize())
+                    words[1] = words[1].lower()
+                    words_to_add -= 1
+            
+            result = ' '.join(words)
     
     return result.strip()
 
@@ -224,9 +295,12 @@ def validate_humanization_quality(original: str, humanized: str, min_similarity:
     # 1. Content preservation check
     similarity_score = calculate_content_similarity(original, humanized)
     
-    # 2. Length check (shouldn't be too different)
+    # 2. Strict length check (StealthWriter-level: exact word count)
     original_length = len(original.split())
     humanized_length = len(humanized.split())
+    
+    # For StealthWriter-level quality, lengths should be exactly the same
+    length_match = original_length == humanized_length
     length_ratio = min(original_length, humanized_length) / max(original_length, humanized_length) if max(original_length, humanized_length) > 0 else 0
     
     # 3. Structural improvements check
@@ -240,23 +314,33 @@ def validate_humanization_quality(original: str, humanized: str, min_similarity:
     ]
     has_human_patterns = any(pattern in humanized.lower() for pattern in human_patterns)
     
-    # 5. Overall quality score
+    # 5. Overall quality score (enhanced for StealthWriter-level requirements)
     quality_score = (
-        similarity_score * 0.4 +  # 40% content preservation
-        length_ratio * 0.2 +      # 20% appropriate length
+        similarity_score * 0.35 +  # 35% content preservation
+        (1.0 if length_match else length_ratio * 0.5) * 0.25 +  # 25% exact length match (StealthWriter requirement)
         (1.0 if has_contractions else 0.0) * 0.2 +  # 20% natural language
         (1.0 if has_variety else 0.5) * 0.1 +       # 10% vocabulary variety  
         (1.0 if has_human_patterns else 0.0) * 0.1  # 10% human-like patterns
     )
     
+    # StealthWriter-level validation requires exact length match
+    stealthwriter_validation = (
+        similarity_score >= min_similarity and 
+        quality_score >= 0.7 and 
+        length_match  # Exact word count match required
+    )
+    
     return {
         'content_similarity': similarity_score,
         'length_ratio': length_ratio,
+        'length_match': length_match,
+        'original_word_count': original_length,
+        'humanized_word_count': humanized_length,
         'has_contractions': has_contractions,
         'vocabulary_variety': has_variety,
         'has_human_patterns': has_human_patterns,
         'overall_quality': quality_score,
-        'passes_validation': similarity_score >= min_similarity and quality_score >= 0.7
+        'passes_validation': stealthwriter_validation
     }
 
 def simple_humanize_fallback(text: str) -> str:
@@ -283,6 +367,9 @@ async def humanize(req: Request, payload: Payload):
                 style=payload.style
             )
             
+            # Validate quality even for fallback
+            quality_metrics = validate_humanization_quality(payload.text, humanized_text)
+            
             return {
                 "success": True,
                 "originalText": payload.text,
@@ -294,7 +381,17 @@ async def humanize(req: Request, payload: Payload):
                     "style": payload.style,
                     "length": payload.length
                 },
-                "note": "Using fallback humanization (model not available)"
+                "qualityMetrics": {
+                    "contentSimilarity": round(quality_metrics['content_similarity'], 3),
+                    "overallQuality": round(quality_metrics['overall_quality'], 3),
+                    "lengthMatch": quality_metrics['length_match'],
+                    "originalWordCount": quality_metrics['original_word_count'],
+                    "humanizedWordCount": quality_metrics['humanized_word_count'],
+                    "hasContractions": quality_metrics['has_contractions'],
+                    "hasHumanPatterns": quality_metrics['has_human_patterns'],
+                    "passesValidation": quality_metrics['passes_validation']
+                },
+                "note": "Using advanced fallback humanization (model not available)"
             }
         
         # Create specialized humanization prompt for paraphraser model
@@ -309,19 +406,24 @@ async def humanize(req: Request, payload: Payload):
             padding=True
         )
         
-        # Generate humanized text with seq2seq model
+        # Calculate target length for StealthWriter-level length preservation
+        original_word_count = len(payload.text.split())
+        target_length = original_word_count + len(inputs.input_ids[0])  # Include prompt length
+        
+        # Generate humanized text with strict length control
         with torch.no_grad():
             outputs = model.generate(
                 inputs.input_ids,
                 attention_mask=inputs.attention_mask,
-                max_new_tokens=len(payload.text.split()) + 20,  # Dynamic length
-                min_length=len(payload.text.split()),  # Minimum length
+                max_length=target_length + 5,  # Slight buffer for natural endings
+                min_length=target_length - 5,  # Slight buffer for natural variation
                 temperature=0.7,
                 top_p=0.9,
                 do_sample=True,
                 num_return_sequences=1,
                 repetition_penalty=1.1,
-                length_penalty=1.0
+                length_penalty=1.0,
+                early_stopping=True
             )
         
         # Decode the output
@@ -361,6 +463,9 @@ async def humanize(req: Request, payload: Payload):
             "qualityMetrics": {
                 "contentSimilarity": round(quality_metrics['content_similarity'], 3),
                 "overallQuality": round(quality_metrics['overall_quality'], 3),
+                "lengthMatch": quality_metrics['length_match'],
+                "originalWordCount": quality_metrics['original_word_count'],
+                "humanizedWordCount": quality_metrics['humanized_word_count'],
                 "hasContractions": quality_metrics['has_contractions'],
                 "hasHumanPatterns": quality_metrics['has_human_patterns'],
                 "passesValidation": quality_metrics['passes_validation']
@@ -376,6 +481,9 @@ async def humanize(req: Request, payload: Payload):
             style=payload.style
         )
         
+        # Validate quality even for error fallback
+        quality_metrics = validate_humanization_quality(payload.text, humanized_text)
+        
         return {
             "success": True,
             "originalText": payload.text,
@@ -386,6 +494,16 @@ async def humanize(req: Request, payload: Payload):
                 "tone": payload.tone,
                 "style": payload.style,
                 "length": payload.length
+            },
+            "qualityMetrics": {
+                "contentSimilarity": round(quality_metrics['content_similarity'], 3),
+                "overallQuality": round(quality_metrics['overall_quality'], 3),
+                "lengthMatch": quality_metrics['length_match'],
+                "originalWordCount": quality_metrics['original_word_count'],
+                "humanizedWordCount": quality_metrics['humanized_word_count'],
+                "hasContractions": quality_metrics['has_contractions'],
+                "hasHumanPatterns": quality_metrics['has_human_patterns'],
+                "passesValidation": quality_metrics['passes_validation']
             },
             "note": f"Using fallback due to error: {str(e)}"
         }

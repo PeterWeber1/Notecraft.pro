@@ -33,15 +33,15 @@ def test_stealthwriter_quality():
         }
     ]
     
-    print("🎯 StealthWriter Quality Benchmark Test")
+    print("StealthWriter Quality Benchmark Test")
     print("=" * 60)
     
     total_score = 0
     passed_tests = 0
     
     for i, case in enumerate(test_cases, 1):
-        print(f"\n📝 Test {i}: {case['name']}")
-        print(f"Original: {case['text'][:100]}...")
+        print(f"\nTest {i}: {case['name']}")
+        print(f"Original ({len(case['text'].split())} words): {case['text'][:100]}...")
         
         try:
             # Test the humanization endpoint
@@ -58,61 +58,64 @@ def test_stealthwriter_quality():
             if response.status_code == 200:
                 result = response.json()
                 
-                print(f"✅ Success!")
-                print(f"Humanized: {result['humanizedText'][:100]}...")
+                print(f"Success!")
+                print(f"Humanized ({len(result['humanizedText'].split())} words): {result['humanizedText'][:100]}...")
                 
                 # Check quality metrics
                 metrics = result.get('qualityMetrics', {})
-                print(f"\n📊 Quality Metrics:")
-                print(f"  • Content Similarity: {metrics.get('contentSimilarity', 'N/A')}")
-                print(f"  • Overall Quality: {metrics.get('overallQuality', 'N/A')}")
-                print(f"  • Has Contractions: {metrics.get('hasContractions', 'N/A')}")
-                print(f"  • Has Human Patterns: {metrics.get('hasHumanPatterns', 'N/A')}")  
-                print(f"  • Passes Validation: {metrics.get('passesValidation', 'N/A')}")
+                print(f"\nQuality Metrics:")
+                print(f"  Content Similarity: {metrics.get('contentSimilarity', 'N/A')}")
+                print(f"  Overall Quality: {metrics.get('overallQuality', 'N/A')}")
+                print(f"  Length Match: {metrics.get('lengthMatch', 'N/A')}")
+                print(f"  Word Count - Original: {metrics.get('originalWordCount', 'N/A')}, Humanized: {metrics.get('humanizedWordCount', 'N/A')}")
+                print(f"  Has Contractions: {metrics.get('hasContractions', 'N/A')}")
+                print(f"  Has Human Patterns: {metrics.get('hasHumanPatterns', 'N/A')}")  
+                print(f"  Passes Validation: {metrics.get('passesValidation', 'N/A')}")
                 
-                # Score this test
+                # Score this test with emphasis on length preservation
                 quality_score = metrics.get('overallQuality', 0)
                 content_score = metrics.get('contentSimilarity', 0)
+                length_match = metrics.get('lengthMatch', False)
                 
-                test_score = (quality_score * 0.6) + (content_score * 0.4)
+                test_score = (quality_score * 0.5) + (content_score * 0.3) + (1.0 if length_match else 0.0) * 0.2
                 total_score += test_score
                 
-                if test_score >= 0.7:  # 70% threshold for StealthWriter quality
+                if test_score >= 0.7 and length_match:  # StealthWriter quality requires length match
                     passed_tests += 1
-                    print(f"🎉 PASSED (Score: {test_score:.2f})")
+                    print(f"PASSED (Score: {test_score:.2f}) - Length Match: {length_match}")
                 else:
-                    print(f"❌ FAILED (Score: {test_score:.2f})")
+                    print(f"FAILED (Score: {test_score:.2f}) - Length Match: {length_match}")
                 
             else:
-                print(f"❌ HTTP Error: {response.status_code}")
+                print(f"HTTP Error: {response.status_code}")
                 print(f"Response: {response.text}")
                 
         except requests.exceptions.Timeout:
-            print("⏰ Request timed out")
+            print("Request timed out")
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"Error: {e}")
     
     # Final assessment
     avg_score = total_score / len(test_cases) if test_cases else 0
     pass_rate = (passed_tests / len(test_cases)) * 100 if test_cases else 0
     
-    print(f"\n🏆 FINAL RESULTS")
+    print(f"\nFINAL RESULTS")
     print("=" * 60)
     print(f"Tests Passed: {passed_tests}/{len(test_cases)} ({pass_rate:.1f}%)")
     print(f"Average Quality Score: {avg_score:.2f}")
     
     # StealthWriter-level assessment
     if avg_score >= 0.8 and pass_rate >= 75:
-        print("🎯 EXCELLENT: StealthWriter-level quality achieved!")
+        print("EXCELLENT: StealthWriter-level quality achieved!")
         return "excellent"
     elif avg_score >= 0.7 and pass_rate >= 60:
-        print("✅ GOOD: High-quality humanization, approaching StealthWriter level")
+        print("GOOD: High-quality humanization, approaching StealthWriter level")
         return "good"
     elif avg_score >= 0.6 and pass_rate >= 40:
-        print("⚠️  FAIR: Decent humanization, needs improvement") 
+        print("FAIR: Decent humanization, needs improvement") 
         return "fair"
     else:
-        print("❌ POOR: Significant improvements needed")
+        print("POOR: Significant improvements needed")
         return "poor"
 
 def test_api_health():
@@ -124,23 +127,23 @@ def test_api_health():
         return False
 
 if __name__ == "__main__":
-    print("🚀 Starting StealthWriter Quality Assessment")
+    print("Starting StealthWriter Quality Assessment")
     
     # Check if API is running
     if not test_api_health():
-        print("❌ API is not running. Please start the FastAPI server first.")
+        print("API is not running. Please start the FastAPI server first.")
         print("Run: cd api && python start.py")
         exit(1)
     
     # Run quality tests
     result = test_stealthwriter_quality()
     
-    print(f"\n📋 Next Steps:")
+    print(f"\nNext Steps:")
     if result == "excellent":
-        print("✅ Ready for production deployment!")
+        print("Ready for production deployment!")
     elif result == "good":
-        print("🔧 Consider minor optimizations for perfect StealthWriter quality")
+        print("Consider minor optimizations for perfect StealthWriter quality")
     else:
-        print("🛠️  Review model configuration and pipeline parameters")
+        print("Review model configuration and pipeline parameters")
     
-    print(f"🔗 Full implementation ready for deployment to Render")
+    print(f"Full implementation ready for deployment to Render")
