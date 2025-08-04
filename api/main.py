@@ -23,24 +23,43 @@ class Payload(BaseModel):
     style: str = "professional"
     length: str = "maintain"
 
-@functools.lru_cache
-def get_pipe():
-    """Load and cache the Hugging Face model and tokenizer"""
-    repo = os.getenv("MODEL_REPO", "google/flan-t5-small")
-    print(f"Loading model: {repo}")
+# Global variables to cache model
+_model_cache = None
+_tokenizer_cache = None
+
+def get_model():
+    """Load and cache the Hugging Face model and tokenizer with error handling"""
+    global _model_cache, _tokenizer_cache
+    
+    if _model_cache is not None and _tokenizer_cache is not None:
+        return _tokenizer_cache, _model_cache
     
     try:
-        tokenizer = AutoTokenizer.from_pretrained(repo)
-        model = AutoModelForSeq2SeqLM.from_pretrained(
+        # Use a smaller model for Vercel deployment
+        repo = os.getenv("MODEL_REPO", "google/flan-t5-base")
+        print(f"Loading model: {repo}")
+        
+        # Load tokenizer first
+        _tokenizer_cache = AutoTokenizer.from_pretrained(
             repo,
-            torch_dtype=torch.float32,  # Use float32 for better compatibility
-            low_cpu_mem_usage=True
+            cache_dir="/tmp/model_cache"  # Use temp directory for Vercel
         )
+        
+        # Load model with reduced precision and memory optimizations
+        _model_cache = AutoModelForSeq2SeqLM.from_pretrained(
+            repo,
+            torch_dtype=torch.float16,  # Use float16 to reduce memory
+            low_cpu_mem_usage=True,
+            cache_dir="/tmp/model_cache"
+        )
+        
         print(f"Model {repo} loaded successfully")
-        return tokenizer, model
+        return _tokenizer_cache, _model_cache
+        
     except Exception as e:
         print(f"Error loading model: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load model: {str(e)}")
+        # Return None to indicate model loading failed
+        return None, None
 
 def verify(req: Request):
     """Verify API authentication"""
@@ -53,6 +72,47 @@ def verify(req: Request):
     if not auth_header or auth_header != f"Bearer {api_secret}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
+def simple_humanize_fallback(text: str) -> str:
+    """Simple fallback humanization when model is not available"""
+    # Basic text improvements
+    improvements = [
+        ("I am", "I'm"),
+        ("you are", "you're"),
+        ("we are", "we're"),
+        ("they are", "they're"),
+        ("it is", "it's"),
+        ("that is", "that's"),
+        ("this is", "this's"),
+        ("there is", "there's"),
+        ("here is", "here's"),
+        ("I will", "I'll"),
+        ("you will", "you'll"),
+        ("we will", "we'll"),
+        ("they will", "they'll"),
+        ("it will", "it'll"),
+        ("that will", "that'll"),
+        ("I would", "I'd"),
+        ("you would", "you'd"),
+        ("we would", "we'd"),
+        ("they would", "they'd"),
+        ("it would", "it'd"),
+        ("that would", "that'd"),
+        ("I have", "I've"),
+        ("you have", "you've"),
+        ("we have", "we've"),
+        ("they have", "they've"),
+        ("it has", "it's"),
+        ("that has", "that's"),
+    ]
+    
+    result = text
+    for formal, informal in improvements:
+        result = result.replace(f" {formal} ", f" {informal} ")
+        result = result.replace(f" {formal}.", f" {informal}.")
+        result = result.replace(f" {formal},", f" {informal},")
+    
+    return result
+
 @app.post("/humanize")
 async def humanize(req: Request, payload: Payload):
     """Humanize AI-generated text using Hugging Face model"""
@@ -62,25 +122,44 @@ async def humanize(req: Request, payload: Payload):
         raise HTTPException(status_code=400, detail="Text is required")
     
     try:
-        tokenizer, model = get_pipe()
+        tokenizer, model = get_model()
+        
+        # If model loading failed, use fallback
+        if tokenizer is None or model is None:
+            print("Model not available, using fallback humanization")
+            humanized_text = simple_humanize_fallback(payload.text)
+            
+            return {
+                "success": True,
+                "originalText": payload.text,
+                "humanizedText": humanized_text,
+                "wordCount": len(humanized_text.split()),
+                "characterCount": len(humanized_text),
+                "settings": {
+                    "tone": payload.tone,
+                    "style": payload.style,
+                    "length": payload.length
+                },
+                "note": "Using fallback humanization (model not available)"
+            }
         
         # Create a simple, effective prompt for FLAN-T5
         system_prompt = f"Rewrite this text to sound more natural and human-like: {payload.text}"
         
-        # Tokenize the input
+        # Tokenize the input with smaller limits for Vercel
         inputs = tokenizer(
             system_prompt,
             return_tensors="pt",
-            max_length=512,  # Limit input length
+            max_length=256,  # Reduced from 512
             truncation=True,
             padding=True
         )
         
-        # Generate humanized text
+        # Generate humanized text with reduced parameters
         with torch.no_grad():
             outputs = model.generate(
                 inputs.input_ids,
-                max_new_tokens=256,
+                max_new_tokens=128,  # Reduced from 256
                 temperature=0.7,
                 top_p=0.9,
                 do_sample=True,
@@ -96,7 +175,7 @@ async def humanize(req: Request, payload: Payload):
         
         # If the output is empty or too short, provide a fallback
         if not humanized_text.strip() or len(humanized_text.strip()) < 10:
-            humanized_text = payload.text  # Fallback to original text
+            humanized_text = simple_humanize_fallback(payload.text)
         
         return {
             "success": True,
@@ -113,10 +192,22 @@ async def humanize(req: Request, payload: Payload):
         
     except Exception as e:
         print(f"Humanization error: {e}")
-        raise HTTPException(
-            status_code=500, 
-            detail=f"Failed to humanize text: {str(e)}"
-        )
+        # Use fallback on any error
+        humanized_text = simple_humanize_fallback(payload.text)
+        
+        return {
+            "success": True,
+            "originalText": payload.text,
+            "humanizedText": humanized_text,
+            "wordCount": len(humanized_text.split()),
+            "characterCount": len(humanized_text),
+            "settings": {
+                "tone": payload.tone,
+                "style": payload.style,
+                "length": payload.length
+            },
+            "note": f"Using fallback due to error: {str(e)}"
+        }
 
 @app.get("/healthz")
 async def health():
