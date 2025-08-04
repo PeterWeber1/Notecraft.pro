@@ -114,23 +114,18 @@ function HomePage({
     setIsProcessing(true);
     
     try {
-      // Determine which API endpoint to use based on selected tier and advanced options
-      const endpoint = (selectedTier === 'pro' || selectedTier === 'ultra') && showAdvancedOptions 
-        ? '/api/humanize-advanced' 
-        : '/api/humanize';
+      // FastAPI uses a single /humanize endpoint for all tiers
       
       const requestBody = {
         text: text,
         tone: tone,
         style: writingStyle,
-        targetAudience: targetAudience,
-        length: 'maintain',
-        creativity: 'balanced'
+        length: 'maintain'
       };
       
-      // Use the deployed backend URL (you'll need to update this with your Render URL)
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiUrl}${endpoint}`, {
+      // Use the FastAPI backend URL (change to your deployed FastAPI URL when ready)
+      const apiUrl = process.env.REACT_APP_FASTAPI_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/humanize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
