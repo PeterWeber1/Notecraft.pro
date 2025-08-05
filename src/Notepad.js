@@ -672,7 +672,7 @@ function Notepad({
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          marginBottom: '30px',
+          marginBottom: '15px',
           flexWrap: 'wrap',
           gap: '20px',
           padding: 'clamp(20px, 3vw, 40px)'
@@ -682,18 +682,9 @@ function Notepad({
               color: '#635bff', 
               marginBottom: '5px', 
               fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-              margin: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
+              margin: 0
             }}>
               NoteCraft
-              <span style={{ 
-                fontSize: '0.8em', 
-                color: '#000000',
-                opacity: 0.9,
-                fontWeight: 'normal'
-              }}>🪶</span>
             </h1>
             <p style={{ 
               color: theme.mutedColor, 
@@ -1314,7 +1305,7 @@ function Notepad({
               maxWidth: '100%',
               minWidth: 0,
               height: 'auto',
-              minHeight: '200px',
+              minHeight: '400px',
               maxHeight: '60vh',
               padding: 'clamp(12px, 2vw, 32px)',
               border: `2px solid ${theme.inputBorder}`,
