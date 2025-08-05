@@ -672,7 +672,7 @@ function Notepad({
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          marginBottom: '15px',
+          marginBottom: '5px',
           flexWrap: 'wrap',
           gap: '20px',
           padding: 'clamp(20px, 3vw, 40px)'
@@ -1293,38 +1293,49 @@ function Notepad({
                 }
               ` : ''}
             `}} />
-          <div
-            ref={editorRef}
-            contentEditable={true}
-            suppressContentEditableWarning={true}
-            onInput={updateContent}
-            onPaste={handlePaste}
-            placeholder="Start writing your notes here... Everything is automatically saved as you type."
-            style={{
-              width: '100%',
-              maxWidth: '100%',
-              minWidth: 0,
-              height: 'auto',
-              minHeight: '400px',
-              maxHeight: '60vh',
-              padding: 'clamp(12px, 2vw, 32px)',
-              border: `2px solid ${theme.inputBorder}`,
-              borderRadius: '8px',
-              fontSize: '16px',
-              resize: 'vertical',
-              marginBottom: '20px',
-              fontFamily: 'Arial, sans-serif',
-              backgroundColor: theme.editorBackground,
-              color: theme.inputColor,
-              transition: 'all 0.3s ease',
-              lineHeight: '1.6',
-              overflowY: 'auto',
-              outline: 'none',
-              WebkitFontSmoothing: 'antialiased',
-              MozOsxFontSmoothing: 'grayscale',
-              boxSizing: 'border-box',
-            }}
-          />
+          <div style={{
+            position: 'relative',
+            background: 'rgba(99, 91, 255, 0.05)',
+            borderRadius: '0.75rem',
+            border: '2px solid rgba(99, 91, 255, 0.2)',
+            padding: '1.5rem',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            marginBottom: '20px'
+          }}>
+            <div
+              ref={editorRef}
+              contentEditable={true}
+              suppressContentEditableWarning={true}
+              onInput={updateContent}
+              onPaste={handlePaste}
+              placeholder="Start writing your notes here... Everything is automatically saved as you type."
+              style={{
+                width: '100%',
+                maxWidth: '100%',
+                minWidth: 0,
+                height: 'auto',
+                minHeight: '400px',
+                maxHeight: '60vh',
+                padding: 'clamp(12px, 2vw, 32px)',
+                border: 'none',
+                borderRadius: '0.5rem',
+                fontSize: '16px',
+                resize: 'vertical',
+                marginBottom: 0,
+                fontFamily: 'Arial, sans-serif',
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                color: '#000000',
+                transition: 'all 0.3s ease',
+                lineHeight: '1.6',
+                overflowY: 'auto',
+                outline: 'none',
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
 
           {/* Enhanced Statistics */}
           <div style={{ 
