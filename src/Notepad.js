@@ -669,12 +669,15 @@ function Notepad({
       }}>
         {/* Header */}
         <div style={{ 
-          marginBottom: '30px'
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '30px',
+          flexWrap: 'wrap',
+          gap: '20px',
+          padding: 'clamp(20px, 3vw, 40px)'
         }}>
-          <div style={{ 
-            textAlign: 'center',
-            marginBottom: '20px'
-          }}>
+          <div>
             <h1 style={{ 
               color: '#635bff', 
               marginBottom: '5px', 
@@ -691,14 +694,6 @@ function Notepad({
               Your personal writing space with auto-save
             </p>
           </div>
-          
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '20px'
-          }}>
           
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {/* User Authentication */}
@@ -831,7 +826,6 @@ function Notepad({
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
-          </div>
           </div>
         </div>
 
