@@ -5,7 +5,7 @@ import Notepad from './Notepad';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 import AccountManager from './AccountManager';
-import { LoginModal, RegisterModal, ProfileModal, BillingModal } from './components/AccountModals.js';
+import { LoginModal, RegisterModal, ProfileModal, BillingModal, UpgradeModal } from './components/AccountModals.js';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -126,6 +126,11 @@ function App() {
             <RegisterModal 
               isOpen={showRegisterModal} 
               onClose={() => setShowRegisterModal(false)} 
+              theme={theme} 
+            />
+            <UpgradeModal 
+              isOpen={showUpgradeModal} 
+              onClose={() => setShowUpgradeModal(false)} 
               theme={theme} 
             />
             <ProfileModal 

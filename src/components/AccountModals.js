@@ -826,3 +826,184 @@ export function BillingModal({ isOpen, onClose, theme }) {
     </div>
   );
 } 
+
+// Upgrade Modal
+export function UpgradeModal({ isOpen, onClose, theme }) {
+  const { upgradeSubscription, isAuthenticating } = useAccount();
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
+  const plans = [
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: 29.99,
+      features: [
+        '2,000 words per document',
+        'AI detection',
+        'Export options', 
+        'Style customization',
+        'Priority support'
+      ],
+      color: theme.primary,
+      popular: true
+    },
+    {
+      id: 'ultra',
+      name: 'Ultra',
+      price: 59.99,
+      features: [
+        '10,000 words per document',
+        'All Pro features',
+        'Bulk processing',
+        'Advanced analytics',
+        'Dedicated support',
+        'API access'
+      ],
+      color: '#8b5cf6'
+    }
+  ];
+
+  const handleUpgrade = async (planId) => {
+    try {
+      await upgradeSubscription(planId);
+      onClose();
+    } catch (error) {
+      console.error('Upgrade failed:', error);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        background: theme.cardBackground,
+        padding: '32px',
+        borderRadius: '16px',
+        maxWidth: '600px',
+        width: '90%',
+        border: `1px solid ${theme.cardBorder}`,
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        maxHeight: '90vh',
+        overflowY: 'auto'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.8rem' }}>
+            Choose Your Plan
+          </h2>
+          <p style={{ color: theme.color + '80', fontSize: '1rem' }}>
+            Upgrade to access advanced features and higher word limits
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gap: '20px', marginBottom: '32px' }}>
+          {plans.map((plan) => (
+            <div
+              key={plan.id}
+              style={{
+                border: `2px solid ${selectedPlan === plan.id ? plan.color : theme.cardBorder}`,
+                borderRadius: '12px',
+                padding: '24px',
+                background: selectedPlan === plan.id ? `${plan.color}10` : theme.background,
+                position: 'relative',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onClick={() => setSelectedPlan(plan.id)}
+            >
+              {plan.popular && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: plan.color,
+                  color: 'white',
+                  padding: '4px 16px',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600'
+                }}>
+                  Most Popular
+                </div>
+              )}
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ color: theme.color, margin: 0, fontSize: '1.4rem' }}>
+                  {plan.name}
+                </h3>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ color: plan.color, fontWeight: 'bold', fontSize: '1.8rem' }}>
+                    ${plan.price}
+                  </span>
+                  <span style={{ color: theme.color + '80', fontSize: '0.9rem' }}>/month</span>
+                </div>
+              </div>
+              
+              <ul style={{ margin: 0, paddingLeft: '20px', color: theme.color }}>
+                {plan.features.map((feature, index) => (
+                  <li key={index} style={{ marginBottom: '8px', fontSize: '0.95rem' }}>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <button
+            onClick={() => selectedPlan && handleUpgrade(selectedPlan)}
+            disabled={!selectedPlan || isAuthenticating}
+            style={{
+              background: !selectedPlan || isAuthenticating ? theme.color + '40' : theme.primary,
+              color: 'white',
+              border: 'none',
+              padding: '12px 32px',
+              borderRadius: '8px',
+              cursor: !selectedPlan || isAuthenticating ? 'not-allowed' : 'pointer',
+              fontSize: '1rem',
+              fontWeight: '600',
+              minWidth: '120px'
+            }}
+          >
+            {isAuthenticating ? 'Processing...' : `Upgrade to ${selectedPlan ? plans.find(p => p.id === selectedPlan)?.name : 'Plan'}`}
+          </button>
+          
+          <button
+            onClick={onClose}
+            style={{
+              background: 'transparent',
+              color: theme.color,
+              border: `1px solid ${theme.cardBorder}`,
+              padding: '12px 32px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '500'
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '24px' }}>
+          <p style={{ color: theme.color + '60', fontSize: '0.85rem' }}>
+            All plans include a 30-day money-back guarantee
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+} 
