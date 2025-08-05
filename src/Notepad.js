@@ -687,8 +687,13 @@ function Notepad({
               alignItems: 'center',
               gap: '8px'
             }}>
-              <span style={{ fontSize: '0.8em', opacity: 0.7 }}>✏️</span>
               NoteCraft
+              <span style={{ 
+                fontSize: '0.8em', 
+                color: '#000000',
+                opacity: 0.8,
+                fontWeight: 'normal'
+              }}>🖋️</span>
             </h1>
             <p style={{ 
               color: theme.mutedColor, 
