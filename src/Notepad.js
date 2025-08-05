@@ -683,7 +683,7 @@ function Notepad({
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               margin: 0
             }}>
-              📝 NoteCraft
+              NoteCraft
             </h1>
             <p style={{ 
               color: theme.mutedColor, 
@@ -807,7 +807,7 @@ function Notepad({
                 whiteSpace: 'nowrap'
               }}
             >
-              ← Back to AI Tools
+              ← Back to Humanizer
             </a>
             <button
               onClick={toggleTheme}
