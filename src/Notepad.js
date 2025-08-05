@@ -681,9 +681,13 @@ function Notepad({
             <h1 style={{ 
               color: '#635bff', 
               marginBottom: '5px', 
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
-              margin: 0
+              fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}>
+              <span style={{ fontSize: '0.8em', opacity: 0.7 }}>✏️</span>
               NoteCraft
             </h1>
             <p style={{ 
@@ -708,10 +712,11 @@ function Notepad({
                     background: 'transparent',
                     border: `1px solid ${theme.cardBorder}`,
                     color: theme.color,
-                    padding: '4px 8px',
-                    borderRadius: '4px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
                     cursor: 'pointer',
-                    fontSize: '0.7rem'
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
                   }}
                 >
                   Sign Out
@@ -724,10 +729,10 @@ function Notepad({
                   background: theme.primary,
                   border: 'none',
                   color: 'white',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
                   cursor: 'pointer',
-                  fontSize: '0.7rem',
+                  fontSize: '0.9rem',
                   fontWeight: '500'
                 }}
               >
@@ -762,13 +767,13 @@ function Notepad({
                       background: isSelected ? getTierFeatures(tier).color : 'transparent',
                       color: isSelected ? '#ffffff' : theme.color,
                       border: 'none',
-                      borderRadius: '4px',
-                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      padding: '8px 16px',
                       fontWeight: 'bold',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
                       textTransform: 'capitalize',
-                      fontSize: '0.8rem',
+                      fontSize: '0.9rem',
                       opacity: canAccess ? 1 : 0.6,
                       position: 'relative'
                     }}
@@ -799,10 +804,10 @@ function Notepad({
               style={{
                 background: isDarkMode ? '#404040' : '#e0e0e0',
                 color: isDarkMode ? '#a0a0a0' : '#606060',
-                padding: '10px 20px',
+                padding: '12px 24px',
                 borderRadius: '8px',
                 textDecoration: 'none',
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: '600',
                 transition: 'all 0.3s ease',
                 whiteSpace: 'nowrap'
@@ -816,9 +821,9 @@ function Notepad({
                 background: isDarkMode ? '#404040' : '#e0e0e0',
                 border: 'none',
                 borderRadius: '50px',
-                padding: '12px',
+                padding: '14px',
                 cursor: 'pointer',
-                fontSize: '20px',
+                fontSize: '22px',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
               }}
