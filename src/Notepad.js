@@ -691,9 +691,9 @@ function Notepad({
               <span style={{ 
                 fontSize: '0.8em', 
                 color: '#000000',
-                opacity: 0.8,
+                opacity: 0.9,
                 fontWeight: 'normal'
-              }}>🖋️</span>
+              }}>🪶</span>
             </h1>
             <p style={{ 
               color: theme.mutedColor, 
