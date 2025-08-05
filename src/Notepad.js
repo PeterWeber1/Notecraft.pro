@@ -1295,9 +1295,9 @@ function Notepad({
             `}} />
           <div style={{
             position: 'relative',
-            background: 'rgba(99, 91, 255, 0.05)',
+            background: 'rgba(0, 0, 0, 0.05)',
             borderRadius: '0.75rem',
-            border: '2px solid rgba(99, 91, 255, 0.2)',
+            border: '2px solid rgba(0, 0, 0, 0.1)',
             padding: '1.5rem',
             backdropFilter: 'blur(10px)',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
