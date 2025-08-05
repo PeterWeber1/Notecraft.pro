@@ -26,15 +26,15 @@ function AccountManager({ children, isDarkMode = false }) {
   const [sessionTimeout, setSessionTimeout] = useState(null);
 
   const theme = {
-    background: isDarkMode ? '#111827' : '#f9fafb',
-    color: isDarkMode ? '#ffffff' : '#111827',
-    cardBackground: isDarkMode ? '#1f2937' : '#ffffff',
-    cardBorder: isDarkMode ? '#374151' : '#e5e7eb',
-    primary: '#6366f1',
-    accent: '#fbbf24',
-    success: '#10b981',
-    error: '#ef4444',
-    warning: '#f59e0b'
+    background: isDarkMode ? '#000000' : '#ffffff',
+    color: isDarkMode ? '#ffffff' : '#000000',
+    cardBackground: isDarkMode ? '#202020' : '#ffffff',
+    cardBorder: isDarkMode ? '#404040' : '#e0e0e0',
+    primary: '#635bff',
+    accent: '#635bff',
+    success: '#000000',
+    error: '#000000',
+    warning: '#000000'
   };
 
   // Session management with auto-logout

@@ -1,0 +1,371 @@
+/* Minimalist Theme Variables */
+:root {
+  /* Core Colors - Black, White, Blue */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-blue: #635bff;
+  
+  /* Grayscale for UI elements */
+  --color-gray-50: #f9f9f9;
+  --color-gray-100: #f0f0f0;
+  --color-gray-200: #e0e0e0;
+  --color-gray-300: #d0d0d0;
+  --color-gray-400: #a0a0a0;
+  --color-gray-500: #808080;
+  --color-gray-600: #606060;
+  --color-gray-700: #404040;
+  --color-gray-800: #202020;
+  
+  /* Text Colors */
+  --stripe-text-primary: var(--color-black);
+  --stripe-text-secondary: var(--color-gray-600);
+  --stripe-text-muted: var(--color-gray-400);
+  --stripe-text-light: var(--color-white);
+  
+  /* Background Colors */
+  --stripe-bg-primary: var(--color-white);
+  --stripe-bg-secondary: var(--color-gray-50);
+  --stripe-bg-dark: var(--color-black);
+  
+  /* Border Colors */
+  --stripe-border-light: var(--color-gray-200);
+  --stripe-border-medium: var(--color-gray-300);
+  --stripe-border-dark: var(--color-gray-400);
+  
+  /* Shadow */
+  --stripe-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --stripe-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --stripe-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  
+  /* Typography */
+  --stripe-font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --stripe-font-size-xs: 12px;
+  --stripe-font-size-sm: 14px;
+  --stripe-font-size-base: 16px;
+  --stripe-font-size-lg: 18px;
+  --stripe-font-size-xl: 20px;
+  --stripe-font-size-2xl: 24px;
+  --stripe-font-size-3xl: 32px;
+  --stripe-font-size-4xl: 48px;
+  
+  /* Font Weights */
+  --stripe-font-weight-light: 300;
+  --stripe-font-weight-normal: 400;
+  --stripe-font-weight-medium: 500;
+  --stripe-font-weight-semibold: 600;
+  --stripe-font-weight-bold: 700;
+  
+  /* Spacing */
+  --stripe-space-1: 4px;
+  --stripe-space-2: 8px;
+  --stripe-space-3: 12px;
+  --stripe-space-4: 16px;
+  --stripe-space-5: 20px;
+  --stripe-space-6: 24px;
+  --stripe-space-8: 32px;
+  --stripe-space-10: 40px;
+  --stripe-space-12: 48px;
+  --stripe-space-16: 64px;
+  --stripe-space-20: 80px;
+  
+  /* Border Radius */
+  --stripe-radius-sm: 4px;
+  --stripe-radius-md: 6px;
+  --stripe-radius-lg: 8px;
+  --stripe-radius-xl: 12px;
+  --stripe-radius-full: 9999px;
+}
+
+/* Dark Mode Variables */
+.dark-mode {
+  --stripe-text-primary: var(--color-white);
+  --stripe-text-secondary: var(--color-gray-400);
+  --stripe-text-muted: var(--color-gray-500);
+  --stripe-bg-primary: var(--color-black);
+  --stripe-bg-secondary: var(--color-gray-800);
+  --stripe-bg-dark: var(--color-black);
+  --stripe-border-light: var(--color-gray-700);
+  --stripe-border-medium: var(--color-gray-600);
+  --stripe-border-dark: var(--color-gray-500);
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body {
+  font-family: var(--stripe-font-family);
+  font-size: var(--stripe-font-size-base);
+  font-weight: var(--stripe-font-weight-normal);
+  color: var(--stripe-text-primary);
+  background-color: var(--stripe-bg-primary);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--stripe-font-weight-semibold);
+  color: var(--stripe-text-primary);
+  line-height: 1.3;
+  margin-bottom: var(--stripe-space-4);
+}
+
+h1 {
+  font-size: var(--stripe-font-size-4xl);
+  font-weight: var(--stripe-font-weight-bold);
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: var(--stripe-font-size-3xl);
+}
+
+h3 {
+  font-size: var(--stripe-font-size-2xl);
+}
+
+h4 {
+  font-size: var(--stripe-font-size-xl);
+}
+
+h5 {
+  font-size: var(--stripe-font-size-lg);
+}
+
+h6 {
+  font-size: var(--stripe-font-size-base);
+}
+
+p {
+  margin-bottom: var(--stripe-space-4);
+  color: var(--stripe-text-secondary);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--stripe-space-3) var(--stripe-space-6);
+  font-family: inherit;
+  font-size: var(--stripe-font-size-sm);
+  font-weight: var(--stripe-font-weight-medium);
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--stripe-radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button - Blue */
+.btn-primary {
+  background: var(--color-blue);
+  color: var(--color-white);
+  border-color: var(--color-blue);
+}
+
+.btn-primary:hover {
+  background: var(--color-black);
+  border-color: var(--color-black);
+  transform: translateY(-1px);
+  box-shadow: var(--stripe-shadow-md);
+}
+
+/* Secondary Button - White with Blue border */
+.btn-secondary {
+  background: var(--color-white);
+  color: var(--color-blue);
+  border-color: var(--color-blue);
+}
+
+.btn-secondary:hover {
+  background: var(--color-blue);
+  color: var(--color-white);
+  transform: translateY(-1px);
+  box-shadow: var(--stripe-shadow-sm);
+}
+
+/* Gradient Button - Now just Blue */
+.btn-gradient {
+  background: var(--color-blue);
+  color: var(--color-white);
+  border: none;
+}
+
+.btn-gradient:hover {
+  background: var(--color-black);
+  transform: translateY(-1px);
+  box-shadow: var(--stripe-shadow-md);
+}
+
+/* Large Button */
+.btn-lg {
+  padding: var(--stripe-space-4) var(--stripe-space-8);
+  font-size: var(--stripe-font-size-base);
+}
+
+/* Small Button */
+.btn-sm {
+  padding: var(--stripe-space-2) var(--stripe-space-4);
+  font-size: var(--stripe-font-size-xs);
+}
+
+/* Cards */
+.card {
+  background: var(--stripe-bg-primary);
+  border: 1px solid var(--stripe-border-light);
+  border-radius: var(--stripe-radius-lg);
+  padding: var(--stripe-space-6);
+  box-shadow: var(--stripe-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--stripe-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Form Elements */
+.form-input {
+  width: 100%;
+  padding: var(--stripe-space-3) var(--stripe-space-4);
+  font-family: inherit;
+  font-size: var(--stripe-font-size-sm);
+  color: var(--stripe-text-primary);
+  background: var(--stripe-bg-primary);
+  border: 1px solid var(--stripe-border-light);
+  border-radius: var(--stripe-radius-md);
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--stripe-blurple);
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--stripe-text-muted);
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--stripe-space-4);
+}
+
+.section {
+  padding: var(--stripe-space-16) 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Blue accent text */
+.text-accent {
+  color: var(--color-blue);
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--stripe-border-light);
+  border-top: 2px solid var(--stripe-blurple);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  :root {
+    --stripe-font-size-4xl: 32px;
+    --stripe-font-size-3xl: 24px;
+    --stripe-font-size-2xl: 20px;
+  }
+  
+  .container {
+    padding: 0 var(--stripe-space-4);
+  }
+  
+  .section {
+    padding: var(--stripe-space-12) 0;
+  }
+  
+  /* Responsive text areas for mobile */
+  textarea {
+    min-height: 220px !important;
+    padding: 1rem !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+  
+  /* Adjust container width on mobile */
+  .container {
+    max-width: 100% !important;
+    padding: 0 var(--stripe-space-4) !important;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* Hide scrollbars but keep functionality - Stripe style */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--stripe-border-light);
+  border-radius: var(--stripe-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--stripe-border-medium);
+}

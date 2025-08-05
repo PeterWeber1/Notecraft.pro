@@ -28,14 +28,10 @@ export function LoginModal({ isOpen, onClose, theme }) {
       alignItems: 'center',
       zIndex: 1000
     }}>
-      <div style={{
-        background: theme.cardBackground,
-        padding: '32px',
-        borderRadius: '16px',
+      <div className="card" style={{
         maxWidth: '400px',
         width: '90%',
-        border: `1px solid ${theme.cardBorder}`,
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        padding: 'var(--stripe-space-8)'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
@@ -57,17 +53,7 @@ export function LoginModal({ isOpen, onClose, theme }) {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: `1px solid ${theme.cardBorder}`,
-                background: theme.background,
-                color: theme.color,
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'border-color 0.2s'
-              }}
+              className="form-input"
             />
           </div>
 
@@ -82,17 +68,9 @@ export function LoginModal({ isOpen, onClose, theme }) {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter your password"
+                className="form-input"
                 style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  paddingRight: '48px',
-                  borderRadius: '8px',
-                  border: `1px solid ${theme.cardBorder}`,
-                  background: theme.background,
-                  color: theme.color,
-                  fontSize: '1rem',
-                  outline: 'none',
-                  transition: 'border-color 0.2s'
+                  paddingRight: '48px'
                 }}
               />
               <button
@@ -200,13 +178,9 @@ export function RegisterModal({ isOpen, onClose, theme }) {
       zIndex: 1000
     }}>
       <div style={{
-        background: theme.cardBackground,
-        padding: '32px',
-        borderRadius: '16px',
         maxWidth: '450px',
         width: '90%',
-        border: `1px solid ${theme.cardBorder}`,
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        padding: 'var(--stripe-space-8)',
         maxHeight: '90vh',
         overflowY: 'auto'
       }}>
@@ -859,7 +833,7 @@ export function UpgradeModal({ isOpen, onClose, theme }) {
         'Dedicated support',
         'API access'
       ],
-      color: '#8b5cf6'
+      color: '#635bff'
     }
   ];
 
@@ -949,7 +923,18 @@ export function UpgradeModal({ isOpen, onClose, theme }) {
                 </h3>
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ color: plan.color, fontWeight: 'bold', fontSize: '1.8rem' }}>
-                    ${plan.price}
+                    <span style={{
+                      background: '#635bff',
+                      color: 'white',
+                      fontSize: '0.6em',
+                      padding: '1px 4px',
+                      borderRadius: '8px',
+                      marginRight: '4px',
+                      fontWeight: 'bold'
+                    }}>
+                      $
+                    </span>
+                    {plan.price}
                   </span>
                   <span style={{ color: theme.color + '80', fontSize: '0.9rem' }}>/month</span>
                 </div>

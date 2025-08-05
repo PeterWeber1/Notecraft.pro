@@ -55,22 +55,24 @@ function Notepad({
   const [lastSaved, setLastSaved] = useState(null);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
 
-  // Theme-based styles
+  // Minimalist theme - Black, White, Blue
   const getThemeStyles = () => ({
-    background: isDarkMode ? '#111827' : '#f9fafb',
-    color: isDarkMode ? '#ffffff' : '#111827',
-    cardBackground: isDarkMode ? '#1f2937' : '#ffffff',
-    cardBorder: isDarkMode ? '#374151' : '#e5e7eb',
-    inputBackground: isDarkMode ? '#374151' : '#ffffff',
-    inputBorder: isDarkMode ? '#4b5563' : '#e5e7eb',
-    inputColor: isDarkMode ? '#ffffff' : '#111827',
-    labelColor: isDarkMode ? '#d1d5db' : '#374151',
-    mutedColor: isDarkMode ? '#9ca3af' : '#666666',
-    editorBackground: isDarkMode ? '#111827' : '#f9fafb',
-    toolbarBackground: isDarkMode ? '#111827' : '#f9fafb',
-    success: '#10b981',
-    warning: '#f59e0b',
-    error: '#ef4444'
+    background: isDarkMode ? '#000000' : '#ffffff',
+    color: isDarkMode ? '#ffffff' : '#000000',
+    cardBackground: isDarkMode ? '#202020' : '#ffffff',
+    cardBorder: isDarkMode ? '#404040' : '#e0e0e0',
+    inputBackground: isDarkMode ? '#202020' : '#ffffff',
+    inputBorder: isDarkMode ? '#606060' : '#e0e0e0',
+    inputColor: isDarkMode ? '#ffffff' : '#000000',
+    labelColor: isDarkMode ? '#a0a0a0' : '#606060',
+    mutedColor: isDarkMode ? '#808080' : '#a0a0a0',
+    editorBackground: isDarkMode ? '#000000' : '#ffffff',
+    toolbarBackground: isDarkMode ? '#000000' : '#f9f9f9',
+    primary: '#635bff',
+    accent: '#635bff', 
+    success: '#000000',
+    warning: '#000000',
+    error: '#000000'
   });
 
   const theme = getThemeStyles();
@@ -114,7 +116,7 @@ function Notepad({
       basic: {
         wordLimit: 500,
         features: ['Basic formatting', 'Word count', 'Reading time', 'Auto-save'],
-        color: theme.primary || '#6366f1',
+        color: theme.primary || '#635bff',
         canExport: false,
         canAiDetect: false,
         canAdvancedFormat: false
@@ -122,7 +124,7 @@ function Notepad({
       pro: {
         wordLimit: 2000,
         features: ['Advanced formatting', 'AI detection', 'Export options', 'Style customization'],
-        color: theme.accent || '#fbbf24',
+        color: theme.accent || '#635bff',
         canExport: true,
         canAiDetect: true,
         canAdvancedFormat: true
@@ -130,7 +132,7 @@ function Notepad({
       ultra: {
         wordLimit: 10000,
         features: ['Ultra formatting', 'All Pro features', 'Bulk processing', 'Priority support'],
-        color: '#8b5cf6',
+        color: '#635bff',
         canExport: true,
         canAiDetect: true,
         canAdvancedFormat: true
@@ -562,7 +564,7 @@ function Notepad({
         height: '36px',
         padding: '8px',
         border: 'none',
-        borderBottom: active ? `2.5px solid ${isDarkMode ? '#fff' : '#18181b'}` : '2.5px solid transparent',
+        borderBottom: active ? `2.5px solid ${isDarkMode ? '#ffffff' : '#000000'}` : '2.5px solid transparent',
         borderRadius: '4px',
         cursor: 'pointer',
         fontSize: '16px',
@@ -570,7 +572,7 @@ function Notepad({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'transparent',
-        color: isDarkMode ? '#fff' : '#18181b',
+        color: isDarkMode ? '#ffffff' : '#000000',
         boxShadow: 'none',
         transition: 'border-bottom 0.2s, color 0.2s',
       }}
@@ -589,7 +591,7 @@ function Notepad({
     <div style={{
       width: '1px',
       height: '24px',
-      backgroundColor: isDarkMode ? '#4b5563' : '#d1d5db',
+      backgroundColor: isDarkMode ? '#404040' : '#e0e0e0',
       margin: '0 4px'
     }} />
   );
@@ -676,7 +678,7 @@ function Notepad({
         }}>
           <div>
             <h1 style={{ 
-              color: '#8b5cf6', 
+              color: '#635bff', 
               marginBottom: '5px', 
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               margin: 0
@@ -776,7 +778,7 @@ function Notepad({
                         position: 'absolute',
                         top: '-4px',
                         right: '-4px',
-                        background: '#ff6b6b',
+                        background: '#635bff',
                         color: 'white',
                         fontSize: '0.6rem',
                         padding: '1px 4px',
@@ -794,8 +796,8 @@ function Notepad({
             <a 
               href="/" 
               style={{
-                background: isDarkMode ? '#374151' : '#e5e7eb',
-                color: isDarkMode ? '#d1d5db' : '#374151',
+                background: isDarkMode ? '#404040' : '#e0e0e0',
+                color: isDarkMode ? '#a0a0a0' : '#606060',
                 padding: '10px 20px',
                 borderRadius: '8px',
                 textDecoration: 'none',
@@ -810,7 +812,7 @@ function Notepad({
             <button
               onClick={toggleTheme}
               style={{
-                background: isDarkMode ? '#374151' : '#e5e7eb',
+                background: isDarkMode ? '#404040' : '#e0e0e0',
                 border: 'none',
                 borderRadius: '50px',
                 padding: '12px',
@@ -856,7 +858,7 @@ function Notepad({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: isDarkMode ? '#fff' : '#18181b',
+                  color: isDarkMode ? '#ffffff' : '#000000',
                   fontSize: 22,
                   cursor: 'pointer',
                   padding: '4px 10px',
@@ -874,7 +876,7 @@ function Notepad({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: isDarkMode ? '#fff' : '#18181b',
+                  color: isDarkMode ? '#ffffff' : '#000000',
                   fontSize: 22,
                   cursor: 'pointer',
                   padding: '4px 10px',
@@ -892,7 +894,7 @@ function Notepad({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: isDarkMode ? '#fff' : '#18181b',
+                  color: isDarkMode ? '#ffffff' : '#000000',
                   fontSize: 22,
                   cursor: 'pointer',
                   padding: '4px 10px',
@@ -1057,7 +1059,7 @@ function Notepad({
                           borderRadius: 4,
                           transition: 'background 0.2s',
                         }}
-                        onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? '#374151' : '#e5e7eb'}
+                        onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? '#404040' : '#e0e0e0'}
                         onMouseLeave={e => e.currentTarget.style.background = 'none'}
                       >
                         {emoji}
@@ -1204,7 +1206,7 @@ function Notepad({
                     onClick={insertLink}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: '#8b5cf6',
+                      backgroundColor: '#635bff',
                       color: 'white',
                       borderRadius: '6px',
                       border: 'none',
@@ -1222,7 +1224,7 @@ function Notepad({
                     }}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: isDarkMode ? '#4b5563' : '#e5e7eb',
+                      backgroundColor: isDarkMode ? '#404040' : '#e0e0e0',
                       color: theme.color,
                       borderRadius: '6px',
                       border: 'none',
@@ -1393,7 +1395,7 @@ function Notepad({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: isDarkMode ? '#d1d5db' : '#374151',
+                  color: isDarkMode ? '#a0a0a0' : '#606060',
                   fontSize: 20,
                   cursor: 'pointer',
                   padding: 0,
@@ -1760,7 +1762,7 @@ function Notepad({
           bottom: 32,
           transform: 'translateX(-50%)',
           background: isDarkMode ? 'rgba(55,65,81,0.97)' : 'rgba(243,244,246,0.97)',
-          color: isDarkMode ? '#fff' : '#222',
+          color: isDarkMode ? '#ffffff' : '#222',
           padding: '12px 28px',
           borderRadius: 24,
           fontSize: 16,

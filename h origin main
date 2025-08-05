@@ -1,0 +1,3 @@
+[33mdda0eb3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Fix pricing buttons functionality - add onClick handlers and debugging
+[33mf2dc01c[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix pricing buttons functionality - add UpgradeModal component and connect to App.js
+[33me500010[m Fix button functionality and improve UI components

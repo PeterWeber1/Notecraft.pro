@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dollar Sign Styling Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .plan { border: 1px solid #ddd; padding: 20px; margin: 10px; border-radius: 8px; }
+        .price { font-size: 1.8rem; font-weight: bold; }
+        .dollar-sign {
+            background: #635bff;
+            color: white;
+            font-size: 0.6em;
+            padding: 1px 4px;
+            border-radius: 8px;
+            margin-right: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Dollar Sign Styling Test</h2>
+    
+    <div class="plan">
+        <h3>Pro Plan</h3>
+        <div class="price">
+            <span class="dollar-sign">$</span>29.99<span style="font-size: 0.9rem; color: #666;">/month</span>
+        </div>
+    </div>
+    
+    <div class="plan">
+        <h3>Ultra Plan</h3>
+        <div class="price">
+            <span class="dollar-sign">$</span>59.99<span style="font-size: 0.9rem; color: #666;">/month</span>
+        </div>
+    </div>
+    
+    <p>The dollar signs should have a blue background (#635bff) with white text.</p>
+</body>
+</html>
