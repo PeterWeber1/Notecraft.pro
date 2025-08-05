@@ -26,7 +26,7 @@ function Notepad({
   const [showLinkDialog, setShowLinkDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [showLineSpacing, setShowLineSpacing] = useState(false);
-  const [savedStatus, setSavedStatus] = useState('');
+  // Removed savedStatus to eliminate popup notifications
   const [savedNotes, setSavedNotes] = useState([]); // NEW: array of saved notes
   const [expandedNotes, setExpandedNotes] = useState([]); // Track expanded notes
   const [toast, setToast] = useState(''); // For subtle confirmation
@@ -55,24 +55,24 @@ function Notepad({
   const [lastSaved, setLastSaved] = useState(null);
   const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
 
-  // Minimalist theme - Black, White, Blue
+  // Minimalist theme - Twitter Dim inspired dark mode
   const getThemeStyles = () => ({
-    background: isDarkMode ? '#000000' : '#ffffff',
+    background: isDarkMode ? '#15202b' : '#ffffff',
     color: isDarkMode ? '#ffffff' : '#000000',
-    cardBackground: isDarkMode ? '#202020' : '#ffffff',
-    cardBorder: isDarkMode ? '#404040' : '#e0e0e0',
-    inputBackground: isDarkMode ? '#202020' : '#ffffff',
-    inputBorder: isDarkMode ? '#606060' : '#e0e0e0',
+    cardBackground: isDarkMode ? '#1e2732' : '#ffffff',
+    cardBorder: isDarkMode ? '#38444d' : '#e0e0e0',
+    inputBackground: isDarkMode ? '#253341' : '#ffffff',
+    inputBorder: isDarkMode ? '#38444d' : '#e0e0e0',
     inputColor: isDarkMode ? '#ffffff' : '#000000',
-    labelColor: isDarkMode ? '#a0a0a0' : '#606060',
-    mutedColor: isDarkMode ? '#808080' : '#a0a0a0',
-    editorBackground: isDarkMode ? '#000000' : '#ffffff',
-    toolbarBackground: isDarkMode ? '#000000' : '#f9f9f9',
+    labelColor: isDarkMode ? '#8899a6' : '#606060',
+    mutedColor: isDarkMode ? '#8899a6' : '#a0a0a0',
+    editorBackground: isDarkMode ? '#192734' : '#ffffff',
+    toolbarBackground: isDarkMode ? '#1e2732' : '#f9f9f9',
     primary: '#635bff',
     accent: '#635bff', 
-    success: '#000000',
-    warning: '#000000',
-    error: '#000000'
+    success: '#17bf63',
+    warning: '#ffad1f',
+    error: '#f91880'
   });
 
   const theme = getThemeStyles();
@@ -186,6 +186,77 @@ function Notepad({
     editorRef.current.focus();
     
     try {
+      // Handle alignment commands with toggle functionality
+      if (command === 'justifyLeft' || command === 'justifyCenter' || command === 'justifyRight') {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) {
+          document.execCommand(command, false, null);
+          setTimeout(() => updateFormatState(), 50);
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
+        let element = range.commonAncestorContainer;
+        
+        // Find the block element that contains our selection
+        if (element.nodeType === Node.TEXT_NODE) {
+          element = element.parentElement;
+        }
+        
+        // Find the closest block element
+        while (element && element !== editorRef.current && !['DIV', 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(element.tagName)) {
+          element = element.parentElement;
+        }
+
+        if (element && element !== editorRef.current) {
+          // Store the current selection and preserve its formatting state
+          const currentRange = selection.getRangeAt(0).cloneRange();
+          
+          // Check current formatting before applying alignment
+          const wasBold = document.queryCommandState('bold');
+          const wasItalic = document.queryCommandState('italic');
+          const wasUnderline = document.queryCommandState('underline');
+          
+          // Check if this alignment is already active (for toggle functionality)
+          const currentAlign = element.style.textAlign;
+          const targetAlign = command === 'justifyLeft' ? 'left' : 
+                             command === 'justifyCenter' ? 'center' : 'right';
+          
+          if (currentAlign === targetAlign) {
+            // Toggle off - remove alignment (return to default)
+            element.style.textAlign = '';
+          } else {
+            // Apply new alignment
+            element.style.textAlign = targetAlign;
+          }
+          
+          // Restore selection first
+          selection.removeAllRanges();
+          selection.addRange(currentRange);
+          
+          // If formatting was lost, reapply it
+          setTimeout(() => {
+            if (selection.rangeCount > 0) {
+              const newBold = document.queryCommandState('bold');
+              const newItalic = document.queryCommandState('italic');
+              const newUnderline = document.queryCommandState('underline');
+              
+              if (wasBold && !newBold) document.execCommand('bold', false, null);
+              if (wasItalic && !newItalic) document.execCommand('italic', false, null);
+              if (wasUnderline && !newUnderline) document.execCommand('underline', false, null);
+              
+              updateFormatState();
+            }
+          }, 10);
+        } else {
+          // Fallback to execCommand if we can't find a suitable block element
+          document.execCommand(command, false, null);
+        }
+        
+        setTimeout(() => updateFormatState(), 50);
+        return;
+      }
+      
       if (command === 'fontSize') {
         const selection = window.getSelection();
         if (!selection.rangeCount) return;
@@ -297,11 +368,9 @@ function Notepad({
       try {
         localStorage.setItem('notepadContent', plainText);
         localStorage.setItem('notepadHtml', html);
-        setSavedStatus('✅ Saved');
         setLastSaved(new Date());
         
-        // Clear saved status after 2 seconds
-        setTimeout(() => setSavedStatus(''), 2000);
+        // Don't show saved status popup for automatic saves
       } catch (error) {
         console.log('Could not save to localStorage');
       }
@@ -454,28 +523,95 @@ function Notepad({
     }
   };
 
-  // Download note as .txt file
+  // Export note as Word document
   const downloadNote = () => {
     try {
-      const textToDownload = editorRef.current ? editorRef.current.innerText : '';
-      if (!textToDownload.trim()) {
-        alert('No text to download!');
+      const htmlToExport = editorRef.current ? editorRef.current.innerHTML : '';
+      if (!htmlToExport.trim()) {
+        alert('No text to export!');
         return;
       }
       
-      const blob = new Blob([textToDownload], { type: 'text/plain' });
+      // Create Word document HTML structure
+      const wordDocContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+          <head>
+            <meta charset='utf-8'>
+            <title>Notecraft Document</title>
+            <!--[if gte mso 9]>
+            <xml>
+              <w:WordDocument>
+                <w:View>Print</w:View>
+                <w:Zoom>90</w:Zoom>
+                <w:DoNotPromptForConvert/>
+                <w:DoNotShowInsertionsAndDeletions/>
+              </w:WordDocument>
+            </xml>
+            <![endif]-->
+            <style>
+              @page {
+                margin: 1in;
+              }
+              body {
+                font-family: Arial, sans-serif;
+                font-size: 12pt;
+                line-height: 1.6;
+              }
+            </style>
+          </head>
+          <body>
+            ${htmlToExport}
+          </body>
+        </html>
+      `;
+      
+      const blob = new Blob([wordDocContent], { 
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `notecraft-note-${new Date().toISOString().slice(0, 10)}.txt`;
+      a.download = `notecraft-note-${new Date().toISOString().slice(0, 10)}.doc`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('Note downloaded successfully!');
+      showToast('Word document exported successfully!');
     } catch (error) {
-      console.error('Failed to download note:', error);
-      showToast('Failed to download note. Please try again.');
+      console.error('Failed to export Word document:', error);
+      showToast('Failed to export Word document. Please try again.');
+    }
+  };
+
+  // Print current note
+  const printNote = () => {
+    try {
+      const textToPrint = editorRef.current ? editorRef.current.innerHTML : '';
+      if (!textToPrint.trim()) {
+        alert('No text to print!');
+        return;
+      }
+      
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Notecraft Note</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+              @media print { body { margin: 0; } }
+            </style>
+          </head>
+          <body>${textToPrint}</body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    } catch (error) {
+      console.error('Failed to print note:', error);
+      showToast('Failed to print note. Please try again.');
     }
   };
 
@@ -530,30 +666,105 @@ function Notepad({
     if (!editorRef.current) return;
     const sel = window.getSelection();
     if (!sel.rangeCount) return;
-    const commands = [
-      'bold', 'italic', 'underline',
-      'justifyLeft', 'justifyCenter', 'justifyRight',
-    ];
-    const state = {};
-    commands.forEach(cmd => {
-      state[cmd] = document.queryCommandState(cmd);
-    });
-    setFormatState(state);
+    
+    // Only update format state if selection is actually inside the editor
+    const range = sel.getRangeAt(0);
+    const isInsideEditor = editorRef.current.contains(range.commonAncestorContainer) || 
+                          editorRef.current.contains(range.startContainer) ||
+                          editorRef.current.contains(range.endContainer) ||
+                          range.commonAncestorContainer === editorRef.current;
+    
+    if (!isInsideEditor) {
+      // If selection is outside editor, reset all format states
+      setFormatState({
+        bold: false,
+        italic: false,
+        underline: false,
+        justifyLeft: false,
+        justifyCenter: false,
+        justifyRight: false
+      });
+      return;
+    }
+    
+    try {
+      const state = {};
+      
+      // Check each format state individually and safely
+      try { state.bold = document.queryCommandState('bold'); } catch { state.bold = false; }
+      try { state.italic = document.queryCommandState('italic'); } catch { state.italic = false; }
+      try { state.underline = document.queryCommandState('underline'); } catch { state.underline = false; }
+      
+      // For alignment, check the current selection/cursor position
+      let element = range.commonAncestorContainer;
+      if (element.nodeType === Node.TEXT_NODE) {
+        element = element.parentElement;
+      }
+      
+      // Find the closest block element to check alignment
+      while (element && element !== editorRef.current && !['DIV', 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(element.tagName)) {
+        element = element.parentElement;
+      }
+      
+      if (element && element !== editorRef.current) {
+        // Check both CSS style and computed style for alignment
+        const inlineTextAlign = element.style.textAlign;
+        const computedTextAlign = window.getComputedStyle(element).textAlign;
+        const effectiveAlign = inlineTextAlign || computedTextAlign;
+        
+        // Only show alignment as active if explicitly set by user (not default browser behavior)
+        state.justifyLeft = inlineTextAlign === 'left';
+        state.justifyCenter = inlineTextAlign === 'center' || effectiveAlign === 'center';
+        state.justifyRight = inlineTextAlign === 'right' || effectiveAlign === 'right' || effectiveAlign === 'end';
+      } else {
+        // No alignment buttons selected initially - user must explicitly choose
+        state.justifyLeft = false;
+        state.justifyCenter = false;
+        state.justifyRight = false;
+      }
+      
+      setFormatState(state);
+    } catch (error) {
+      console.log('Format state update error:', error);
+      // Set safe default state - no alignment buttons selected initially
+      setFormatState({
+        bold: false,
+        italic: false,
+        underline: false,
+        justifyLeft: false,
+        justifyCenter: false,
+        justifyRight: false
+      });
+    }
   };
 
-  // Attach selectionchange event to update format state
+  // Attach selectionchange event to update format state with debouncing
   useEffect(() => {
-    document.addEventListener('selectionchange', updateFormatState);
-    return () => document.removeEventListener('selectionchange', updateFormatState);
+    let timeoutId;
+    const debouncedUpdateFormatState = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        updateFormatState();
+      }, 100); // Debounce by 100ms
+    };
+    
+    document.addEventListener('selectionchange', debouncedUpdateFormatState);
+    return () => {
+      document.removeEventListener('selectionchange', debouncedUpdateFormatState);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   // Also update format state on input
   const handleEditorInput = (e) => {
     updateContent();
-    updateFormatState();
+    // Only update format state if editor is focused
+    if (document.activeElement === editorRef.current) {
+      setTimeout(() => updateFormatState(), 150);
+    }
   };
 
-  // Update IconButton for toolbar to use a simple border-bottom when active, no color fill
+  // Enhanced IconButton with clear active states for both light and dark modes
   const IconButton = ({ icon, onClick, onMouseDown, title, active = false }) => (
     <button
       onClick={onClick}
@@ -563,24 +774,32 @@ function Notepad({
         minWidth: '36px',
         height: '36px',
         padding: '8px',
-        border: 'none',
-        borderBottom: active ? `2.5px solid ${isDarkMode ? '#ffffff' : '#000000'}` : '2.5px solid transparent',
-        borderRadius: '4px',
+        border: `1px solid ${active ? (isDarkMode ? '#635bff' : '#635bff') : 'transparent'}`,
+        borderRadius: '6px',
         cursor: 'pointer',
         fontSize: '16px',
+        fontWeight: active ? 'bold' : 'normal',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'transparent',
-        color: isDarkMode ? '#ffffff' : '#000000',
-        boxShadow: 'none',
-        transition: 'border-bottom 0.2s, color 0.2s',
+        backgroundColor: active 
+          ? (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') 
+          : 'transparent',
+        color: active 
+          ? (isDarkMode ? '#ffffff' : '#000000') 
+          : (isDarkMode ? '#ffffff' : '#000000'),
+        boxShadow: active ? `0 0 0 1px ${isDarkMode ? '#ffffff' : '#000000'}` : 'none',
+        transition: 'all 0.2s ease',
       }}
       onMouseEnter={e => {
-        e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+        if (!active) {
+          e.target.style.backgroundColor = isDarkMode ? 'rgba(56, 68, 77, 0.3)' : 'rgba(0,0,0,0.04)';
+        }
       }}
       onMouseLeave={e => {
-        e.target.style.backgroundColor = 'transparent';
+        if (!active) {
+          e.target.style.backgroundColor = 'transparent';
+        }
       }}
     >
       {icon}
@@ -657,42 +876,52 @@ function Notepad({
           overflow: auto !important;
           height: 100%;
         }
+        /* Custom scrollbar for emoji picker */
+        .emoji-picker-scroll::-webkit-scrollbar {
+          display: block;
+          width: 6px;
+        }
+        .emoji-picker-scroll::-webkit-scrollbar-track {
+          background: ${isDarkMode ? 'rgba(56, 68, 77, 0.3)' : 'rgba(0, 0, 0, 0.05)'};
+          border-radius: 3px;
+        }
+        .emoji-picker-scroll::-webkit-scrollbar-thumb {
+          background: ${isDarkMode ? 'rgba(99, 91, 255, 0.4)' : 'rgba(99, 91, 255, 0.3)'};
+          border-radius: 3px;
+        }
+        .emoji-picker-scroll::-webkit-scrollbar-thumb:hover {
+          background: ${isDarkMode ? 'rgba(99, 91, 255, 0.6)' : 'rgba(99, 91, 255, 0.5)'};
+        }
       `}</style>
-      <div style={{
-        maxWidth: 'clamp(320px, 95vw, 1400px)',
-        margin: '0 auto',
-        padding: 'clamp(12px, 3vw, 20px)',
-        boxSizing: 'border-box',
-        boxShadow: 'none',
-        border: 'none',
-        background: 'none',
+      {/* Fixed Header */}
+      <nav style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        zIndex: 1000, 
+        background: theme.background,
+        borderBottom: `1px solid ${theme.cardBorder}`,
+        backdropFilter: 'blur(20px)',
+        padding: '0.75rem 0'
       }}>
-        {/* Header */}
         <div style={{ 
+          maxWidth: 'clamp(320px, 95vw, 1400px)', 
+          margin: '0 auto', 
+          padding: '0 clamp(20px, 3vw, 40px)', 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
-          marginBottom: '5px',
           flexWrap: 'wrap',
-          gap: '20px',
-          padding: 'clamp(20px, 3vw, 40px)'
+          gap: '20px'
         }}>
-          <div>
-            <h1 style={{ 
-              color: '#635bff', 
-              marginBottom: '5px', 
-              fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-              margin: 0
-            }}>
-              NoteCraft
-            </h1>
-            <p style={{ 
-              color: theme.mutedColor, 
-              margin: 0,
-              fontSize: 'clamp(14px, 1.5vw, 18px)'
-            }}>
-              Your personal writing space with auto-save
-            </p>
+          <div style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: 'var(--stripe-font-weight-bold)', 
+            color: '#635bff',
+            marginLeft: '20px'
+          }}>
+            Notecraft Pro
           </div>
           
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -798,8 +1027,8 @@ function Notepad({
             <a 
               href="/" 
               style={{
-                background: isDarkMode ? '#404040' : '#e0e0e0',
-                color: isDarkMode ? '#a0a0a0' : '#606060',
+                background: isDarkMode ? '#38444d' : '#e0e0e0',
+                color: isDarkMode ? '#8899a6' : '#606060',
                 padding: '12px 24px',
                 borderRadius: '8px',
                 textDecoration: 'none',
@@ -814,7 +1043,7 @@ function Notepad({
             <button
               onClick={toggleTheme}
               style={{
-                background: isDarkMode ? '#404040' : '#e0e0e0',
+                background: isDarkMode ? '#38444d' : '#e0e0e0',
                 border: 'none',
                 borderRadius: '50px',
                 padding: '14px',
@@ -829,7 +1058,19 @@ function Notepad({
             </button>
           </div>
         </div>
+      </nav>
 
+      {/* Main Content */}
+      <div style={{
+        maxWidth: 'clamp(320px, 95vw, 1400px)',
+        margin: '0 auto',
+        padding: 'clamp(12px, 3vw, 20px)',
+        paddingTop: '80px', // Reduced space from fixed header
+        boxSizing: 'border-box',
+        boxShadow: 'none',
+        border: 'none',
+        background: 'none',
+      }}>
         {/* Editor Card */}
         <div style={{ 
           background: theme.background, // Match background for seamlessness
@@ -854,62 +1095,6 @@ function Notepad({
             }}>
               Your Notes
             </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <button
-                onClick={copyText}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: isDarkMode ? '#ffffff' : '#000000',
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  padding: '4px 10px',
-                  borderRadius: 6,
-                  transition: 'background 0.2s',
-                }}
-                title="Copy"
-                onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'none'}
-              >
-                📋
-              </button>
-              <button
-                onClick={downloadNote}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: isDarkMode ? '#ffffff' : '#000000',
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  padding: '4px 10px',
-                  borderRadius: 6,
-                  transition: 'background 0.2s',
-                }}
-                title="Download"
-                onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'none'}
-              >
-                ⬇️
-              </button>
-              <button
-                onClick={saveCurrentNote}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: isDarkMode ? '#ffffff' : '#000000',
-                  fontSize: 22,
-                  cursor: 'pointer',
-                  padding: '4px 10px',
-                  borderRadius: 6,
-                  transition: 'background 0.2s',
-                }}
-                title="Save"
-                onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'none'}
-              >
-                💾
-              </button>
-            </div>
           </div>
 
           {/* Formatting Toolbar */}
@@ -926,17 +1111,29 @@ function Notepad({
           }}>
             {/* Font Selection */}
             <select
-              onChange={(e) => { formatText('fontName', e.target.value); updateFormatState(); }}
+              onChange={(e) => { formatText('fontName', e.target.value); }}
               defaultValue="Arial"
               style={{
-                padding: '4px 8px',
-                borderRadius: '4px',
+                padding: '6px 10px',
+                borderRadius: '6px',
                 fontSize: '14px',
+                fontWeight: '500',
                 backgroundColor: theme.inputBackground,
                 color: theme.inputColor,
-                border: `1px solid ${theme.inputBorder}`
+                border: `1px solid ${theme.inputBorder}`,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                outline: 'none'
               }}
               title="Font Family"
+              onFocus={e => {
+                e.target.style.border = `1px solid #635bff`;
+                e.target.style.boxShadow = '0 0 0 2px rgba(99, 91, 255, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.border = `1px solid ${theme.inputBorder}`;
+                e.target.style.boxShadow = 'none';
+              }}
             >
               {fonts.map(font => (
                 <option key={font.value} value={font.value} style={{ fontFamily: font.value }}>
@@ -947,17 +1144,29 @@ function Notepad({
 
             {/* Text Size */}
             <select
-              onChange={(e) => { formatText('fontSize', e.target.value); updateFormatState(); }}
+              onChange={(e) => { formatText('fontSize', e.target.value); }}
               defaultValue="16px"
               style={{
-                padding: '4px 8px',
-                borderRadius: '4px',
+                padding: '6px 10px',
+                borderRadius: '6px',
                 fontSize: '14px',
+                fontWeight: '500',
                 backgroundColor: theme.inputBackground,
                 color: theme.inputColor,
-                border: `1px solid ${theme.inputBorder}`
+                border: `1px solid ${theme.inputBorder}`,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                outline: 'none'
               }}
               title="Font Size"
+              onFocus={e => {
+                e.target.style.border = `1px solid #635bff`;
+                e.target.style.boxShadow = '0 0 0 2px rgba(99, 91, 255, 0.1)';
+              }}
+              onBlur={e => {
+                e.target.style.border = `1px solid ${theme.inputBorder}`;
+                e.target.style.boxShadow = 'none';
+              }}
             >
               {textSizes.map(size => (
                 <option key={size.value} value={size.value}>
@@ -968,64 +1177,28 @@ function Notepad({
 
             <ToolbarSeparator />
 
-            <IconButton icon="B" onClick={() => { formatText('bold'); updateFormatState(); }} title="Bold" active={!!formatState.bold} />
-            <IconButton icon="I" onClick={() => { formatText('italic'); updateFormatState(); }} title="Italic" active={!!formatState.italic} />
-            <IconButton icon="U" onClick={() => { formatText('underline'); updateFormatState(); }} title="Underline" active={!!formatState.underline} />
+            <IconButton icon="B" onClick={() => { formatText('bold'); setTimeout(() => updateFormatState(), 10); }} title="Bold" active={!!formatState.bold} />
+            <IconButton icon="I" onClick={() => { formatText('italic'); setTimeout(() => updateFormatState(), 10); }} title="Italic" active={!!formatState.italic} />
+            <IconButton icon="U" onClick={() => { formatText('underline'); setTimeout(() => updateFormatState(), 10); }} title="Underline" active={!!formatState.underline} />
             
             <ToolbarSeparator />
             
-            <div style={{ position: 'relative' }} data-dropdown="color">
-              <IconButton 
-                icon="🎨" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowColorPicker(!showColorPicker);
-                }} 
-                title="Text Color" 
-              />
-              {showColorPicker && (
-                <div style={{
-                  position: 'absolute',
-                  top: '40px',
-                  left: '0',
-                  padding: '8px',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  zIndex: 10,
-                  backgroundColor: theme.cardBackground,
-                  border: `1px solid ${theme.cardBorder}`
-                }}>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(5, 1fr)',
-                    gap: '4px'
-                  }}>
-                    {colors.map(color => (
-                      <button
-                        key={color}
-                        onClick={() => {
-                          formatText('foreColor', color);
-                          setShowColorPicker(false);
-                        }}
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '4px',
-                          border: '1px solid #ccc',
-                          backgroundColor: color,
-                          cursor: 'pointer'
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Undo and Redo buttons */}
+            <IconButton 
+              icon="↶" 
+              onClick={() => { document.execCommand('undo'); setTimeout(() => updateFormatState(), 10); }} 
+              title="Undo" 
+            />
+            <IconButton 
+              icon="↷" 
+              onClick={() => { document.execCommand('redo'); setTimeout(() => updateFormatState(), 10); }} 
+              title="Redo" 
+            />
             
-            {/* Toolbar: Replace Add Link with Add Emoji */}
+            {/* Add Emoji with minimalist icon */}
             <div style={{ position: 'relative' }} data-dropdown="emoji">
               <IconButton 
-                icon="😊" 
+                icon="☺" 
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowEmojiPicker(!showEmojiPicker);
@@ -1033,40 +1206,182 @@ function Notepad({
                 title="Add Emoji" 
               />
               {showEmojiPicker && (
-                <div style={{
-                  position: 'absolute',
-                  top: '40px',
-                  left: '0',
-                  padding: '8px',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  zIndex: 10,
-                  backgroundColor: theme.cardBackground,
-                  border: `1px solid ${theme.cardBorder}`
-                }}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: 180 }}>
-                    {["😀","😁","😂","🤣","😊","😍","😎","😢","😡","👍","🙏","🎉","🔥","💡","✅","❌","⭐","🥳","🤔","🙌"].map(emoji => (
-                      <button
-                        key={emoji}
-                        onClick={() => {
-                          insertEmoji(emoji);
-                          setShowEmojiPicker(false);
-                        }}
-                        style={{
-                          fontSize: 22,
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: 4,
-                          borderRadius: 4,
-                          transition: 'background 0.2s',
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = isDarkMode ? '#404040' : '#e0e0e0'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
+                <div 
+                  className="emoji-picker-scroll"
+                  style={{
+                    position: 'absolute',
+                    top: '42px',
+                    left: '0',
+                    width: '280px',
+                    maxHeight: '320px',
+                    padding: '16px',
+                    borderRadius: '12px',
+                    boxShadow: isDarkMode 
+                      ? '0 12px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 91, 255, 0.2)' 
+                      : '0 12px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(99, 91, 255, 0.1)',
+                    zIndex: 1000,
+                    backgroundColor: theme.cardBackground,
+                    border: `1px solid ${isDarkMode ? '#635bff' : theme.cardBorder}`,
+                    backdropFilter: 'blur(20px)',
+                    overflowY: 'auto'
+                  }}
+                >
+                  <div style={{
+                    marginBottom: '12px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: theme.labelColor,
+                    textAlign: 'center'
+                  }}>
+                    Choose an Emoji
+                  </div>
+                  
+                  {/* Emoji Categories */}
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: theme.mutedColor,
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Smileys & People
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '4px' }}>
+                      {["😀","😁","😂","🤣","😊","😍","😎","😢","😡","🥳","🤔","😴","😋","😇","🤪","😘"].map(emoji => (
+                        <button
+                          key={emoji}
+                          onClick={() => {
+                            insertEmoji(emoji);
+                            setShowEmojiPicker(false);
+                          }}
+                          style={{
+                            fontSize: 18,
+                            background: 'transparent',
+                            border: '1px solid transparent',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '8px',
+                            transition: 'all 0.15s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            aspectRatio: '1'
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.background = isDarkMode ? 'rgba(99, 91, 255, 0.15)' : 'rgba(99, 91, 255, 0.08)';
+                            e.currentTarget.style.border = '1px solid rgba(99, 91, 255, 0.3)';
+                            e.currentTarget.style.transform = 'scale(1.15)';
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.border = '1px solid transparent';
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }}
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: theme.mutedColor,
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Gestures & Symbols
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '4px' }}>
+                      {["👍","👎","👏","🙏","✋","👋","🤝","💪","🔥","💡","✅","❌","⭐","🎉","🏆","🎯"].map(emoji => (
+                        <button
+                          key={emoji}
+                          onClick={() => {
+                            insertEmoji(emoji);
+                            setShowEmojiPicker(false);
+                          }}
+                          style={{
+                            fontSize: 18,
+                            background: 'transparent',
+                            border: '1px solid transparent',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '8px',
+                            transition: 'all 0.15s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            aspectRatio: '1'
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.background = isDarkMode ? 'rgba(99, 91, 255, 0.15)' : 'rgba(99, 91, 255, 0.08)';
+                            e.currentTarget.style.border = '1px solid rgba(99, 91, 255, 0.3)';
+                            e.currentTarget.style.transform = 'scale(1.15)';
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.border = '1px solid transparent';
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }}
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: theme.mutedColor,
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      Objects & Nature
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '4px' }}>
+                      {["🌟","⚡","🌈","🎨","📝","💼","🔍","⚙️","🎵","📱","💻","🚀","🎪","🎭","🎲","🎪"].map(emoji => (
+                        <button
+                          key={emoji}
+                          onClick={() => {
+                            insertEmoji(emoji);
+                            setShowEmojiPicker(false);
+                          }}
+                          style={{
+                            fontSize: 18,
+                            background: 'transparent',
+                            border: '1px solid transparent',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '8px',
+                            transition: 'all 0.15s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            aspectRatio: '1'
+                          }}
+                          onMouseEnter={e => {
+                            e.currentTarget.style.background = isDarkMode ? 'rgba(99, 91, 255, 0.15)' : 'rgba(99, 91, 255, 0.08)';
+                            e.currentTarget.style.border = '1px solid rgba(99, 91, 255, 0.3)';
+                            e.currentTarget.style.transform = 'scale(1.15)';
+                          }}
+                          onMouseLeave={e => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.border = '1px solid transparent';
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }}
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -1074,9 +1389,9 @@ function Notepad({
             
             <ToolbarSeparator />
             
-            <IconButton icon="≡" onClick={() => { formatText('justifyLeft'); updateFormatState(); }} title="Align Left" active={!!formatState.justifyLeft} />
-            <IconButton icon="≣" onClick={() => { formatText('justifyCenter'); updateFormatState(); }} title="Align Center" active={!!formatState.justifyCenter} />
-            <IconButton icon={<span style={{display:'inline-block', transform:'scaleX(-1)'}}>≡</span>} onClick={() => { formatText('justifyRight'); updateFormatState(); }} title="Align Right" active={!!formatState.justifyRight} />
+            <IconButton icon="≡" onClick={() => { formatText('justifyLeft'); }} title="Align Left" active={!!formatState.justifyLeft} />
+            <IconButton icon="≣" onClick={() => { formatText('justifyCenter'); }} title="Align Center" active={!!formatState.justifyCenter} />
+            <IconButton icon={<span style={{display:'inline-block', transform:'scaleX(-1)'}}>≡</span>} onClick={() => { formatText('justifyRight'); }} title="Align Right" active={!!formatState.justifyRight} />
             
             <ToolbarSeparator />
             
@@ -1092,14 +1407,18 @@ function Notepad({
               {showLineSpacing && (
                 <div style={{
                   position: 'absolute',
-                  top: '40px',
+                  top: '42px',
                   left: '0',
                   padding: '8px',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  borderRadius: '10px',
+                  boxShadow: isDarkMode 
+                    ? '0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 91, 255, 0.1)' 
+                    : '0 8px 24px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(99, 91, 255, 0.1)',
                   zIndex: 10,
                   backgroundColor: theme.cardBackground,
-                  border: `1px solid ${theme.cardBorder}`
+                  border: `1px solid ${isDarkMode ? '#635bff' : theme.cardBorder}`,
+                  backdropFilter: 'blur(12px)',
+                  minWidth: '120px'
                 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {lineSpacings.map(spacing => (
@@ -1112,21 +1431,25 @@ function Notepad({
                           setShowLineSpacing(false);
                         }}
                         style={{
-                          padding: '4px 12px',
+                          padding: '8px 12px',
                           fontSize: '14px',
+                          fontWeight: '500',
                           textAlign: 'left',
-                          borderRadius: '4px',
-                          border: 'none',
+                          borderRadius: '6px',
+                          border: '1px solid transparent',
                           backgroundColor: 'transparent',
                           color: theme.color,
                           cursor: 'pointer',
-                          transition: 'background-color 0.2s'
+                          transition: 'all 0.2s ease',
+                          width: '100%'
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+                          e.target.style.backgroundColor = isDarkMode ? 'rgba(99, 91, 255, 0.1)' : 'rgba(99, 91, 255, 0.05)';
+                          e.target.style.border = '1px solid rgba(99, 91, 255, 0.2)';
                         }}
                         onMouseLeave={(e) => {
                           e.target.style.backgroundColor = 'transparent';
+                          e.target.style.border = '1px solid transparent';
                         }}
                       >
                         {spacing.label}
@@ -1157,6 +1480,30 @@ function Notepad({
             />
             <IconButton icon="⬅" onClick={() => formatText('outdent')} title="Decrease Indent" />
             <IconButton icon="➡" onClick={() => formatText('indent')} title="Increase Indent" />
+            
+            <ToolbarSeparator />
+            
+            {/* Action Buttons - Minimalist Icons */}
+            <IconButton 
+              icon="⧉" 
+              onClick={copyText} 
+              title="Copy text to clipboard" 
+            />
+            <IconButton 
+              icon="⎙" 
+              onClick={printNote} 
+              title="Print note" 
+            />
+            <IconButton 
+              icon="⤋" 
+              onClick={downloadNote} 
+              title="Export as Word document" 
+            />
+            <IconButton 
+              icon="⊡" 
+              onClick={saveCurrentNote} 
+              title="Save to my notes collection" 
+            />
           </div>
 
           {/* Link Dialog */}
@@ -1164,7 +1511,7 @@ function Notepad({
             <div style={{
               position: 'fixed',
               inset: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backgroundColor: isDarkMode ? 'rgba(21, 32, 43, 0.8)' : 'rgba(0, 0, 0, 0.5)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1226,7 +1573,7 @@ function Notepad({
                     }}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: isDarkMode ? '#404040' : '#e0e0e0',
+                      backgroundColor: isDarkMode ? '#38444d' : '#e0e0e0',
                       color: theme.color,
                       borderRadius: '6px',
                       border: 'none',
@@ -1295,20 +1642,32 @@ function Notepad({
             `}} />
           <div style={{
             position: 'relative',
-            background: 'rgba(0, 0, 0, 0.05)',
+            background: isDarkMode ? 'rgba(56, 68, 77, 0.3)' : 'rgba(0, 0, 0, 0.05)',
             borderRadius: '0.75rem',
-            border: '2px solid rgba(0, 0, 0, 0.1)',
+            border: isDarkMode ? '1px solid rgba(56, 68, 77, 0.5)' : '2px solid rgba(0, 0, 0, 0.1)',
             padding: '1.5rem',
             backdropFilter: 'blur(10px)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            boxShadow: isDarkMode ? '0 8px 32px rgba(0, 0, 0, 0.3)' : '0 8px 32px rgba(0, 0, 0, 0.1)',
             marginBottom: '20px'
           }}>
             <div
               ref={editorRef}
               contentEditable={true}
               suppressContentEditableWarning={true}
-              onInput={updateContent}
+              onInput={handleEditorInput}
               onPaste={handlePaste}
+              onFocus={() => setTimeout(() => updateFormatState(), 50)}
+              onBlur={() => {
+                // Reset format state when editor loses focus
+                setFormatState({
+                  bold: false,
+                  italic: false,
+                  underline: false,
+                  justifyLeft: false,
+                  justifyCenter: false,
+                  justifyRight: false
+                });
+              }}
               placeholder="Start writing your notes here... Everything is automatically saved as you type."
               style={{
                 width: '100%',
@@ -1324,8 +1683,8 @@ function Notepad({
                 resize: 'vertical',
                 marginBottom: 0,
                 fontFamily: 'Arial, sans-serif',
-                backgroundColor: 'rgba(255,255,255,0.95)',
-                color: '#000000',
+                backgroundColor: theme.editorBackground,
+                color: theme.inputColor,
                 transition: 'all 0.3s ease',
                 lineHeight: '1.6',
                 overflowY: 'auto',
@@ -1358,7 +1717,7 @@ function Notepad({
               color: theme.labelColor
             }}>
               <span>Characters: {text.length}</span>
-              <span>Words: {text.split(/\s+/).filter(word => word.length > 0).length}/{currentTier.wordLimit}</span>
+              <span>{text.split(/\s+/).filter(word => word.length > 0).length} words</span>
               <span>Lines: {text.split('\n').length}</span>
               <span>Reading time: {readingTime} min</span>
               {currentTier.canAiDetect && aiScore > 0 && (
@@ -1383,10 +1742,12 @@ function Notepad({
                   borderRadius: '4px',
                   cursor: text ? 'pointer' : 'not-allowed',
                   fontSize: '12px',
+                  fontWeight: '500',
                   opacity: text ? 1 : 0.5
                 }}
+                title="Copy text to clipboard"
               >
-                Copy
+                📋 Copy Text
               </button>
               <button
                 onClick={() => setShowKeyboardShortcuts(!showKeyboardShortcuts)}
@@ -1439,7 +1800,6 @@ function Notepad({
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <span>Auto-save: {lastSaved ? lastSaved.toLocaleTimeString() : 'Never'}</span>
               <span>Plan: {selectedTier.toUpperCase()}</span>
-              {savedStatus && <span style={{ color: theme.success }}>{savedStatus}</span>}
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <span>Ctrl+S: Save</span>
@@ -1608,10 +1968,12 @@ function Notepad({
                     padding: '8px 16px',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
                   }}
+                  title="Export as plain text file"
                 >
-                  Download TXT
+                  📄 Export as TXT
                 </button>
                 <button
                   onClick={() => {
@@ -1622,7 +1984,7 @@ function Notepad({
                     a.download = 'note.html';
                     a.click();
                     URL.revokeObjectURL(url);
-                    showToast('Downloaded note.html');
+                    showToast('Exported as HTML');
                   }}
                   style={{
                     background: theme.cardBackground,
@@ -1631,10 +1993,12 @@ function Notepad({
                     padding: '8px 16px',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
                   }}
+                  title="Export with formatting as HTML file"
                 >
-                  Download HTML
+                  🌐 Export as HTML
                 </button>
                 {selectedTier === 'ultra' && (
                   <button
@@ -1646,7 +2010,7 @@ function Notepad({
                       a.download = 'note.json';
                       a.click();
                       URL.revokeObjectURL(url);
-                      showToast('Downloaded note.json');
+                      showToast('Exported as JSON');
                     }}
                     style={{
                       background: theme.cardBackground,
@@ -1655,10 +2019,12 @@ function Notepad({
                       padding: '8px 16px',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: '0.9rem'
+                      fontSize: '0.9rem',
+                      fontWeight: '500'
                     }}
+                    title="Export as JSON data file"
                   >
-                    Download JSON
+                    🔧 Export as JSON
                   </button>
                 )}
               </div>
@@ -1774,7 +2140,7 @@ function Notepad({
           left: '50%',
           bottom: 32,
           transform: 'translateX(-50%)',
-          background: isDarkMode ? 'rgba(55,65,81,0.97)' : 'rgba(243,244,246,0.97)',
+          background: isDarkMode ? 'rgba(30, 39, 50, 0.95)' : 'rgba(243,244,246,0.97)',
           color: isDarkMode ? '#ffffff' : '#222',
           padding: '12px 28px',
           borderRadius: 24,
