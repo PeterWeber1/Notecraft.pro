@@ -15,12 +15,20 @@ function App() {
   });
 
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    
+    // Update document body class for global theme
+    document.body.classList.toggle('dark-mode', newTheme);
+    document.documentElement.classList.toggle('dark-mode', newTheme);
   };
 
-  // Save theme preference
+  // Save theme preference and update document classes
   useEffect(() => {
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    document.documentElement.classList.toggle('dark-mode', isDarkMode);
   }, [isDarkMode]);
 
   return (

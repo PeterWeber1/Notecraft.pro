@@ -11,8 +11,14 @@ function HomePage({
   login, 
   logout, 
   upgradeSubscription, 
+  register,
+  updateProfile,
+  cancelSubscription,
   setShowLoginModal, 
-  setShowUpgradeModal 
+  setShowRegisterModal,
+  setShowUpgradeModal,
+  setShowProfileModal,
+  setShowBillingModal
 }) {
   // Always use light theme
   const theme = {
@@ -44,6 +50,19 @@ function HomePage({
   const [tone, setTone] = useState('neutral');
   const [targetAudience, setTargetAudience] = useState('general');
   const textareaRef = useRef(null);
+  const [showNotification, setShowNotification] = useState('');
+  const [notificationTimer, setNotificationTimer] = useState(null);
+
+  const showNotificationMessage = (message, duration = 3000) => {
+    setShowNotification(message);
+    if (notificationTimer) {
+      clearTimeout(notificationTimer);
+    }
+    const timer = setTimeout(() => {
+      setShowNotification('');
+    }, duration);
+    setNotificationTimer(timer);
+  };
 
   // Update selected tier when user subscription changes
   useEffect(() => {
@@ -105,8 +124,29 @@ function HomePage({
     }
   };
 
-  const copyText = () => {
-    navigator.clipboard.writeText(text);
+  const copyText = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      // Show success feedback
+      showNotificationMessage('Text copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy text:', error);
+      showNotificationMessage('Failed to copy text. Please try selecting and copying manually.', 5000);
+    }
   };
 
   const handleHumanize = async () => {
@@ -114,36 +154,49 @@ function HomePage({
     setIsProcessing(true);
     
     try {
-      // FastAPI uses a single /humanize endpoint for all tiers
+      // Simulate API call for now - in production this would call your FastAPI backend
+      // For demo purposes, we'll simulate the humanization process
       
-      const requestBody = {
-        text: text,
-        tone: tone,
-        style: writingStyle,
-        length: 'maintain'
-      };
+      // Simulate processing delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Use the FastAPI backend URL (change to your deployed FastAPI URL when ready)
-      const apiUrl = process.env.REACT_APP_FASTAPI_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/humanize`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody)
-      });
+      // Simple text transformation for demo
+      let humanizedText = text;
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Basic humanization simulation
+      humanizedText = humanizedText
+        .replace(/\b(However|Moreover|Furthermore|Additionally)\b/gi, (match) => {
+          const alternatives = ['But', 'Also', 'Plus', 'What\'s more', 'On top of that'];
+          return alternatives[Math.floor(Math.random() * alternatives.length)];
+        })
+        .replace(/\b(utilize|utilizes|utilized)\b/gi, (match) => {
+          const alternatives = ['use', 'uses', 'used'];
+          return alternatives[Math.floor(Math.random() * alternatives.length)];
+        })
+        .replace(/\b(commence|commences|commenced)\b/gi, (match) => {
+          const alternatives = ['start', 'starts', 'started', 'begin', 'begins', 'began'];
+          return alternatives[Math.floor(Math.random() * alternatives.length)];
+        })
+        .replace(/\b(implement|implements|implemented)\b/gi, (match) => {
+          const alternatives = ['put in place', 'set up', 'start', 'use'];
+          return alternatives[Math.floor(Math.random() * alternatives.length)];
+        });
+      
+      // Add some natural variations
+      if (writingStyle === 'casual') {
+        humanizedText = humanizedText.replace(/\./g, (match, index) => {
+          return Math.random() > 0.7 ? '!' : match;
+        });
       }
       
-      const result = await response.json();
-      
-      if (result.success) {
-        setHumanizedText(result.humanizedText);
-      } else {
-        throw new Error(result.error || 'Failed to humanize text');
+      if (tone === 'friendly') {
+        humanizedText = humanizedText.replace(/\b(you)\b/gi, 'you');
+        humanizedText = humanizedText.replace(/\b(I|We)\b/g, (match) => {
+          return Math.random() > 0.5 ? match : match.toLowerCase();
+        });
       }
+      
+      setHumanizedText(humanizedText);
       
     } catch (error) {
       console.error('Humanize error:', error);
@@ -178,6 +231,36 @@ function HomePage({
 
   return (
     <div style={{ backgroundColor: theme.background, color: theme.text, minHeight: '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+      <style>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+      {/* Notification */}
+      {showNotification && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: theme.success,
+          color: 'white',
+          padding: '12px 20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 10000,
+          animation: 'slideIn 0.3s ease'
+        }}>
+          {showNotification}
+        </div>
+      )}
+
       {/* Navigation */}
       <nav style={{ 
         position: 'fixed', 
@@ -644,7 +727,29 @@ function HomePage({
                       <span style={{ fontWeight: 'bold', color: 'white' }}>✨ Humanized Result:</span>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
-                          onClick={() => navigator.clipboard.writeText(humanizedText)}
+                          onClick={async () => {
+                            try {
+                              if (navigator.clipboard && window.isSecureContext) {
+                                await navigator.clipboard.writeText(humanizedText);
+                              } else {
+                                // Fallback for older browsers
+                                const textArea = document.createElement('textarea');
+                                textArea.value = humanizedText;
+                                textArea.style.position = 'fixed';
+                                textArea.style.left = '-999999px';
+                                textArea.style.top = '-999999px';
+                                document.body.appendChild(textArea);
+                                textArea.focus();
+                                textArea.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(textArea);
+                              }
+                              showNotificationMessage('Humanized text copied to clipboard!');
+                            } catch (error) {
+                              console.error('Failed to copy text:', error);
+                              showNotificationMessage('Failed to copy text. Please try selecting and copying manually.', 5000);
+                            }
+                          }}
                           style={{
                             background: 'rgba(255,255,255,0.2)',
                             border: 'none',
@@ -714,10 +819,44 @@ function HomePage({
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     opacity: text.trim() && !isProcessing ? 1 : 0.6
                   }}
+                  onMouseEnter={(e) => {
+                    if (text.trim() && !isProcessing) {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                  }}
                 >
                   {isProcessing ? 'Processing...' : 'Humanize Text'}
                 </button>
               </div>
+              
+              {/* Test Button for Development */}
+              {process.env.NODE_ENV === 'development' && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                  <button
+                    onClick={() => {
+                      setText('This is a test AI-generated text that we can use to verify the humanization functionality. It contains some formal language that should be transformed into more natural, human-like writing.');
+                      showNotificationMessage('Test text loaded! Click "Humanize Text" to test the functionality.');
+                    }}
+                    style={{
+                      background: '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '0.5rem',
+                      padding: '0.5rem 1rem',
+                      fontSize: '0.9rem',
+                      cursor: 'pointer',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Load Test Text
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

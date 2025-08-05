@@ -169,38 +169,57 @@ function AccountManager({ children, isDarkMode = false }) {
     setError(null);
     
     try {
-      // Validate input
+      // Simulate API call - in production this would be a real authentication endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+      
+      // For demo purposes, accept any email/password combination
+      // In production, this would validate against your backend
       if (!email || !password) {
         throw new Error('Email and password are required');
       }
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Create a mock user object
       const mockUser = {
-        id: 'user_123',
+        id: 'user_' + Date.now(),
         email: email,
-        name: email.split('@')[0],
+        name: email.split('@')[0], // Use email prefix as name
         createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString(),
         preferences: {
-          emailNotifications: true,
-          marketingEmails: false,
-          theme: isDarkMode ? 'dark' : 'light'
+          theme: 'light',
+          notifications: true
         }
       };
       
-      const authToken = generateAuthToken(mockUser);
+      // Generate auth token
+      const token = generateAuthToken(mockUser);
       
-      setUser(mockUser);
+      // Save to localStorage
       localStorage.setItem('user', JSON.stringify(mockUser));
-      localStorage.setItem('authToken', authToken);
+      localStorage.setItem('authToken', token);
       localStorage.setItem('lastActivity', Date.now().toString());
       
+      // Set default subscription for demo
+      const defaultSubscription = {
+        plan: 'basic',
+        status: 'active',
+        startDate: new Date().toISOString(),
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
+      };
+      localStorage.setItem('subscription', JSON.stringify(defaultSubscription));
+      
+      // Update state
+      setUser(mockUser);
+      setSubscription(defaultSubscription);
+      
+      // Close login modal
       setShowLoginModal(false);
       
+      return { success: true };
+      
     } catch (error) {
-      setError(error.message);
+      console.error('Login error:', error);
+      setError(error.message || 'Login failed. Please try again.');
+      return { success: false, error: error.message };
     } finally {
       setIsAuthenticating(false);
     }
@@ -208,18 +227,34 @@ function AccountManager({ children, isDarkMode = false }) {
 
   // Secure logout
   const logout = () => {
-    setUser(null);
-    setSubscription(null);
-    setError(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('subscription');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('lastActivity');
-    
-    // Clear any session timeouts
-    if (sessionTimeout) {
-      clearTimeout(sessionTimeout);
-      setSessionTimeout(null);
+    try {
+      // Clear all user data
+      setUser(null);
+      setSubscription(null);
+      setError(null);
+      
+      // Clear localStorage
+      localStorage.removeItem('user');
+      localStorage.removeItem('subscription');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('lastActivity');
+      
+      // Clear any session timeouts
+      if (sessionTimeout) {
+        clearTimeout(sessionTimeout);
+        setSessionTimeout(null);
+      }
+      
+      // Close any open modals
+      setShowLoginModal(false);
+      setShowRegisterModal(false);
+      setShowUpgradeModal(false);
+      setShowProfileModal(false);
+      setShowBillingModal(false);
+      
+      console.log('User logged out successfully');
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 

@@ -11,8 +11,14 @@ function Notepad({
   login, 
   logout, 
   upgradeSubscription, 
+  register,
+  updateProfile,
+  cancelSubscription,
   setShowLoginModal, 
-  setShowUpgradeModal 
+  setShowRegisterModal,
+  setShowUpgradeModal,
+  setShowProfileModal,
+  setShowBillingModal
 }) {
   const [text, setText] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
@@ -416,24 +422,59 @@ function Notepad({
     }
   };
 
-  const copyText = () => {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('Copied to clipboard!');
-    }).catch(() => {
-      showToast('Failed to copy');
-    });
+  const copyText = async () => {
+    try {
+      const textToCopy = editorRef.current ? editorRef.current.innerText : '';
+      if (!textToCopy.trim()) {
+        alert('No text to copy!');
+        return;
+      }
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(textToCopy);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      showToast('Text copied to clipboard!');
+    } catch (error) {
+      console.error('Failed to copy text:', error);
+      showToast('Failed to copy text. Please try selecting and copying manually.');
+    }
   };
 
   // Download note as .txt file
   const downloadNote = () => {
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'note.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('Downloaded note.txt');
+    try {
+      const textToDownload = editorRef.current ? editorRef.current.innerText : '';
+      if (!textToDownload.trim()) {
+        alert('No text to download!');
+        return;
+      }
+      
+      const blob = new Blob([textToDownload], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `notecraft-note-${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Note downloaded successfully!');
+    } catch (error) {
+      console.error('Failed to download note:', error);
+      showToast('Failed to download note. Please try again.');
+    }
   };
 
   // Save note to savedNotes array
