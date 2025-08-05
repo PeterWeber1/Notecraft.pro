@@ -864,11 +864,15 @@ export function UpgradeModal({ isOpen, onClose, theme }) {
   ];
 
   const handleUpgrade = async (planId) => {
+    console.log('🔧 handleUpgrade called with planId:', planId);
     try {
+      console.log('🔧 Calling upgradeSubscription...');
       await upgradeSubscription(planId);
+      console.log('✅ Upgrade successful');
       onClose();
     } catch (error) {
-      console.error('Upgrade failed:', error);
+      console.error('❌ Upgrade failed:', error);
+      alert('Upgrade failed: ' + error.message);
     }
   };
 

@@ -1024,7 +1024,40 @@ function HomePage({
                 <ul style={{ textAlign: 'left', padding: 0, margin: 0, listStyle: 'none', marginBottom: '1.2rem' }}>
                   {plan.features.map((f, j) => <li key={j} style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><span style={{ color: theme.accent }}>✔️</span> {f}</li>)}
                 </ul>
-                <button style={{ background: theme.accent, color: '#1a1a1a', border: 'none', borderRadius: '0.5rem', padding: '0.8rem 1.5rem', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer', width: '100%' }}>Subscribe</button>
+                <button 
+                  onClick={() => {
+                    console.log('🔧 Subscribe button clicked for plan:', plan.name);
+                    if (plan.name === 'Basic') {
+                      console.log('🔧 Basic plan selected - showing notification');
+                      showNotificationMessage('Basic plan is free! You can start using it now.');
+                    } else {
+                      console.log('🔧 Paid plan selected - opening upgrade modal');
+                      setShowUpgradeModal(true);
+                    }
+                  }}
+                  style={{ 
+                    background: theme.accent, 
+                    color: '#1a1a1a', 
+                    border: 'none', 
+                    borderRadius: '0.5rem', 
+                    padding: '0.8rem 1.5rem', 
+                    fontWeight: 'bold', 
+                    fontSize: '1.1rem', 
+                    cursor: 'pointer', 
+                    width: '100%',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                >
+                  {plan.name === 'Basic' ? 'Get Started' : 'Subscribe'}
+                </button>
               </div>
             ))}
           </div>

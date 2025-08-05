@@ -260,18 +260,22 @@ function AccountManager({ children, isDarkMode = false }) {
 
   // Enhanced subscription management
   const upgradeSubscription = async (plan) => {
+    console.log('🔧 upgradeSubscription called with plan:', plan);
     setIsAuthenticating(true);
     setError(null);
     
     try {
       // Validate user is logged in
       if (!user) {
+        console.log('❌ No user logged in');
         throw new Error('Please log in to upgrade your subscription');
       }
       
+      console.log('🔧 User is logged in, processing payment...');
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      console.log('🔧 Payment processed, creating subscription...');
       const mockSubscription = {
         id: `sub_${Date.now()}`,
         plan: plan,
@@ -288,11 +292,14 @@ function AccountManager({ children, isDarkMode = false }) {
         }
       };
       
+      console.log('🔧 Setting subscription:', mockSubscription);
       setSubscription(mockSubscription);
       localStorage.setItem('subscription', JSON.stringify(mockSubscription));
       setShowUpgradeModal(false);
+      console.log('✅ Subscription upgrade completed successfully');
       
     } catch (error) {
+      console.error('❌ Upgrade error:', error);
       setError(error.message);
     } finally {
       setIsAuthenticating(false);
