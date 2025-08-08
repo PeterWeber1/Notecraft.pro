@@ -14,7 +14,10 @@ export const authHelpers = {
       email,
       password,
       options: {
-        data: userData // Additional user metadata
+        data: userData, // Additional user metadata
+        emailRedirectTo: process.env.NODE_ENV === 'production' 
+          ? (process.env.REACT_APP_PRODUCTION_URL || 'https://notecraft-pro.vercel.app') 
+          : window.location.origin
       }
     })
     return { data, error }

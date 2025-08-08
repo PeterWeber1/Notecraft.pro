@@ -309,8 +309,8 @@ function HomePage({
             </button>
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.8)' }}>
-                  Welcome, {user.email?.split('@')[0] || user.name || 'User'}
+                <span style={{ fontSize: '0.9rem', color: theme.text, opacity: 0.8 }}>
+                  Welcome, {user.email?.split('@')[0] || user.user_metadata?.full_name || 'User'}
                 </span>
                 <button
                   onClick={() => setShowProfileModal(true)}
