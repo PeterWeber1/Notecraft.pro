@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { supabase, authHelpers } from './lib/supabase';
+import { supabase } from './lib/supabase';
+import Cookies from 'js-cookie';
 
 // Account Management Context
 const AccountContext = createContext();
@@ -12,10 +13,11 @@ export const useAccount = () => {
   return context;
 };
 
-// Enhanced Account Manager with Supabase Authentication
+// Enhanced Account Manager with Supabase Auth + Secure Token Storage
 function AccountManager({ children, isDarkMode = false }) {
   const [user, setUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const [session, setSession] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [error, setError] = useState(null);
@@ -25,6 +27,9 @@ function AccountManager({ children, isDarkMode = false }) {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showBillingModal, setShowBillingModal] = useState(false);
 
+  // Debug log
+  console.log('🔐 AccountManager loaded');
+
   const theme = {
     background: isDarkMode ? '#000000' : '#ffffff',
     color: isDarkMode ? '#ffffff' : '#000000',
@@ -32,166 +37,179 @@ function AccountManager({ children, isDarkMode = false }) {
     cardBorder: isDarkMode ? '#404040' : '#e0e0e0',
     primary: '#635bff',
     accent: '#635bff',
-    success: '#10b981',
-    error: '#ef4444',
-    warning: '#f59e0b'
+    success: '#000000',
+    error: '#000000',
+    warning: '#000000'
   };
 
-  // Initialize authentication state
+  // Initialize Supabase Auth listener
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        console.log('🔧 Initializing Supabase auth...');
-        
-        // Get initial session
-        const { session, error: sessionError } = await authHelpers.getSession();
-        
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          setError('Failed to restore session');
-        } else if (session?.user) {
-          console.log('✅ Found existing session for user:', session.user.email);
-          setUser(session.user);
-          await loadUserSubscription(session.user.id);
-        } else {
-          console.log('ℹ️ No existing session found');
+        // Check if supabase is properly initialized
+        if (!supabase || !supabase.auth) {
+          console.warn('Supabase not configured, using fallback mode');
+          setIsLoading(false);
+          return;
         }
+
+        // Get initial session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+          setSession(session);
+          setUser(session.user);
+          
+          // Load user subscription from secure storage or API
+          await loadUserSubscription(session.user.id);
+        }
+        
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log('Auth state change:', event, session);
+            
+            if (session) {
+              setSession(session);
+              setUser(session.user);
+              await loadUserSubscription(session.user.id);
+              
+              // Store refresh token in httpOnly cookie (simulated with secure cookie)
+              Cookies.set('supabase_refresh_token', session.refresh_token, {
+                httpOnly: false, // Note: Real httpOnly requires server-side implementation
+                secure: true,
+                sameSite: 'strict',
+                expires: 30 // 30 days
+              });
+              
+            } else {
+              setSession(null);
+              setUser(null);
+              setSubscription(null);
+              
+              // Clear cookies
+              Cookies.remove('supabase_refresh_token');
+              Cookies.remove('user_subscription');
+            }
+          }
+        );
+        
+        return () => subscription.unsubscribe();
+        
       } catch (error) {
         console.error('Auth initialization error:', error);
-        setError('Failed to initialize authentication');
+        setError('Authentication system not configured. Please check your environment variables.');
       } finally {
         setIsLoading(false);
       }
     };
 
     initializeAuth();
-
-    // Listen for auth state changes
-    const { data: { subscription: authSubscription } } = authHelpers.onAuthStateChange(
-      async (event, session) => {
-        console.log('🔧 Auth state change:', event, session?.user?.email);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user);
-          await loadUserSubscription(session.user.id);
-          setError(null);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setSubscription(null);
-          setError(null);
-        }
-        
-        setIsLoading(false);
-      }
-    );
-
-    // Cleanup subscription on unmount
-    return () => {
-      authSubscription?.unsubscribe();
-    };
   }, []);
 
   // Load user subscription data
   const loadUserSubscription = async (userId) => {
     try {
-      // For now, create a default subscription
-      // In a real app, you'd query your subscription table
-      const defaultSubscription = {
-        id: `sub_${userId}`,
-        user_id: userId,
-        plan: 'basic',
-        status: 'active',
-        startDate: new Date().toISOString(),
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        features: getPlanFeatures('basic'),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      // In production, this would be a Supabase RPC call or API endpoint
+      // For now, we'll use secure cookie storage as a bridge
+      const savedSubscription = Cookies.get('user_subscription');
       
-      setSubscription(defaultSubscription);
-      console.log('✅ Loaded subscription for user:', userId);
+      if (savedSubscription) {
+        setSubscription(JSON.parse(savedSubscription));
+      } else {
+        // Set default basic subscription for new users
+        const basicSubscription = {
+          id: `sub_${Date.now()}`,
+          user_id: userId,
+          plan: 'basic',
+          status: 'active',
+          created_at: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          features: getPlanFeatures('basic')
+        };
+        
+        setSubscription(basicSubscription);
+        Cookies.set('user_subscription', JSON.stringify(basicSubscription), {
+          secure: true,
+          sameSite: 'strict',
+          expires: 30
+        });
+      }
     } catch (error) {
-      console.error('Error loading subscription:', error);
-      setError('Failed to load subscription data');
+      console.error('Failed to load subscription:', error);
     }
   };
 
-  // Enhanced registration with Supabase
+  // Enhanced registration with Supabase Auth
   const register = async (userData) => {
     setIsAuthenticating(true);
     setError(null);
     
     try {
-      console.log('🔧 Registering user with Supabase:', userData.email);
-      
       // Validate user data
       if (!userData.email || !userData.password || !userData.name) {
         throw new Error('All fields are required');
       }
       
-      if (userData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long');
+      if (userData.password.length < 8) {
+        throw new Error('Password must be at least 8 characters long');
       }
       
       if (!userData.email.includes('@')) {
         throw new Error('Please enter a valid email address');
       }
 
-      // Register with Supabase
-      const { data, error } = await authHelpers.signUp(userData.email, userData.password, {
-        full_name: userData.name,
-        preferences: {
-          emailNotifications: true,
-          marketingEmails: false,
-          theme: isDarkMode ? 'dark' : 'light'
+      // Register with Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          data: {
+            full_name: userData.name,
+            preferences: {
+              emailNotifications: true,
+              marketingEmails: false,
+              theme: isDarkMode ? 'dark' : 'light'
+            }
+          }
         }
       });
-      
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      if (data.user && !data.session) {
-        // Email confirmation required
-        setError('Please check your email and click the confirmation link to complete registration');
-      } else if (data.session) {
-        // User is automatically signed in
-        console.log('✅ User registered and signed in:', data.user.email);
+
+      if (error) throw error;
+
+      if (data.user && !data.user.email_confirmed_at) {
+        setError('Please check your email for a confirmation link');
+      } else {
         setShowRegisterModal(false);
         setShowLoginModal(false);
       }
       
     } catch (error) {
-      console.error('Registration error:', error);
       setError(error.message);
     } finally {
       setIsAuthenticating(false);
     }
   };
 
-  // Enhanced login with Supabase
+  // Enhanced login with Supabase Auth
   const login = async (email, password) => {
     setIsAuthenticating(true);
     setError(null);
     
     try {
-      console.log('🔧 Signing in user with Supabase:', email);
-      
       if (!email || !password) {
         throw new Error('Email and password are required');
       }
-      
-      const { data, error } = await authHelpers.signIn(email, password);
-      
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      if (data.user) {
-        console.log('✅ User signed in successfully:', data.user.email);
-        setShowLoginModal(false);
-        return { success: true };
-      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      setShowLoginModal(false);
+      return { success: true };
       
     } catch (error) {
       console.error('Login error:', error);
@@ -202,34 +220,59 @@ function AccountManager({ children, isDarkMode = false }) {
     }
   };
 
-  // Secure logout with Supabase
-  const logout = async () => {
+  // Social login with Supabase
+  const loginWithProvider = async (provider) => {
     try {
-      console.log('🔧 Signing out user...');
-      
-      const { error } = await authHelpers.signOut();
-      
-      if (error) {
-        console.error('Logout error:', error);
-        setError('Failed to sign out');
-      } else {
-        console.log('✅ User signed out successfully');
-        // State will be cleared by the auth state change listener
-        
-        // Close any open modals
-        setShowLoginModal(false);
-        setShowRegisterModal(false);
-        setShowUpgradeModal(false);
-        setShowProfileModal(false);
-        setShowBillingModal(false);
-      }
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+
+      if (error) throw error;
     } catch (error) {
-      console.error('Logout error:', error);
-      setError('Failed to sign out');
+      console.error('Social login error:', error);
+      setError(error.message);
     }
   };
 
-  // Enhanced subscription management
+  // Secure logout with Supabase
+  const logout = async () => {
+    try {
+      setIsAuthenticating(true);
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      // Clear all user data
+      setUser(null);
+      setSession(null);
+      setSubscription(null);
+      setError(null);
+      
+      // Clear cookies
+      Cookies.remove('supabase_refresh_token');
+      Cookies.remove('user_subscription');
+      
+      // Close any open modals
+      setShowLoginModal(false);
+      setShowRegisterModal(false);
+      setShowUpgradeModal(false);
+      setShowProfileModal(false);
+      setShowBillingModal(false);
+      
+      console.log('User logged out successfully');
+    } catch (error) {
+      console.error('Logout error:', error);
+      setError('Failed to logout');
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  // Enhanced subscription management (will integrate with Stripe)
   const upgradeSubscription = async (plan) => {
     console.log('🔧 upgradeSubscription called with plan:', plan);
     setIsAuthenticating(true);
@@ -244,37 +287,35 @@ function AccountManager({ children, isDarkMode = false }) {
       
       console.log('🔧 User is logged in, processing upgrade...');
       
-      // In a real app, you would:
-      // 1. Create Stripe checkout session
-      // 2. Handle payment processing
-      // 3. Update subscription in database
-      // 4. Update user's subscription status
-      
-      // For now, simulate the upgrade
+      // In production, this would integrate with Stripe
+      // For now, we'll simulate the upgrade
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       console.log('🔧 Creating subscription...');
       const newSubscription = {
-        id: `sub_${user.id}_${Date.now()}`,
+        id: `sub_${Date.now()}`,
         user_id: user.id,
         plan: plan,
         status: 'active',
-        startDate: new Date().toISOString(),
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        features: getPlanFeatures(plan),
-        billingCycle: 'monthly',
-        nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        paymentMethod: {
-          type: 'card',
-          last4: '1234',
-          brand: 'visa'
-        },
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        current_period_start: new Date().toISOString(),
+        current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        features: getPlanFeatures(plan),
+        billing_cycle: 'monthly',
+        stripe_subscription_id: `stripe_sub_${Date.now()}`,
+        stripe_customer_id: `stripe_cust_${user.id}`
       };
       
       console.log('🔧 Setting subscription:', newSubscription);
       setSubscription(newSubscription);
+      
+      // Store in secure cookie
+      Cookies.set('user_subscription', JSON.stringify(newSubscription), {
+        secure: true,
+        sameSite: 'strict',
+        expires: 30
+      });
+      
       setShowUpgradeModal(false);
       console.log('✅ Subscription upgrade completed successfully');
       
@@ -296,21 +337,25 @@ function AccountManager({ children, isDarkMode = false }) {
         throw new Error('No active subscription to cancel');
       }
       
-      // Simulate API call
+      // In production, this would call Stripe API to cancel subscription
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const updatedSubscription = {
         ...subscription,
         status: 'cancelled',
-        cancelledAt: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        cancelled_at: new Date().toISOString()
       };
       
       setSubscription(updatedSubscription);
-      console.log('✅ Subscription cancelled successfully');
+      
+      // Update secure cookie
+      Cookies.set('user_subscription', JSON.stringify(updatedSubscription), {
+        secure: true,
+        sameSite: 'strict',
+        expires: 30
+      });
       
     } catch (error) {
-      console.error('Cancel subscription error:', error);
       setError(error.message);
     } finally {
       setIsAuthenticating(false);
@@ -327,26 +372,20 @@ function AccountManager({ children, isDarkMode = false }) {
         throw new Error('User not authenticated');
       }
       
-      console.log('🔧 Updating user profile:', profileData);
-      
-      // Update user metadata in Supabase
-      const { data, error } = await authHelpers.updateUser({
+      // Update profile in Supabase Auth
+      const { data, error } = await supabase.auth.updateUser({
         data: {
           ...user.user_metadata,
           ...profileData,
           updated_at: new Date().toISOString()
         }
       });
+
+      if (error) throw error;
       
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      console.log('✅ Profile updated successfully');
       setShowProfileModal(false);
       
     } catch (error) {
-      console.error('Update profile error:', error);
       setError(error.message);
     } finally {
       setIsAuthenticating(false);
@@ -358,9 +397,7 @@ function AccountManager({ children, isDarkMode = false }) {
     try {
       if (!user) return;
       
-      console.log('🔧 Updating user preferences:', preferences);
-      
-      const { data, error } = await authHelpers.updateUser({
+      const { error } = await supabase.auth.updateUser({
         data: {
           ...user.user_metadata,
           preferences: {
@@ -370,16 +407,26 @@ function AccountManager({ children, isDarkMode = false }) {
           updated_at: new Date().toISOString()
         }
       });
-      
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      console.log('✅ Preferences updated successfully');
+
+      if (error) throw error;
       
     } catch (error) {
-      console.error('Update preferences error:', error);
       setError('Failed to update preferences');
+    }
+  };
+
+  // Password reset
+  const resetPassword = async (email) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`
+      });
+      
+      if (error) throw error;
+      
+      return { success: true, message: 'Password reset email sent' };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
   };
 
@@ -389,17 +436,20 @@ function AccountManager({ children, isDarkMode = false }) {
       basic: {
         wordLimit: 500,
         features: ['Basic humanization', 'Word count', 'Reading time', 'Auto-save'],
-        price: 0
+        price: 0,
+        stripePriceId: null
       },
       pro: {
         wordLimit: 2000,
         features: ['Advanced humanization', 'AI detection', 'Export options', 'Style customization'],
-        price: 29.99
+        price: 29.99,
+        stripePriceId: 'price_pro_monthly'
       },
       ultra: {
         wordLimit: 10000,
         features: ['Ultra humanization', 'All Pro features', 'Bulk processing', 'Priority support'],
-        price: 59.99
+        price: 59.99,
+        stripePriceId: 'price_ultra_monthly'
       }
     };
     return features[plan] || features.basic;
@@ -428,7 +478,7 @@ function AccountManager({ children, isDarkMode = false }) {
   // Get subscription days remaining
   const getDaysRemaining = () => {
     if (!subscription || subscription.status !== 'active') return 0;
-    const endDate = new Date(subscription.endDate);
+    const endDate = new Date(subscription.current_period_end);
     const now = new Date();
     const diffTime = endDate - now;
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -436,6 +486,7 @@ function AccountManager({ children, isDarkMode = false }) {
 
   const contextValue = {
     user,
+    session,
     subscription,
     isLoading,
     isAuthenticating,
@@ -448,6 +499,8 @@ function AccountManager({ children, isDarkMode = false }) {
     login,
     logout,
     register,
+    loginWithProvider,
+    resetPassword,
     upgradeSubscription,
     cancelSubscription,
     updateProfile,
@@ -477,7 +530,9 @@ function AccountManager({ children, isDarkMode = false }) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Loading...</div>
-          <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>Initializing Supabase authentication</div>
+          <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>
+            Initializing secure authentication
+          </div>
         </div>
       </div>
     );
@@ -545,7 +600,7 @@ function AccountManager({ children, isDarkMode = false }) {
               Processing...
             </div>
             <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>
-              Please wait while we process your request
+              Please wait while we securely process your request
             </div>
           </div>
         </div>
