@@ -3,7 +3,7 @@ import { useAccount } from '../AccountManager.js';
 
 // Enhanced Login Modal
 export function LoginModal({ isOpen, onClose, theme }) {
-  const { login, isAuthenticating, error } = useAccount();
+  const { login, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,8 +31,26 @@ export function LoginModal({ isOpen, onClose, theme }) {
       <div className="card" style={{
         maxWidth: '400px',
         width: '90%',
-        padding: 'var(--stripe-space-8)'
+        padding: 'var(--stripe-space-8)',
+        position: 'relative'
       }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            fontSize: '1.5rem',
+            color: theme.color + '60',
+            cursor: 'pointer',
+            padding: '4px',
+            borderRadius: '4px'
+          }}
+        >
+          ×
+        </button>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
             Welcome Back
@@ -113,20 +131,37 @@ export function LoginModal({ isOpen, onClose, theme }) {
             {isAuthenticating ? 'Signing In...' : 'Sign In'}
           </button>
 
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setShowLoginModal(false);
+                setShowRegisterModal(true);
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: theme.primary,
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                textDecoration: 'underline',
+                fontWeight: '600'
+              }}
+            >
+              Don't have an account? Sign up
+            </button>
             <button
               type="button"
               onClick={onClose}
               style={{
                 background: 'none',
                 border: 'none',
-                color: theme.color + '80',
+                color: theme.color + '60',
                 cursor: 'pointer',
-                fontSize: '0.9rem',
-                textDecoration: 'underline'
+                fontSize: '0.9rem'
               }}
             >
-              Don't have an account? Sign up
+              Cancel
             </button>
           </div>
         </form>
@@ -137,7 +172,7 @@ export function LoginModal({ isOpen, onClose, theme }) {
 
 // Enhanced Registration Modal
 export function RegisterModal({ isOpen, onClose, theme }) {
-  const { register, isAuthenticating, error } = useAccount();
+  const { register, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -177,13 +212,31 @@ export function RegisterModal({ isOpen, onClose, theme }) {
       alignItems: 'center',
       zIndex: 1000
     }}>
-      <div style={{
+      <div className="card" style={{
         maxWidth: '450px',
         width: '90%',
         padding: 'var(--stripe-space-8)',
         maxHeight: '90vh',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        position: 'relative'
       }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            fontSize: '1.5rem',
+            color: theme.color + '60',
+            cursor: 'pointer',
+            padding: '4px',
+            borderRadius: '4px'
+          }}
+        >
+          ×
+        </button>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
             Create Account
@@ -191,6 +244,17 @@ export function RegisterModal({ isOpen, onClose, theme }) {
           <p style={{ color: theme.color + '80', fontSize: '0.9rem' }}>
             Join Notecraft Pro and start humanizing your AI text
           </p>
+          <div style={{ 
+            background: 'rgba(16, 185, 129, 0.1)', 
+            padding: '12px', 
+            borderRadius: '8px', 
+            marginBottom: '8px',
+            border: '1px solid rgba(16, 185, 129, 0.3)'
+          }}>
+            <div style={{ color: '#10b981', fontSize: '0.85rem', fontWeight: '600', textAlign: 'center' }}>
+              ✨ Free Account Includes: 500 words • Basic humanization • Auto-save
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -380,20 +444,37 @@ export function RegisterModal({ isOpen, onClose, theme }) {
             {isAuthenticating ? 'Creating Account...' : 'Create Account'}
           </button>
 
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setShowRegisterModal(false);
+                setShowLoginModal(true);
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: theme.primary,
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                textDecoration: 'underline',
+                fontWeight: '600'
+              }}
+            >
+              Already have an account? Sign in
+            </button>
             <button
               type="button"
               onClick={onClose}
               style={{
                 background: 'none',
                 border: 'none',
-                color: theme.color + '80',
+                color: theme.color + '60',
                 cursor: 'pointer',
-                fontSize: '0.9rem',
-                textDecoration: 'underline'
+                fontSize: '0.9rem'
               }}
             >
-              Already have an account? Sign in
+              Cancel
             </button>
           </div>
         </form>

@@ -310,8 +310,15 @@ function HomePage({
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <span style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.8)' }}>
-                  Welcome, {user.name}
+                  Welcome, {user.email?.split('@')[0] || user.name || 'User'}
                 </span>
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+                >
+                  Profile
+                </button>
                 <button
                   onClick={logout}
                   className="btn btn-primary"
@@ -320,12 +327,20 @@ function HomePage({
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="btn btn-primary"
-              >
-                Login
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button
+                  onClick={() => setShowLoginModal(true)}
+                  className="btn btn-secondary"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setShowRegisterModal(true)}
+                  className="btn btn-primary"
+                >
+                  Sign Up Free
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -356,7 +371,13 @@ function HomePage({
                       if (canAccess) {
                         setSelectedTier(tier);
                       } else if (tier === 'pro' || tier === 'ultra') {
-                        setShowUpgradeModal(true);
+                        // If user is not logged in, show signup modal first
+                        if (!user) {
+                          setShowRegisterModal(true);
+                          showNotificationMessage('Sign up free to access Pro & Ultra features!');
+                        } else {
+                          setShowUpgradeModal(true);
+                        }
                       }
                     }}
                     style={{
@@ -396,9 +417,27 @@ function HomePage({
             <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
               {currentTier.wordLimit} words • {currentTier.features.join(' • ')}
               {!user && (
-                <span style={{ marginLeft: '1rem', color: '#ff6b6b' }}>
-                  Sign in to access Pro & Ultra features
-                </span>
+                <>
+                  <br />
+                  <span style={{ color: '#10b981', fontWeight: '600' }}>
+                    👆 
+                    <button 
+                      onClick={() => setShowRegisterModal(true)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#10b981',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      Sign up free
+                    </button> 
+                    to unlock Pro & Ultra features
+                  </span>
+                </>
               )}
             </div>
           </div>
@@ -598,7 +637,7 @@ function HomePage({
                 </div>
               )}
 
-              {/* Upgrade Prompt for Non-Subscribers */}
+              {/* Upgrade/Signup Prompt for Premium Features */}
               {(selectedTier === 'pro' || selectedTier === 'ultra') && canAccessFeature && !canAccessFeature(selectedTier) && (
                 <div style={{
                   marginTop: '1rem',
@@ -609,26 +648,66 @@ function HomePage({
                   textAlign: 'center'
                 }}>
                   <div style={{ color: '#000000', marginBottom: '12px', fontWeight: 'bold' }}>
-                    🔒 {selectedTier.toUpperCase()} Features Require Subscription
+                    🔒 {selectedTier.toUpperCase()} Features {!user ? 'Require Account' : 'Require Subscription'}
                   </div>
                   <div style={{ color: '#000000', marginBottom: '16px', fontSize: '0.9rem' }}>
-                    Upgrade to {selectedTier} to access advanced features like AI detection, export options, and style customization.
+                    {!user 
+                      ? `Sign up free to unlock ${selectedTier} features like AI detection, export options, and style customization.`
+                      : `Upgrade to ${selectedTier} to access advanced features like AI detection, export options, and style customization.`
+                    }
                   </div>
-                  <button
-                    onClick={() => setShowUpgradeModal(true)}
-                    style={{
-                      background: '#ff6b6b',
-                      color: '#ffffff',
-                      border: 'none',
-                      padding: '8px 24px',
-                      borderRadius: '0.5rem',
-                      cursor: 'pointer',
-                      fontWeight: 'bold',
-                      fontSize: '0.9rem'
-                    }}
-                  >
-                    Upgrade Now
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    {!user ? (
+                      <>
+                        <button
+                          onClick={() => setShowRegisterModal(true)}
+                          style={{
+                            background: '#10b981',
+                            color: '#ffffff',
+                            border: 'none',
+                            padding: '8px 20px',
+                            borderRadius: '0.5rem',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            fontSize: '0.9rem'
+                          }}
+                        >
+                          Sign Up Free
+                        </button>
+                        <button
+                          onClick={() => setShowLoginModal(true)}
+                          style={{
+                            background: '#635bff',
+                            color: '#ffffff',
+                            border: 'none',
+                            padding: '8px 20px',
+                            borderRadius: '0.5rem',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            fontSize: '0.9rem'
+                          }}
+                        >
+                          Login
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setShowUpgradeModal(true)}
+                        style={{
+                          background: '#ff6b6b',
+                          color: '#ffffff',
+                          border: 'none',
+                          padding: '8px 24px',
+                          borderRadius: '0.5rem',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        Upgrade Now
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -960,11 +1039,23 @@ function HomePage({
                   onClick={() => {
                     console.log('🔧 Subscribe button clicked for plan:', plan.name);
                     if (plan.name === 'Basic') {
-                      console.log('🔧 Basic plan selected - showing notification');
-                      showNotificationMessage('Basic plan is free! You can start using it now.');
+                      if (!user) {
+                        console.log('🔧 Basic plan - no user, showing signup modal');
+                        setShowRegisterModal(true);
+                        showNotificationMessage('Sign up free to get started with Basic plan!');
+                      } else {
+                        console.log('🔧 Basic plan - user logged in');
+                        showNotificationMessage('You\'re already on the Basic plan! Start humanizing text above.');
+                      }
                     } else {
-                      console.log('🔧 Paid plan selected - opening upgrade modal');
-                      setShowUpgradeModal(true);
+                      if (!user) {
+                        console.log('🔧 Paid plan - no user, showing signup modal first');
+                        setShowRegisterModal(true);
+                        showNotificationMessage(`Sign up free first, then upgrade to ${plan.name}!`);
+                      } else {
+                        console.log('🔧 Paid plan - user logged in, opening upgrade modal');
+                        setShowUpgradeModal(true);
+                      }
                     }
                   }}
                   className={plan.highlight ? "btn btn-secondary" : "btn btn-primary"}
@@ -972,7 +1063,9 @@ function HomePage({
                     width: '100%'
                   }}
                 >
-                  {plan.name === 'Basic' ? 'Get Started' : 'Subscribe'}
+                  {plan.name === 'Basic' 
+                    ? (user ? 'Current Plan' : 'Get Started Free') 
+                    : (user ? 'Upgrade Now' : 'Sign Up & Upgrade')}
                 </button>
               </div>
             ))}
