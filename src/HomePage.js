@@ -309,22 +309,91 @@ function HomePage({
             </button>
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontSize: '0.9rem', color: theme.text, opacity: 0.8 }}>
-                  Welcome, {user.email?.split('@')[0] || user.user_metadata?.full_name || 'User'}
-                </span>
-                <button
-                  onClick={() => setShowProfileModal(true)}
-                  className="btn btn-secondary"
-                  style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
-                >
-                  Profile
-                </button>
-                <button
-                  onClick={logout}
-                  className="btn btn-primary"
-                >
-                  Sign Out
-                </button>
+                {/* Current Plan Badge */}
+                <div style={{
+                  background: getUserTier() === 'basic' ? 'rgba(99, 91, 255, 0.1)' : 
+                             getUserTier() === 'pro' ? 'rgba(16, 185, 129, 0.1)' : 
+                             'rgba(139, 92, 246, 0.1)',
+                  color: getUserTier() === 'basic' ? '#635bff' : 
+                         getUserTier() === 'pro' ? '#10b981' : 
+                         '#8b5cf6',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '1rem',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  border: `1px solid ${
+                    getUserTier() === 'basic' ? 'rgba(99, 91, 255, 0.3)' : 
+                    getUserTier() === 'pro' ? 'rgba(16, 185, 129, 0.3)' : 
+                    'rgba(139, 92, 246, 0.3)'
+                  }`
+                }}>
+                  {getUserTier()} Plan
+                </div>
+
+                {/* Upgrade Button - Only show if not on highest tier */}
+                {getUserTier() !== 'ultra' && (
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="btn btn-secondary"
+                    style={{ 
+                      fontSize: '0.85rem', 
+                      padding: '0.4rem 0.8rem',
+                      background: '#10b981',
+                      borderColor: '#10b981',
+                      color: '#ffffff'
+                    }}
+                  >
+                    Upgrade
+                  </button>
+                )}
+
+                {/* User Profile Icon */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div 
+                    onClick={() => setShowProfileModal(true)}
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #635bff, #10b981)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      border: '2px solid rgba(255, 255, 255, 0.1)'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    title={`${user.email} - Click to manage profile`}
+                  >
+                    {(user.email?.charAt(0) || user.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
+                  </div>
+                  
+                  <button
+                    onClick={logout}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: theme.text,
+                      cursor: 'pointer',
+                      fontSize: '1.2rem',
+                      padding: '4px',
+                      borderRadius: '4px',
+                      opacity: 0.6,
+                      transition: 'opacity 0.2s'
+                    }}
+                    onMouseOver={(e) => e.target.style.opacity = '1'}
+                    onMouseOut={(e) => e.target.style.opacity = '0.6'}
+                    title="Sign Out"
+                  >
+                    →
+                  </button>
+                </div>
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
