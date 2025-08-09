@@ -511,99 +511,362 @@ function HomePage({
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            <div style={{ width: '100%', maxWidth: '1380px', margin: '0 auto' }}>
-              {/* Enhanced Text Area */}
+          {/* Advanced Humanizer Interface */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 0.8fr', gap: '1rem', marginBottom: '2rem', maxWidth: '1400px', margin: '0 auto', padding: '0 1rem' }}>
+            
+            {/* Original Text Panel */}
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e0e0e0',
+              borderRadius: '16px',
+              boxShadow: '0 10px 30px rgba(10,10,20,0.07)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '400px'
+            }}>
               <div style={{
-                position: 'relative',
-                background: 'rgba(99, 91, 255, 0.05)',
-                borderRadius: '0.75rem',
-                border: '2px solid rgba(99, 91, 255, 0.2)',
-                padding: '1.5rem',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '8px',
+                padding: '12px 16px',
+                borderBottom: '1px solid #e0e0e0',
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02))'
               }}>
-                <textarea 
+                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Original</h3>
+                <div style={{ color: theme.muted, fontSize: '0.85rem' }}>Write or paste your AI‑generated text</div>
+              </div>
+              <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+                <textarea
                   ref={textareaRef}
-                  placeholder="Paste your AI-generated text here to humanize it..." 
                   value={text}
                   onChange={handleTextChange}
-                  style={{ 
-                    width: '100%', 
-                    height: '220px', 
-                    padding: '1.5rem', 
-                    borderRadius: '0.5rem', 
-                    border: 'none',
-                    fontSize: '1.1rem', 
-                    backgroundColor: 'rgba(255,255,255,0.95)', 
-                    color: '#000000',
-                    border: '1px solid #e0e0e0',
-                    resize: 'vertical',
-                    fontFamily: 'inherit',
+                  placeholder="Paste or type your text here…"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    resize: 'none',
                     outline: 'none',
-                    transition: 'all 0.2s',
-                    lineHeight: '1.6',
-                    boxSizing: 'border-box'
-                  }} 
+                    border: 0,
+                    padding: '16px',
+                    background: 'transparent',
+                    color: theme.text,
+                    lineHeight: 1.55,
+                    fontSize: '1rem',
+                    fontFamily: 'inherit',
+                    caretColor: '#635bff'
+                  }}
                 />
-                
-                {/* Text Statistics */}
+              </div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                borderTop: '1px solid #e0e0e0',
+                fontSize: '0.85rem',
+                color: theme.muted
+              }}>
+                <div>{text.trim().split(/\s+/).filter(Boolean).length} words</div>
+                <div>{Math.max(1, Math.round(text.trim().split(/\s+/).filter(Boolean).length / 200))}m read</div>
+              </div>
+            </div>
+
+            {/* Humanized Output Panel */}
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e0e0e0',
+              borderRadius: '16px',
+              boxShadow: '0 10px 30px rgba(10,10,20,0.07)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '400px'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '8px',
+                padding: '12px 16px',
+                borderBottom: '1px solid #e0e0e0'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Humanized</h3>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button style={{
+                    padding: '8px 12px',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, rgba(124,92,255,0.12), rgba(0,224,184,0.12))',
+                    borderColor: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    color: theme.text
+                  }}>
+                    Preview
+                  </button>
+                </div>
+              </div>
+              <div style={{
+                padding: '16px',
+                lineHeight: 1.6,
+                overflow: 'auto',
+                flex: 1,
+                color: theme.text,
+                fontSize: '1rem'
+              }}>
+                {humanizedText || (
+                  <div style={{ color: theme.muted, fontStyle: 'italic' }}>
+                    Humanized text will appear here...
+                  </div>
+                )}
+              </div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                borderTop: '1px solid #e0e0e0',
+                fontSize: '0.85rem',
+                color: theme.muted
+              }}>
+                <button 
+                  onClick={handleCopyText}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#10b981',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Copy
+                </button>
+                <div>AI Detection: {aiDetectionScore}%</div>
+              </div>
+            </div>
+
+            {/* Controls Panel */}
+            <div style={{
+              background: '#ffffff',
+              border: '1px solid #e0e0e0',
+              borderRadius: '16px',
+              boxShadow: '0 10px 30px rgba(10,10,20,0.07)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <div style={{
+                padding: '12px 16px',
+                borderBottom: '1px solid #e0e0e0'
+              }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Controls</h3>
+              </div>
+              
+              {/* Advanced Controls */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '10px',
+                padding: '12px'
+              }}>
                 <div style={{
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: '1rem',
-                  padding: '0.5rem 1rem',
-                  background: 'rgba(99, 91, 255, 0.1)',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.9rem'
+                  flexDirection: 'column',
+                  gap: '6px',
+                  background: '#fbfcff',
+                  border: '1px solid #e0e0e0',
+                  padding: '10px',
+                  borderRadius: '12px'
                 }}>
-                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                    <span>Words: {wordCount}/{currentTier.wordLimit}</span>
-                    <span>Characters: {charCount}</span>
-                    <span>Reading time: {readingTime} min</span>
-                    {aiScore > 0 && (
-                      <span style={{ 
-                        color: aiScore > 30 ? theme.error : aiScore > 15 ? theme.warning : theme.success 
-                      }}>
-                        AI Score: {aiScore}%
-                      </span>
-                    )}
+                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Tone</label>
+                  <select style={{
+                    border: 'none',
+                    background: 'transparent',
+                    color: theme.text,
+                    fontSize: '0.9rem',
+                    outline: 'none'
+                  }}>
+                    <option>professional</option>
+                    <option>casual</option>
+                    <option>academic</option>
+                    <option>friendly</option>
+                    <option>persuasive</option>
+                  </select>
+                </div>
+                
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                  background: '#fbfcff',
+                  border: '1px solid #e0e0e0',
+                  padding: '10px',
+                  borderRadius: '12px'
+                }}>
+                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Formality</label>
+                  <input type="range" min="0" max="100" defaultValue="60" style={{
+                    width: '100%',
+                    accentColor: '#635bff'
+                  }} />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                  background: '#fbfcff',
+                  border: '1px solid #e0e0e0',
+                  padding: '10px',
+                  borderRadius: '12px'
+                }}>
+                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Reading Level</label>
+                  <select style={{
+                    border: 'none',
+                    background: 'transparent',
+                    color: theme.text,
+                    fontSize: '0.9rem',
+                    outline: 'none'
+                  }}>
+                    <option>standard</option>
+                    <option>simple</option>
+                    <option>advanced</option>
+                  </select>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '6px',
+                  background: '#fbfcff',
+                  border: '1px solid #e0e0e0',
+                  padding: '10px',
+                  borderRadius: '12px'
+                }}>
+                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Intensity</label>
+                  <input type="range" min="0" max="100" defaultValue="55" style={{
+                    width: '100%',
+                    accentColor: '#635bff'
+                  }} />
+                </div>
+              </div>
+
+              {/* Protection Switches */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gap: '8px',
+                padding: '12px'
+              }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
+                  <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
+                  Keep quotes & code unchanged
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
+                  <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
+                  Preserve citations & links
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
+                  <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
+                  Avoid changing dates & figures
+                </label>
+              </div>
+
+              {/* Humanize Button */}
+              <div style={{ padding: '12px' }}>
+                <button
+                  onClick={handleHumanize}
+                  disabled={isLoading}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    background: 'linear-gradient(135deg, #635bff, #10b981)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: isLoading ? 0.7 : 1
+                  }}
+                >
+                  {isLoading ? 'Humanizing...' : 'Humanize Text'}
+                </button>
+              </div>
+
+              {/* Analytics */}
+              <div style={{
+                padding: '12px',
+                borderTop: '1px solid #e0e0e0'
+              }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: theme.text }}>Analytics</h4>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '10px'
+                }}>
+                  <div style={{
+                    background: '#fbfcff',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '12px',
+                    padding: '12px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: theme.text }}>
+                      {text.trim().split(/\s+/).filter(Boolean).length}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: theme.muted }}>Words</div>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                      onClick={copyText}
-                      disabled={!text}
-                      style={{
-                        background: '#635bff',
-                        border: 'none',
-                        borderRadius: '0.25rem',
-                        padding: '0.25rem 0.5rem',
-                        color: '#ffffff',
-                        cursor: text ? 'pointer' : 'not-allowed',
-                        fontSize: '0.8rem'
-                      }}
-                    >
-                      Copy
-                    </button>
-                    <button
-                      onClick={clearText}
-                      disabled={!text}
-                      style={{
-                        background: '#635bff',
-                        border: 'none',
-                        borderRadius: '0.25rem',
-                        padding: '0.25rem 0.5rem',
-                        color: '#ffffff',
-                        cursor: text ? 'pointer' : 'not-allowed',
-                        fontSize: '0.8rem'
-                      }}
-                    >
-                      Clear
-                    </button>
+                  <div style={{
+                    background: '#fbfcff',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: '12px',
+                    padding: '12px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: theme.text }}>
+                      {Math.max(1, Math.round(text.trim().split(/\s+/).filter(Boolean).length / 200))}m
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: theme.muted }}>Read Time</div>
+                  </div>
+                </div>
+                
+                {/* Humanization Meter */}
+                <div style={{ marginTop: '12px' }}>
+                  <div style={{ fontSize: '0.8rem', color: theme.muted, marginBottom: '6px' }}>Humanization Level</div>
+                  <div style={{
+                    height: '10px',
+                    background: 'rgba(127,127,127,0.18)',
+                    borderRadius: '999px',
+                    overflow: 'hidden',
+                    border: '1px solid #e0e0e0'
+                  }}>
+                    <div style={{
+                      display: 'block',
+                      height: '100%',
+                      width: '55%',
+                      background: 'linear-gradient(90deg, #635bff, #10b981)'
+                    }}></div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Responsive Design for Mobile */}
+          <style jsx>{`
+            @media (max-width: 1200px) {
+              .humanizer-grid {
+                grid-template-columns: 1fr !important;
+                height: auto !important;
+              }
+            }
+          `}</style>
 
               {/* Advanced Options (Pro & Ultra) */}
               {(selectedTier === 'pro' || selectedTier === 'ultra') && canAccessFeature && canAccessFeature(selectedTier) && (
