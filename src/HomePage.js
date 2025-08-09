@@ -642,7 +642,12 @@ function HomePage({
                 color: theme.muted
               }}>
                 <button 
-                  onClick={handleCopyText}
+                  onClick={() => {
+                    if (humanizedText) {
+                      navigator.clipboard.writeText(humanizedText);
+                      showNotificationMessage('Humanized text copied!');
+                    }
+                  }}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -654,7 +659,7 @@ function HomePage({
                 >
                   Copy
                 </button>
-                <div>AI Detection: {aiDetectionScore}%</div>
+                <div>AI Detection: {aiScore}%</div>
               </div>
             </div>
 
@@ -788,7 +793,7 @@ function HomePage({
               <div style={{ padding: '12px' }}>
                 <button
                   onClick={handleHumanize}
-                  disabled={isLoading}
+                  disabled={isProcessing}
                   style={{
                     width: '100%',
                     padding: '12px 16px',
@@ -798,12 +803,12 @@ function HomePage({
                     borderRadius: '12px',
                     fontSize: '1rem',
                     fontWeight: '600',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    cursor: isProcessing ? 'not-allowed' : 'pointer',
                     transition: 'all 0.2s',
-                    opacity: isLoading ? 0.7 : 1
+                    opacity: isProcessing ? 0.7 : 1
                   }}
                 >
-                  {isLoading ? 'Humanizing...' : 'Humanize Text'}
+                  {isProcessing ? 'Humanizing...' : 'Humanize Text'}
                 </button>
               </div>
 
