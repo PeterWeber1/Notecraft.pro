@@ -512,7 +512,15 @@ function HomePage({
           </div>
 
           {/* Advanced Humanizer Interface */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.2fr 0.8fr', gap: '1rem', marginBottom: '2rem', maxWidth: '1400px', margin: '0 auto', padding: '0 1rem' }}>
+          <div className="humanizer-grid" style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1.2fr 1.2fr 0.8fr', 
+            gap: '1rem', 
+            marginBottom: '2rem', 
+            maxWidth: '1400px', 
+            margin: '0 auto', 
+            padding: '0 1rem' 
+          }}>
             
             {/* Original Text Panel */}
             <div style={{
@@ -858,16 +866,14 @@ function HomePage({
             </div>
           </div>
 
-          {/* Responsive Design for Mobile */}
-          <style jsx>{`
-            @media (max-width: 1200px) {
-              .humanizer-grid {
-                grid-template-columns: 1fr !important;
-                height: auto !important;
-              }
-            }
-          `}</style>
+        </div>
+      </section>
 
+      {/* Advanced Options Section */}
+      <section className="section" style={{ background: theme.background }}>
+        <div className="container" style={{ maxWidth: '1200px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+            <div style={{ width: '100%', maxWidth: '1380px', margin: '0 auto' }}>
               {/* Advanced Options (Pro & Ultra) */}
               {(selectedTier === 'pro' || selectedTier === 'ultra') && canAccessFeature && canAccessFeature(selectedTier) && (
                 <div style={{
