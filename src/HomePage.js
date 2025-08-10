@@ -187,12 +187,16 @@ function HomePage({
       
       const data = await response.json();
       
-      if (data.humanized_text) {
-        setHumanizedText(data.humanized_text);
+      if (data.humanizedText) {
+        setHumanizedText(data.humanizedText);
         
-        // Update AI score if provided
+        // Update AI score if provided (try both field names for compatibility)
         if (data.ai_detection_score !== undefined) {
           setAiScore(Math.round(data.ai_detection_score));
+        } else if (data.qualityMetrics && data.qualityMetrics.contentSimilarity !== undefined) {
+          // Convert content similarity to AI detection score (inverse relationship)
+          const aiDetectionScore = Math.max(5, 100 - Math.round(data.qualityMetrics.contentSimilarity * 100));
+          setAiScore(aiDetectionScore);
         }
         
         showNotificationMessage('Text successfully humanized!');
