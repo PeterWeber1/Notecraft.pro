@@ -3,6 +3,35 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://mxkmwaenxhkwbjbkpglv.supabase.co'
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14a213YWVueGhrd2JqYmtwZ2x2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDA3NTcsImV4cCI6MjA3MDA3Njc1N30.4FgFW-aaiNBz1FKIh-RroWw4UHEICEqmVPkf2gG2efI'
 
+// Get the redirect URL based on environment
+const getRedirectUrl = () => {
+  // Priority: 1. Environment variable, 2. Production fallback, 3. Current origin (development)
+  if (process.env.REACT_APP_PRODUCTION_URL) {
+    return process.env.REACT_APP_PRODUCTION_URL;
+  }
+  
+  // Production fallback
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://notecraft-pro.vercel.app';
+  }
+  
+  // Development fallback - use localhost for testing
+  return window.location.origin;
+};
+
+/* 
+ * IMPORTANT: Supabase Dashboard Configuration
+ * 
+ * To fix email confirmation redirects completely, you also need to:
+ * 1. Go to your Supabase Dashboard → Authentication → URL Configuration
+ * 2. Set Site URL to: https://notecraft-pro.vercel.app (or your production domain)
+ * 3. Add Redirect URLs: 
+ *    - https://notecraft-pro.vercel.app/**
+ *    - http://localhost:3000/** (for development testing)
+ * 
+ * This ensures emails use the correct redirect URL regardless of where the request originates.
+ */
+
 // Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
@@ -15,9 +44,7 @@ export const authHelpers = {
       password,
       options: {
         data: userData, // Additional user metadata
-        emailRedirectTo: process.env.NODE_ENV === 'production' 
-          ? (process.env.REACT_APP_PRODUCTION_URL || 'https://notecraft-pro.vercel.app') 
-          : window.location.origin
+        emailRedirectTo: getRedirectUrl()
       }
     })
     return { data, error }
@@ -63,7 +90,9 @@ export const authHelpers = {
 
   // Reset password
   resetPassword: async (email) => {
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email)
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: getRedirectUrl()
+    })
     return { data, error }
   }
 }

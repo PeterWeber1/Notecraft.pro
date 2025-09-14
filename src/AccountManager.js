@@ -19,6 +19,7 @@ function AccountManager({ children, isDarkMode = false }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null); // { text: string, type: 'success' | 'error' | 'warning' | 'info' }
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -34,8 +35,20 @@ function AccountManager({ children, isDarkMode = false }) {
     accent: '#635bff',
     success: '#10b981',
     error: '#ef4444',
-    warning: '#f59e0b'
+    warning: '#f59e0b',
+    info: '#3b82f6'
   };
+
+  // Helper function to show messages with appropriate types
+  const showMessage = (text, type = 'info') => {
+    setMessage({ text, type });
+    setError(null); // Clear any existing error when showing a new message
+  };
+
+  const showSuccess = (text) => showMessage(text, 'success');
+  const showError = (text) => showMessage(text, 'error');
+  const showWarning = (text) => showMessage(text, 'warning');
+  const showInfo = (text) => showMessage(text, 'info');
 
   // Initialize authentication state
   useEffect(() => {
@@ -153,17 +166,18 @@ function AccountManager({ children, isDarkMode = false }) {
       
       if (data.user && !data.session) {
         // Email confirmation required
-        setError('Please check your email and click the confirmation link to complete registration');
+        showSuccess('Registration successful! Please check your email and click the confirmation link to complete your account setup.');
       } else if (data.session) {
         // User is automatically signed in
         console.log('✅ User registered and signed in:', data.user.email);
+        showSuccess('Welcome! Your account has been created successfully.');
         setShowRegisterModal(false);
         setShowLoginModal(false);
       }
       
     } catch (error) {
       console.error('Registration error:', error);
-      setError(error.message);
+      showError(error.message);
     } finally {
       setIsAuthenticating(false);
     }
@@ -189,13 +203,14 @@ function AccountManager({ children, isDarkMode = false }) {
       
       if (data.user) {
         console.log('✅ User signed in successfully:', data.user.email);
+        showSuccess('Welcome back! You have been signed in successfully.');
         setShowLoginModal(false);
         return { success: true };
       }
       
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please try again.');
+      showError(error.message || 'Login failed. Please try again.');
       return { success: false, error: error.message };
     } finally {
       setIsAuthenticating(false);
@@ -211,10 +226,10 @@ function AccountManager({ children, isDarkMode = false }) {
       
       if (error) {
         console.error('Logout error:', error);
-        setError('Failed to sign out');
+        showError('Failed to sign out');
       } else {
         console.log('✅ User signed out successfully');
-        // State will be cleared by the auth state change listener
+        showSuccess('You have been signed out successfully.');
         
         // Close any open modals
         setShowLoginModal(false);
@@ -225,7 +240,7 @@ function AccountManager({ children, isDarkMode = false }) {
       }
     } catch (error) {
       console.error('Logout error:', error);
-      setError('Failed to sign out');
+      showError('Failed to sign out');
     }
   };
 
@@ -276,11 +291,12 @@ function AccountManager({ children, isDarkMode = false }) {
       console.log('🔧 Setting subscription:', newSubscription);
       setSubscription(newSubscription);
       setShowUpgradeModal(false);
+      showSuccess(`Successfully upgraded to ${plan.toUpperCase()} plan! Welcome to premium features.`);
       console.log('✅ Subscription upgrade completed successfully');
       
     } catch (error) {
       console.error('❌ Upgrade error:', error);
-      setError(error.message);
+      showError(error.message);
     } finally {
       setIsAuthenticating(false);
     }
@@ -307,11 +323,12 @@ function AccountManager({ children, isDarkMode = false }) {
       };
       
       setSubscription(updatedSubscription);
+      showSuccess('Your subscription has been cancelled successfully.');
       console.log('✅ Subscription cancelled successfully');
       
     } catch (error) {
       console.error('Cancel subscription error:', error);
-      setError(error.message);
+      showError(error.message);
     } finally {
       setIsAuthenticating(false);
     }
@@ -342,12 +359,13 @@ function AccountManager({ children, isDarkMode = false }) {
         throw new Error(error.message);
       }
       
+      showSuccess('Your profile has been updated successfully.');
       console.log('✅ Profile updated successfully');
       setShowProfileModal(false);
       
     } catch (error) {
       console.error('Update profile error:', error);
-      setError(error.message);
+      showError(error.message);
     } finally {
       setIsAuthenticating(false);
     }
@@ -375,11 +393,12 @@ function AccountManager({ children, isDarkMode = false }) {
         throw new Error(error.message);
       }
       
+      showSuccess('Your preferences have been updated successfully.');
       console.log('✅ Preferences updated successfully');
       
     } catch (error) {
       console.error('Update preferences error:', error);
-      setError('Failed to update preferences');
+      showError('Failed to update preferences');
     }
   };
 
@@ -440,6 +459,7 @@ function AccountManager({ children, isDarkMode = false }) {
     isLoading,
     isAuthenticating,
     error,
+    message,
     showLoginModal,
     showRegisterModal,
     showUpgradeModal,
@@ -462,6 +482,12 @@ function AccountManager({ children, isDarkMode = false }) {
     setShowProfileModal,
     setShowBillingModal,
     setError,
+    setMessage,
+    showMessage,
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo,
     theme
   };
 
@@ -487,13 +513,13 @@ function AccountManager({ children, isDarkMode = false }) {
     <AccountContext.Provider value={contextValue}>
       {typeof children === 'function' ? children(contextValue) : children}
       
-      {/* Error Display */}
-      {error && (
+      {/* Message Display */}
+      {(message || error) && (
         <div style={{
           position: 'fixed',
           top: '20px',
           right: '20px',
-          background: theme.error,
+          background: message ? theme[message.type] : theme.error,
           color: 'white',
           padding: '12px 16px',
           borderRadius: '8px',
@@ -502,9 +528,12 @@ function AccountManager({ children, isDarkMode = false }) {
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>{error}</span>
+            <span>{message ? message.text : error}</span>
             <button
-              onClick={() => setError(null)}
+              onClick={() => {
+                setMessage(null);
+                setError(null);
+              }}
               style={{
                 background: 'none',
                 border: 'none',
