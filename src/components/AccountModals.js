@@ -622,21 +622,17 @@ export function ProfileModal({ isOpen, onClose, theme }) {
     }}>
       <div style={{
         position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
+        top: '70px',
+        right: '20px',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        padding: '32px',
-        borderRadius: '16px',
-        maxWidth: '500px',
-        width: '90%',
+        padding: '24px',
+        borderRadius: '12px',
+        width: '320px',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        position: 'relative'
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+        zIndex: 1001
       }}>
         <button
           onClick={onClose}
@@ -655,28 +651,28 @@ export function ProfileModal({ isOpen, onClose, theme }) {
         >
           ×
         </button>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <h2 style={{ color: theme.color, marginBottom: '0', fontSize: '1.2rem', fontWeight: '600' }}>
             Account
           </h2>
         </div>
 
         {/* Profile Picture Section */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div
             style={{
-              width: '80px',
-              height: '80px',
+              width: '60px',
+              height: '60px',
               borderRadius: '50%',
               background: user?.user_metadata?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #635bff, #10b981)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#ffffff',
-              fontSize: '2rem',
+              fontSize: '1.5rem',
               fontWeight: '600',
-              margin: '0 auto 16px',
-              border: '3px solid rgba(255, 255, 255, 0.1)',
+              margin: '0 auto 12px',
+              border: '2px solid rgba(255, 255, 255, 0.1)',
               overflow: 'hidden'
             }}
           >
@@ -702,13 +698,13 @@ export function ProfileModal({ isOpen, onClose, theme }) {
               {(user?.email?.charAt(0) || user?.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
             </span>
           </div>
-          <p style={{ color: theme.color, fontSize: '1rem', margin: 0, fontWeight: '500' }}>
+          <p style={{ color: theme.color, fontSize: '0.9rem', margin: 0, fontWeight: '500' }}>
             {user?.email}
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             onClick={handleUpgrade}
             style={{
@@ -716,11 +712,11 @@ export function ProfileModal({ isOpen, onClose, theme }) {
               background: theme.primary,
               color: 'white',
               border: 'none',
-              padding: '16px 24px',
-              borderRadius: '8px',
+              padding: '12px 16px',
+              borderRadius: '6px',
               cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: '600',
+              fontSize: '0.9rem',
+              fontWeight: '500',
               transition: 'all 0.2s'
             }}
           >
@@ -734,10 +730,10 @@ export function ProfileModal({ isOpen, onClose, theme }) {
               background: 'transparent',
               color: theme.color,
               border: `1px solid ${theme.color}40`,
-              padding: '16px 24px',
-              borderRadius: '8px',
+              padding: '12px 16px',
+              borderRadius: '6px',
               cursor: 'pointer',
-              fontSize: '1rem',
+              fontSize: '0.9rem',
               fontWeight: '500',
               transition: 'all 0.2s'
             }}
@@ -750,12 +746,12 @@ export function ProfileModal({ isOpen, onClose, theme }) {
             style={{
               width: '100%',
               background: 'transparent',
-              color: '#dc3545',
-              border: '1px solid #dc3545',
-              padding: '16px 24px',
-              borderRadius: '8px',
+              color: '#000000',
+              border: '1px solid #000000',
+              padding: '12px 16px',
+              borderRadius: '6px',
               cursor: 'pointer',
-              fontSize: '1rem',
+              fontSize: '0.9rem',
               fontWeight: '500',
               transition: 'all 0.2s'
             }}
