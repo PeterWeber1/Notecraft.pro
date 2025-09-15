@@ -174,27 +174,46 @@ export function LoginModal({ isOpen, onClose, theme }) {
 export function RegisterModal({ isOpen, onClose, theme }) {
   const { register, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
-    confirmPassword: '',
     agreeToTerms: false
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      return;
-    }
-    
-    await register(formData);
+
+    // Combine first and last name for registration
+    const registrationData = {
+      ...formData,
+      name: `${formData.firstName} ${formData.lastName}`.trim()
+    };
+
+    await register(registrationData);
   };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const { supabase } = await import('../lib/supabase.js');
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+
+      if (error) {
+        console.error('Google sign up error:', error);
+      }
+    } catch (error) {
+      console.error('Google sign up error:', error);
+    }
   };
 
   if (!isOpen) return null;
@@ -237,60 +256,75 @@ export function RegisterModal({ isOpen, onClose, theme }) {
         >
           ×
         </button>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
-            Create Account
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '2rem', fontWeight: '600' }}>
+            Sign Up
           </h2>
-          <p style={{ color: theme.color + '80', fontSize: '0.9rem' }}>
-            Join Notecraft Pro and start humanizing your AI text
+          <p style={{ color: theme.color + '80', fontSize: '1rem' }}>
+            Enter your information to create an account
           </p>
-          <div style={{ 
-            background: 'rgba(16, 185, 129, 0.1)', 
-            padding: '12px', 
-            borderRadius: '8px', 
-            marginBottom: '8px',
-            border: '1px solid rgba(16, 185, 129, 0.3)'
-          }}>
-            <div style={{ color: '#10b981', fontSize: '0.85rem', fontWeight: '600', textAlign: 'center' }}>
-              ✨ Free Account Includes: 500 words • Basic humanization • Auto-save
-            </div>
-          </div>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              required
-              placeholder="Enter your full name"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: `1px solid ${theme.cardBorder}`,
-                background: theme.background,
-                color: theme.color,
-                fontSize: '1rem',
-                outline: 'none'
-              }}
-            />
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
+                First Name
+              </label>
+              <input
+                type="text"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                required
+                placeholder="Max"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: `1px solid ${theme.cardBorder}`,
+                  background: theme.background,
+                  color: theme.color,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
+                Last Name
+              </label>
+              <input
+                type="text"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                required
+                placeholder="Robinson"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: `1px solid ${theme.cardBorder}`,
+                  background: theme.background,
+                  color: theme.color,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
           </div>
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Email Address
+              Email
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               required
-              placeholder="Enter your email"
+              placeholder="m@example.com"
               style={{
                 width: '100%',
                 padding: '12px 16px',
@@ -299,105 +333,34 @@ export function RegisterModal({ isOpen, onClose, theme }) {
                 background: theme.background,
                 color: theme.color,
                 fontSize: '1rem',
-                outline: 'none'
+                outline: 'none',
+                boxSizing: 'border-box'
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
+          <div style={{ marginBottom: '32px' }}>
             <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
               Password
             </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                required
-                placeholder="Create a password (min 8 characters)"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  paddingRight: '48px',
-                  borderRadius: '8px',
-                  border: `1px solid ${theme.cardBorder}`,
-                  background: theme.background,
-                  color: theme.color,
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  color: theme.color + '60',
-                  cursor: 'pointer',
-                  fontSize: '1.1rem'
-                }}
-              >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-            {formData.password && formData.password.length < 8 && (
-              <div style={{ color: theme.error, fontSize: '0.8rem', marginTop: '4px' }}>
-                Password must be at least 8 characters long
-              </div>
-            )}
-          </div>
-
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Confirm Password
-            </label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                required
-                placeholder="Confirm your password"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  paddingRight: '48px',
-                  borderRadius: '8px',
-                  border: `1px solid ${formData.password !== formData.confirmPassword && formData.confirmPassword ? theme.error : theme.cardBorder}`,
-                  background: theme.background,
-                  color: theme.color,
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  color: theme.color + '60',
-                  cursor: 'pointer',
-                  fontSize: '1.1rem'
-                }}
-              >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <div style={{ color: theme.error, fontSize: '0.8rem', marginTop: '4px' }}>
-                Passwords do not match
-              </div>
-            )}
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => handleInputChange('password', e.target.value)}
+              required
+              placeholder=""
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: `1px solid ${theme.cardBorder}`,
+                background: theme.background,
+                color: theme.color,
+                fontSize: '1rem',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+            />
           </div>
 
           <div style={{ marginBottom: '24px' }}>
@@ -424,16 +387,16 @@ export function RegisterModal({ isOpen, onClose, theme }) {
 
           <button
             type="submit"
-            disabled={isAuthenticating || !formData.agreeToTerms || formData.password !== formData.confirmPassword}
+            disabled={isAuthenticating || !formData.agreeToTerms}
             style={{
               width: '100%',
-              background: isAuthenticating || !formData.agreeToTerms || formData.password !== formData.confirmPassword 
-                ? theme.color + '40' : theme.primary,
+              background: isAuthenticating || !formData.agreeToTerms
+                ? '#666' : '#000',
               color: 'white',
               border: 'none',
-              padding: '14px 24px',
+              padding: '16px 24px',
               borderRadius: '8px',
-              cursor: isAuthenticating || !formData.agreeToTerms || formData.password !== formData.confirmPassword 
+              cursor: isAuthenticating || !formData.agreeToTerms
                 ? 'not-allowed' : 'pointer',
               fontSize: '1rem',
               fontWeight: '600',
@@ -441,10 +404,50 @@ export function RegisterModal({ isOpen, onClose, theme }) {
               marginBottom: '16px'
             }}
           >
-            {isAuthenticating ? 'Creating Account...' : 'Create Account'}
+            {isAuthenticating ? 'Creating Account...' : 'Create an Account'}
           </button>
 
-          <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={isAuthenticating}
+            style={{
+              width: '100%',
+              background: 'white',
+              color: '#000',
+              border: '1px solid #e5e5e5',
+              padding: '16px 24px',
+              borderRadius: '8px',
+              cursor: isAuthenticating ? 'not-allowed' : 'pointer',
+              fontSize: '1rem',
+              fontWeight: '500',
+              transition: 'all 0.2s',
+              marginBottom: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+          >
+            <span style={{ fontSize: '1.2rem' }}>G</span>
+            Sign Up with Google
+          </button>
+
+          <div style={{ textAlign: 'center', fontSize: '0.9rem', color: theme.color + '80', marginBottom: '16px' }}>
+            By signing up, you agree to our{' '}
+            <a href="/terms" style={{ color: theme.color, textDecoration: 'underline' }}>
+              Terms and Conditions
+            </a>
+            {' '}and{' '}
+            <a href="/privacy" style={{ color: theme.color, textDecoration: 'underline' }}>
+              Privacy Policy
+            </a>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <span style={{ color: theme.color + '80', fontSize: '0.9rem' }}>
+              Already have an account?{' '}
+            </span>
             <button
               type="button"
               onClick={() => {
@@ -454,27 +457,14 @@ export function RegisterModal({ isOpen, onClose, theme }) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: theme.primary,
+                color: theme.color,
                 cursor: 'pointer',
                 fontSize: '0.9rem',
                 textDecoration: 'underline',
                 fontWeight: '600'
               }}
             >
-              Already have an account? Sign in
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: theme.color + '60',
-                cursor: 'pointer',
-                fontSize: '0.9rem'
-              }}
-            >
-              Cancel
+              Sign In
             </button>
           </div>
         </form>
