@@ -353,7 +353,10 @@ function HomePage({
               to="/notepad"
               className="btn btn-secondary"
               style={{
-                textDecoration: 'none'
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               Notepad
