@@ -22,7 +22,9 @@ export function LoginModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -32,7 +34,12 @@ export function LoginModal({ isOpen, onClose, theme }) {
         maxWidth: '400px',
         width: '90%',
         padding: 'var(--stripe-space-8)',
-        position: 'relative'
+        position: 'relative',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)'
       }}>
         <button
           onClick={onClose}
@@ -225,7 +232,9 @@ export function RegisterModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -237,7 +246,12 @@ export function RegisterModal({ isOpen, onClose, theme }) {
         padding: 'var(--stripe-space-8)',
         maxHeight: '90vh',
         overflowY: 'auto',
-        position: 'relative'
+        position: 'relative',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)'
       }}>
         <button
           onClick={onClose}
