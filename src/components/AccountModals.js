@@ -621,7 +621,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       <div style={{
         position: 'fixed',
         top: '80px',
-        right: 'calc(50% - 600px + 120px)',
+        right: 'calc(50% - 600px + 50px)',
         background: 'rgba(255, 255, 255, 0.98)',
         padding: '24px',
         borderRadius: '12px',
@@ -634,7 +634,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
         <div style={{
           position: 'absolute',
           top: '-8px',
-          right: '30px',
+          right: '140px',
           width: '16px',
           height: '16px',
           background: 'rgba(255, 255, 255, 0.98)',
