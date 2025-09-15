@@ -373,27 +373,29 @@ function HomePage({
             >
               Notepad
             </Link>
-            <button
-              onClick={() => setShowUpgradeModal(true)}
-              className="btn btn-secondary"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxSizing: 'border-box',
-                lineHeight: '1',
-                minHeight: 'auto',
-                height: 'auto',
-                fontFamily: 'inherit',
-                fontSize: 'var(--stripe-font-size-sm)',
-                fontWeight: 'var(--stripe-font-weight-medium)',
-                padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                borderRadius: 'var(--stripe-radius-md)',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Pricing
-            </button>
+            {!user && (
+              <button
+                onClick={() => setShowUpgradeModal(true)}
+                className="btn btn-secondary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
+                  lineHeight: '1',
+                  minHeight: 'auto',
+                  height: 'auto',
+                  fontFamily: 'inherit',
+                  fontSize: 'var(--stripe-font-size-sm)',
+                  fontWeight: 'var(--stripe-font-weight-medium)',
+                  padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                  borderRadius: 'var(--stripe-radius-md)',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                Pricing
+              </button>
+            )}
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 {/* Current Plan Badge */}
