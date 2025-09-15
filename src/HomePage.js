@@ -355,7 +355,13 @@ function HomePage({
               style={{
                 textDecoration: 'none',
                 display: 'inline-flex',
-                alignItems: 'center'
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                fontSize: 'var(--stripe-font-size-sm)',
+                fontWeight: 'var(--stripe-font-weight-medium)',
+                lineHeight: '1',
+                boxSizing: 'border-box'
               }}
             >
               Notepad
