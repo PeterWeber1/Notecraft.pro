@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { supabase, authHelpers } from './lib/supabase';
+import { authHelpers } from './lib/firebase';
 
 // Account Management Context
 const AccountContext = createContext();
@@ -20,6 +20,7 @@ function AccountManager({ children, isDarkMode = false }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null); // { text: string, type: 'success' | 'error' | 'warning' | 'info' }
+  const [showEmailConfirmationBanner, setShowEmailConfirmationBanner] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -50,18 +51,23 @@ function AccountManager({ children, isDarkMode = false }) {
   const showWarning = (text) => showMessage(text, 'warning');
   const showInfo = (text) => showMessage(text, 'info');
 
+  // Check if user's email is verified
+  const isEmailVerified = () => {
+    return user?.email_confirmed_at || user?.user_metadata?.email_verified;
+  };
+
   // Initialize authentication state
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        console.log('🔧 Initializing Supabase auth...');
+        console.log('🔧 Initializing Firebase auth...');
         
         // Get initial session
         const { session, error: sessionError } = await authHelpers.getSession();
         
         if (sessionError) {
           console.error('Session error:', sessionError);
-          setError('Failed to restore session');
+          showError('Failed to restore session');
         } else if (session?.user) {
           console.log('✅ Found existing session for user:', session.user.email);
           setUser(session.user);
@@ -71,7 +77,7 @@ function AccountManager({ children, isDarkMode = false }) {
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        setError('Failed to initialize authentication');
+        showError('Failed to initialize authentication');
       } finally {
         setIsLoading(false);
       }
@@ -88,10 +94,12 @@ function AccountManager({ children, isDarkMode = false }) {
           setUser(session.user);
           await loadUserSubscription(session.user.id);
           setError(null);
+          setMessage(null);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setSubscription(null);
           setError(null);
+          setMessage(null);
         }
         
         setIsLoading(false);
@@ -103,6 +111,24 @@ function AccountManager({ children, isDarkMode = false }) {
       authSubscription?.unsubscribe();
     };
   }, []);
+
+  // Monitor email verification status
+  useEffect(() => {
+    if (user) {
+      const emailVerified = isEmailVerified();
+      const shouldShowBanner = !emailVerified;
+
+      // Always update banner state based on current verification status
+      setShowEmailConfirmationBanner(shouldShowBanner);
+
+      // If email was just verified (banner was showing but now email is verified)
+      if (emailVerified && showEmailConfirmationBanner) {
+        showSuccess('Email verified successfully! Welcome to Notecraft Pro.');
+      }
+    } else {
+      setShowEmailConfirmationBanner(false);
+    }
+  }, [user, user?.email_confirmed_at, user?.user_metadata?.email_verified]);
 
   // Load user subscription data
   const loadUserSubscription = async (userId) => {
@@ -164,15 +190,33 @@ function AccountManager({ children, isDarkMode = false }) {
         throw new Error(error.message);
       }
       
-      if (data.user && !data.session) {
-        // Email confirmation required
-        showSuccess('Registration successful! Please check your email and click the confirmation link to complete your account setup.');
-      } else if (data.session) {
-        // User is automatically signed in
-        console.log('✅ User registered and signed in:', data.user.email);
-        showSuccess('Welcome! Your account has been created successfully.');
+      if (data.user) {
+        console.log('✅ User registered successfully:', data.user.email);
+
+        // Always close the registration modal
         setShowRegisterModal(false);
         setShowLoginModal(false);
+
+        // If no session (email confirmation required), automatically log them in
+        if (!data.session) {
+          console.log('🔧 Automatically logging in user...');
+          const loginResult = await login(userData.email, userData.password);
+
+          if (loginResult.success) {
+            showSuccess('Account created successfully! Please check your email to verify your account.');
+          } else {
+            // If automatic login fails, still set user manually to trigger UI updates
+            setUser(data.user);
+            await loadUserSubscription(data.user.id);
+            showSuccess('Account created successfully! Please check your email to verify your account.');
+          }
+        } else {
+          // User is automatically signed in and verified
+          console.log('✅ User registered and signed in with verified email:', data.user.email);
+          setUser(data.user);
+          await loadUserSubscription(data.user.id);
+          showSuccess('Welcome! Your account has been created and verified successfully.');
+        }
       }
       
     } catch (error) {
@@ -488,6 +532,9 @@ function AccountManager({ children, isDarkMode = false }) {
     showError,
     showWarning,
     showInfo,
+    showEmailConfirmationBanner,
+    setShowEmailConfirmationBanner,
+    isEmailVerified,
     theme
   };
 
@@ -503,7 +550,7 @@ function AccountManager({ children, isDarkMode = false }) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Loading...</div>
-          <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>Initializing Supabase authentication</div>
+          <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>Initializing Firebase authentication</div>
         </div>
       </div>
     );
@@ -541,6 +588,71 @@ function AccountManager({ children, isDarkMode = false }) {
                 cursor: 'pointer',
                 marginLeft: '8px',
                 fontSize: '1.2rem'
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Email Confirmation Banner */}
+      {showEmailConfirmationBanner && user && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          background: theme.warning,
+          color: 'white',
+          padding: '12px 16px',
+          zIndex: 9999,
+          textAlign: 'center',
+          borderBottom: '1px solid rgba(255,255,255,0.2)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '14px' }}>
+              📧 Please verify your email address ({user.email}) to access all features.
+            </span>
+            <button
+              onClick={async () => {
+                try {
+                  setIsAuthenticating(true);
+                  const { error } = await authHelpers.resendEmailConfirmation(user.email);
+                  if (error) {
+                    showError('Failed to resend confirmation email: ' + error.message);
+                  } else {
+                    showSuccess('Confirmation email sent! Please check your inbox.');
+                  }
+                } catch (error) {
+                  showError('Failed to resend confirmation email');
+                } finally {
+                  setIsAuthenticating(false);
+                }
+              }}
+              style={{
+                background: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'white',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '500'
+              }}
+            >
+              Resend Email
+            </button>
+            <button
+              onClick={() => setShowEmailConfirmationBanner(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '16px',
+                padding: '4px 8px'
               }}
             >
               ×
