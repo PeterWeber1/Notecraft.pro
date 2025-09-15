@@ -344,16 +344,18 @@ function HomePage({
           }}>
             Notecraft Pro
           </div>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '1rem' 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem'
           }}>
-            <Link 
-              to="/notepad" 
+            <Link
+              to="/notepad"
               className="btn btn-secondary"
               style={{
-                textDecoration: 'none'
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center'
               }}
             >
               Notepad
