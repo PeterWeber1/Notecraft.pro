@@ -622,18 +622,33 @@ export function ProfileModal({ isOpen, onClose, theme }) {
     }}>
       <div style={{
         position: 'fixed',
-        top: '70px',
-        right: '20px',
+        top: '80px',
+        right: '10px',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         padding: '24px',
         borderRadius: '12px',
-        width: '320px',
+        width: '300px',
         border: '1px solid rgba(255, 255, 255, 0.2)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
         zIndex: 1001
       }}>
+        {/* Dropdown arrow */}
+        <div style={{
+          position: 'absolute',
+          top: '-8px',
+          right: '20px',
+          width: '16px',
+          height: '16px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          borderBottom: 'none',
+          borderRight: 'none',
+          transform: 'rotate(45deg)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)'
+        }}></div>
         <button
           onClick={onClose}
           style={{
