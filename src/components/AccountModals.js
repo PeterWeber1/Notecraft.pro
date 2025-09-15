@@ -614,40 +614,34 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(255, 255, 255, 0.05)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
+      background: 'transparent',
       zIndex: 1000,
       overflow: 'hidden'
     }}>
       <div style={{
         position: 'fixed',
         top: '80px',
-        right: '10px',
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
+        right: 'calc(50% - 600px + 120px)',
+        background: 'rgba(255, 255, 255, 0.98)',
         padding: '24px',
         borderRadius: '12px',
-        width: '300px',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+        width: '280px',
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         zIndex: 1001
       }}>
         {/* Dropdown arrow */}
         <div style={{
           position: 'absolute',
           top: '-8px',
-          right: '20px',
+          right: '30px',
           width: '16px',
           height: '16px',
-          background: 'rgba(255, 255, 255, 0.95)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          background: 'rgba(255, 255, 255, 0.98)',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
           borderBottom: 'none',
           borderRight: 'none',
-          transform: 'rotate(45deg)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)'
+          transform: 'rotate(45deg)'
         }}></div>
         <button
           onClick={onClose}
