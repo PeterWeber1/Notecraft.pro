@@ -364,6 +364,11 @@ function HomePage({
             <button
               onClick={() => setShowUpgradeModal(true)}
               className="btn btn-secondary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
             >
               Pricing
             </button>
@@ -460,12 +465,22 @@ function HomePage({
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="btn btn-secondary"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
                   Login
                 </button>
                 <button
                   onClick={() => setShowRegisterModal(true)}
                   className="btn btn-primary"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
                   Sign Up Free
                 </button>
