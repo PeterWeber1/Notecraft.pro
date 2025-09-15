@@ -420,22 +420,6 @@ function HomePage({
                   {getUserTier()} Plan
                 </div>
 
-                {/* Upgrade Button - Only show if not on highest tier */}
-                {getUserTier() !== 'ultra' && (
-                  <button
-                    onClick={() => setShowUpgradeModal(true)}
-                    className="btn btn-secondary"
-                    style={{ 
-                      fontSize: '0.85rem', 
-                      padding: '0.4rem 0.8rem',
-                      background: '#10b981',
-                      borderColor: '#10b981',
-                      color: '#ffffff'
-                    }}
-                  >
-                    Upgrade
-                  </button>
-                )}
 
                 {/* User Profile Icon */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -483,26 +467,6 @@ function HomePage({
                       {(user.email?.charAt(0) || user.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
                     </span>
                   </div>
-                  
-                  <button
-                    onClick={logout}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: theme.text,
-                      cursor: 'pointer',
-                      fontSize: '1.2rem',
-                      padding: '4px',
-                      borderRadius: '4px',
-                      opacity: 0.6,
-                      transition: 'opacity 0.2s'
-                    }}
-                    onMouseOver={(e) => e.target.style.opacity = '1'}
-                    onMouseOut={(e) => e.target.style.opacity = '0.6'}
-                    title="Sign Out"
-                  >
-                    →
-                  </button>
                 </div>
               </div>
             ) : (
