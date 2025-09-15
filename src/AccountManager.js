@@ -40,10 +40,19 @@ function AccountManager({ children, isDarkMode = false }) {
     info: '#3b82f6'
   };
 
-  // Helper function to show messages with appropriate types
-  const showMessage = (text, type = 'info') => {
+  // Helper function to show messages with appropriate types and auto-dismiss
+  const showMessage = (text, type = 'info', autoDismiss = true) => {
     setMessage({ text, type });
     setError(null); // Clear any existing error when showing a new message
+
+    // Auto-dismiss after 5 seconds for success messages, 7 seconds for others
+    if (autoDismiss) {
+      const dismissTime = type === 'success' ? 5000 : 7000;
+      setTimeout(() => {
+        setMessage(null);
+        setError(null);
+      }, dismissTime);
+    }
   };
 
   const showSuccess = (text) => showMessage(text, 'success');
@@ -560,22 +569,70 @@ function AccountManager({ children, isDarkMode = false }) {
     <AccountContext.Provider value={contextValue}>
       {typeof children === 'function' ? children(contextValue) : children}
       
-      {/* Message Display */}
+      {/* Modern Toast Notification */}
       {(message || error) && (
         <div style={{
           position: 'fixed',
-          top: '20px',
-          right: '20px',
-          background: message ? theme[message.type] : theme.error,
-          color: 'white',
-          padding: '12px 16px',
-          borderRadius: '8px',
+          top: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          color: '#1a1a1a',
+          padding: '16px 20px',
+          borderRadius: '12px',
           zIndex: 10000,
-          maxWidth: '300px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          maxWidth: '400px',
+          minWidth: '320px',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+          transition: 'all 0.3s ease-out',
+          animation: 'slideInTop 0.3s ease-out'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>{message ? message.text : error}</span>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+            {/* Icon based on message type */}
+            <div style={{
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              flexShrink: 0,
+              marginTop: '2px',
+              background: message ?
+                (message.type === 'success' ? '#10b981' :
+                 message.type === 'error' ? '#ef4444' :
+                 message.type === 'warning' ? '#f59e0b' : '#3b82f6') : '#ef4444',
+              color: 'white'
+            }}>
+              {message ?
+                (message.type === 'success' ? '✓' :
+                 message.type === 'error' ? '!' :
+                 message.type === 'warning' ? '⚠' : 'i') : '!'}
+            </div>
+
+            <div style={{ flex: 1, fontSize: '14px', lineHeight: '1.4' }}>
+              <div style={{
+                fontWeight: '500',
+                marginBottom: '2px',
+                color: message ?
+                  (message.type === 'success' ? '#065f46' :
+                   message.type === 'error' ? '#991b1b' :
+                   message.type === 'warning' ? '#92400e' : '#1e40af') : '#991b1b'
+              }}>
+                {message ?
+                  (message.type === 'success' ? 'Success' :
+                   message.type === 'error' ? 'Error' :
+                   message.type === 'warning' ? 'Warning' : 'Info') : 'Error'}
+              </div>
+              <div style={{ color: '#6b7280', fontSize: '13px' }}>
+                {message ? message.text : error}
+              </div>
+            </div>
+
             <button
               onClick={() => {
                 setMessage(null);
@@ -584,11 +641,17 @@ function AccountManager({ children, isDarkMode = false }) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: 'white',
+                color: '#9ca3af',
                 cursor: 'pointer',
-                marginLeft: '8px',
-                fontSize: '1.2rem'
+                padding: '4px',
+                borderRadius: '4px',
+                fontSize: '16px',
+                lineHeight: '1',
+                flexShrink: 0,
+                transition: 'color 0.2s ease'
               }}
+              onMouseEnter={(e) => e.target.style.color = '#374151'}
+              onMouseLeave={(e) => e.target.style.color = '#9ca3af'}
             >
               ×
             </button>
