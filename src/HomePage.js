@@ -365,7 +365,6 @@ function HomePage({
                 fontSize: 'var(--stripe-font-size-sm)',
                 fontWeight: 'var(--stripe-font-weight-medium)',
                 padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                border: '1px solid transparent',
                 borderRadius: 'var(--stripe-radius-md)',
                 whiteSpace: 'nowrap'
               }}
@@ -387,7 +386,6 @@ function HomePage({
                 fontSize: 'var(--stripe-font-size-sm)',
                 fontWeight: 'var(--stripe-font-weight-medium)',
                 padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                border: '1px solid transparent',
                 borderRadius: 'var(--stripe-radius-md)',
                 whiteSpace: 'nowrap'
               }}
@@ -499,7 +497,6 @@ function HomePage({
                     fontSize: 'var(--stripe-font-size-sm)',
                     fontWeight: 'var(--stripe-font-weight-medium)',
                     padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                    border: '1px solid transparent',
                     borderRadius: 'var(--stripe-radius-md)',
                     whiteSpace: 'nowrap'
                   }}
@@ -521,7 +518,6 @@ function HomePage({
                     fontSize: 'var(--stripe-font-size-sm)',
                     fontWeight: 'var(--stripe-font-weight-medium)',
                     padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                    border: '1px solid transparent',
                     borderRadius: 'var(--stripe-radius-md)',
                     whiteSpace: 'nowrap'
                   }}
