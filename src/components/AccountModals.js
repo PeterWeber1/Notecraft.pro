@@ -43,16 +43,17 @@ export function LoginModal({ isOpen, onClose, theme }) {
       background: 'rgba(255, 255, 255, 0.05)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
+      zIndex: 1000,
+      overflow: 'hidden'
     }}>
       <div className="card" style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         maxWidth: '400px',
         width: '90%',
         padding: 'var(--stripe-space-8)',
-        position: 'relative',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
@@ -283,12 +284,14 @@ export function RegisterModal({ isOpen, onClose, theme }) {
       background: 'rgba(255, 255, 255, 0.05)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
+      zIndex: 1000,
+      overflow: 'hidden'
     }}>
       <div className="card" style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         maxWidth: '450px',
         width: '90%',
         padding: 'var(--stripe-space-8)',
@@ -554,12 +557,14 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       background: 'rgba(255, 255, 255, 0.05)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
+      zIndex: 1000,
+      overflow: 'hidden'
     }}>
       <div style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
@@ -788,12 +793,14 @@ export function BillingModal({ isOpen, onClose, theme }) {
       background: 'rgba(255, 255, 255, 0.05)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
+      zIndex: 1000,
+      overflow: 'hidden'
     }}>
       <div style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
@@ -1067,12 +1074,14 @@ export function UpgradeModal({ isOpen, onClose, theme }) {
       background: 'rgba(255, 255, 255, 0.05)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
+      zIndex: 1000,
+      overflow: 'hidden'
     }}>
       <div style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
