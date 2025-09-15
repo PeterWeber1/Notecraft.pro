@@ -351,6 +351,8 @@ function HomePage({
           }}>
             <Link
               to="/notepad"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn btn-secondary"
               style={{
                 textDecoration: 'none',
@@ -1468,7 +1470,7 @@ function HomePage({
           <p style={{ fontSize: '1.1rem', marginBottom: '2rem', opacity: 0.95 }}>
             Transform your AI-generated text into authentic, human-quality content—trusted by professionals, creators, and marketers worldwide.
           </p>
-          <Link to="/notepad" className="btn btn-gradient btn-lg" style={{ textDecoration: 'none' }}>Start Humanizing Now</Link>
+          <Link to="/notepad" target="_blank" rel="noopener noreferrer" className="btn btn-gradient btn-lg" style={{ textDecoration: 'none' }}>Start Humanizing Now</Link>
         </div>
       </section>
 
@@ -1480,7 +1482,7 @@ function HomePage({
             The ultimate AI-powered humanizer for professionals and creators.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-            <Link to="/notepad" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Try Now</Link>
+            <Link to="/notepad" target="_blank" rel="noopener noreferrer" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Try Now</Link>
             <Link to="/privacy" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Privacy Policy</Link>
             <Link to="/terms" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Terms of Service</Link>
           </div>
