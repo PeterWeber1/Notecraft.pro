@@ -55,10 +55,17 @@ function App() {
           setShowUpgradeModal,
           setShowProfileModal,
           setShowBillingModal,
+          showEmailConfirmationBanner,
+          isEmailVerified,
           theme
         }) => (
           <>
-            <Routes>
+            <div style={{ 
+              paddingTop: showEmailConfirmationBanner ? '60px' : '0px',
+              transition: 'padding-top 0.3s ease',
+              minHeight: '100vh'
+            }}>
+              <Routes>
               <Route 
                 path="/" 
                 element={
@@ -80,6 +87,8 @@ function App() {
                     setShowUpgradeModal={setShowUpgradeModal}
                     setShowProfileModal={setShowProfileModal}
                     setShowBillingModal={setShowBillingModal}
+                    showEmailConfirmationBanner={showEmailConfirmationBanner}
+                    isEmailVerified={isEmailVerified}
                   />
                 } 
               />
@@ -104,6 +113,8 @@ function App() {
                     setShowUpgradeModal={setShowUpgradeModal}
                     setShowProfileModal={setShowProfileModal}
                     setShowBillingModal={setShowBillingModal}
+                    showEmailConfirmationBanner={showEmailConfirmationBanner}
+                    isEmailVerified={isEmailVerified}
                   />
                 } 
               />
@@ -116,6 +127,7 @@ function App() {
                 element={<TermsOfService />} 
               />
             </Routes>
+            </div>
 
             {/* Account Management Modals */}
             <LoginModal 

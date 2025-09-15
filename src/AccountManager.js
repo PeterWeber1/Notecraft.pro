@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { authHelpers } from './lib/firebase';
+import { authHelpers } from './lib/supabase';
 
 // Account Management Context
 const AccountContext = createContext();

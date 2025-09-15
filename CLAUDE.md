@@ -23,15 +23,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a React SPA for AI-powered text humanization called "Notecraft Pro". The app consists of:
 - **Homepage** (`src/HomePage.js`): Main interface with text input, humanization features, and pricing
 - **Notepad Editor** (`src/Notepad.js`): Rich text editor with formatting tools and export capabilities
-- **Authentication System**: Mock-based authentication with subscription tiers (Basic/Pro/Ultra)
+- **Authentication System**: Real Supabase authentication with subscription tiers (Basic/Pro/Ultra)
 
 ### Key Components
 
 **AccountManager** (`src/AccountManager.js`):
 - React Context provider managing authentication state and subscription management
-- Mock authentication system with session management and tier-based feature access
+- Real Supabase authentication with session management and tier-based feature access
 - Exports `useAccount` hook for consuming auth state throughout the app
-- Alternative complex version available in `AccountManager-complex.js`
+- Alternative mock version available in `AccountManager-mock.js` and complex version in `AccountManager-complex.js`
 
 **App Component** (`src/App.js`):
 - Main router with React Router handling navigation between homepage and notepad
@@ -92,10 +92,10 @@ The app uses **Supabase Authentication** with real user management:
 
 ### Component File Versions
 Multiple versions exist for debugging and development:
-- `AccountManager.js` (current: Supabase integration) vs `AccountManager-mock.js` (mock version)
+- `AccountManager.js` (current: real Supabase auth) vs `AccountManager-mock.js` (mock version)
 - `AccountManager-complex.js` (legacy complex version) vs `AccountManager-backup.js` (backup version)
 - `App.js` (current: production) vs `App-complex.js`, `App-test.js`, `App-step1.js` (debugging versions)
-- Use `cp` commands to swap between versions: `cp AccountManager-mock.js AccountManager.js`
+- Swap versions with: `copy AccountManager-mock.js AccountManager.js` (Windows) or `cp AccountManager-mock.js AccountManager.js` (Unix)
 
 ### Theme System
 - CSS custom properties with Stripe-inspired design
@@ -126,9 +126,10 @@ Multiple versions exist for debugging and development:
 - **Auth State**: Monitor console logs for authentication flow debugging
 
 ### API Integration
-- Frontend expects `/api/humanize` POST endpoint
-- Request format: `{ text, tone, style, length }`
-- Currently uses mock transformation, can be swapped for real API calls
+- Frontend expects `/api/humanize` POST endpoint with format: `{ text, tone, style, length }`
+- **Python API**: Start with `python main.py` or `python start.py` in `/api` directory
+- **Node.js API**: Start with `node server.js` in `/server` directory
+- Contains extensive test files for API validation (`test_*.py` and `test-api.js`)
 
 ## Project Structure Notes
 - `src/` - React frontend application

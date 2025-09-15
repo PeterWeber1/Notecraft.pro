@@ -32,8 +32,14 @@ const getRedirectUrl = () => {
  * This ensures emails use the correct redirect URL regardless of where the request originates.
  */
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Create Supabase client with auto-confirm disabled (users can login before email verification)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+})
 
 // Auth helper functions
 export const authHelpers = {
@@ -92,6 +98,18 @@ export const authHelpers = {
   resetPassword: async (email) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: getRedirectUrl()
+    })
+    return { data, error }
+  },
+
+  // Resend email confirmation
+  resendEmailConfirmation: async (email) => {
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: getRedirectUrl()
+      }
     })
     return { data, error }
   }
