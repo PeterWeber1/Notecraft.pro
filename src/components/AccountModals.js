@@ -233,8 +233,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
     firstName: '',
     lastName: '',
     email: '',
-    password: '',
-    agreeToTerms: false
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -426,41 +425,18 @@ export function RegisterModal({ isOpen, onClose, theme }) {
             />
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={formData.agreeToTerms}
-                onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
-                required
-                style={{ margin: 0 }}
-              />
-              <span style={{ color: theme.color, fontSize: '0.9rem' }}>
-                I agree to the{' '}
-                <a href="/terms" style={{ color: theme.primary, textDecoration: 'underline' }}>
-                  Terms of Service
-                </a>
-                {' '}and{' '}
-                <a href="/privacy" style={{ color: theme.primary, textDecoration: 'underline' }}>
-                  Privacy Policy
-                </a>
-              </span>
-            </label>
-          </div>
 
           <button
             type="submit"
-            disabled={isAuthenticating || !formData.agreeToTerms}
+            disabled={isAuthenticating}
             style={{
               width: '100%',
-              background: isAuthenticating || !formData.agreeToTerms
-                ? '#666' : '#000',
+              background: isAuthenticating ? '#666' : '#000',
               color: 'white',
               border: 'none',
               padding: '16px 24px',
               borderRadius: '8px',
-              cursor: isAuthenticating || !formData.agreeToTerms
-                ? 'not-allowed' : 'pointer',
+              cursor: isAuthenticating ? 'not-allowed' : 'pointer',
               fontSize: '1rem',
               fontWeight: '600',
               transition: 'all 0.2s',
