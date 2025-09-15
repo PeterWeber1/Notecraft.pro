@@ -521,23 +521,45 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 1000
     }}>
       <div style={{
-        background: theme.cardBackground,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         padding: '32px',
         borderRadius: '16px',
         maxWidth: '500px',
         width: '90%',
-        border: `1px solid ${theme.cardBorder}`,
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         maxHeight: '90vh',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        position: 'relative'
       }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            fontSize: '1.5rem',
+            color: theme.color + '60',
+            cursor: 'pointer',
+            padding: '4px',
+            borderRadius: '4px'
+          }}
+        >
+          ×
+        </button>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
             Profile Settings
@@ -687,21 +709,43 @@ export function BillingModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 1000
     }}>
       <div style={{
-        background: theme.cardBackground,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         padding: '32px',
         borderRadius: '16px',
         maxWidth: '500px',
         width: '90%',
-        border: `1px solid ${theme.cardBorder}`,
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        position: 'relative'
       }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            fontSize: '1.5rem',
+            color: theme.color + '60',
+            cursor: 'pointer',
+            padding: '4px',
+            borderRadius: '4px'
+          }}
+        >
+          ×
+        </button>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
             Billing & Subscription
@@ -944,23 +988,45 @@ export function UpgradeModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(255, 255, 255, 0.05)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 1000
     }}>
       <div style={{
-        background: theme.cardBackground,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         padding: '32px',
         borderRadius: '16px',
         maxWidth: '600px',
         width: '90%',
-        border: `1px solid ${theme.cardBorder}`,
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         maxHeight: '90vh',
-        overflowY: 'auto'
+        overflowY: 'auto',
+        position: 'relative'
       }}>
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            fontSize: '1.5rem',
+            color: theme.color + '60',
+            cursor: 'pointer',
+            padding: '4px',
+            borderRadius: '4px'
+          }}
+        >
+          ×
+        </button>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.8rem' }}>
             Choose Your Plan
