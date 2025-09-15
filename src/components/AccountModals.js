@@ -621,7 +621,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       <div style={{
         position: 'fixed',
         top: '80px',
-        right: 'calc(50% - 600px + 50px)',
+        left: 'calc(50% + 600px - 250px)',
         background: 'rgba(255, 255, 255, 0.98)',
         padding: '24px',
         borderRadius: '12px',
@@ -630,19 +630,6 @@ export function ProfileModal({ isOpen, onClose, theme }) {
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         zIndex: 1001
       }}>
-        {/* Dropdown arrow */}
-        <div style={{
-          position: 'absolute',
-          top: '-8px',
-          right: '140px',
-          width: '16px',
-          height: '16px',
-          background: 'rgba(255, 255, 255, 0.98)',
-          border: '1px solid rgba(0, 0, 0, 0.1)',
-          borderBottom: 'none',
-          borderRight: 'none',
-          transform: 'rotate(45deg)'
-        }}></div>
         <button
           onClick={onClose}
           style={{
