@@ -353,15 +353,7 @@ function HomePage({
               to="/notepad"
               className="btn btn-secondary"
               style={{
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                fontSize: 'var(--stripe-font-size-sm)',
-                fontWeight: 'var(--stripe-font-weight-medium)',
-                lineHeight: '1',
-                boxSizing: 'border-box'
+                textDecoration: 'none'
               }}
             >
               Notepad
