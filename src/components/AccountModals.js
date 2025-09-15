@@ -614,7 +614,9 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'transparent',
+      background: 'rgba(255, 255, 255, 0.05)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       zIndex: 1000,
       overflow: 'hidden'
     }}>
