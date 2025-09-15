@@ -599,6 +599,52 @@ export function ProfileModal({ isOpen, onClose, theme }) {
           </p>
         </div>
 
+        {/* Profile Picture Section */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: user?.user_metadata?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #635bff, #10b981)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              fontSize: '2rem',
+              fontWeight: '600',
+              margin: '0 auto 16px',
+              border: '3px solid rgba(255, 255, 255, 0.1)',
+              overflow: 'hidden'
+            }}
+          >
+            {user?.user_metadata?.avatar_url ? (
+              <img
+                src={user.user_metadata.avatar_url}
+                alt="Profile"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '50%'
+                }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+            ) : null}
+            <span style={{
+              display: user?.user_metadata?.avatar_url ? 'none' : 'block'
+            }}>
+              {(user?.email?.charAt(0) || user?.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
+            </span>
+          </div>
+          <p style={{ color: theme.color + '60', fontSize: '0.85rem', margin: 0 }}>
+            {user?.user_metadata?.avatar_url ? 'Profile picture from Google' : 'Sign in with Google to get your profile picture'}
+          </p>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>

@@ -437,13 +437,13 @@ function HomePage({
 
                 {/* User Profile Icon */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div 
+                  <div
                     onClick={() => setShowProfileModal(true)}
                     style={{
                       width: '36px',
                       height: '36px',
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #635bff, #10b981)',
+                      background: user.user_metadata?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #635bff, #10b981)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -452,13 +452,34 @@ function HomePage({
                       fontWeight: '600',
                       cursor: 'pointer',
                       transition: 'transform 0.2s',
-                      border: '2px solid rgba(255, 255, 255, 0.1)'
+                      border: '2px solid rgba(255, 255, 255, 0.1)',
+                      overflow: 'hidden'
                     }}
                     onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                     title={`${user.email} - Click to manage profile`}
                   >
-                    {(user.email?.charAt(0) || user.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt="Profile"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '50%'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                    ) : null}
+                    <span style={{
+                      display: user.user_metadata?.avatar_url ? 'none' : 'block'
+                    }}>
+                      {(user.email?.charAt(0) || user.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
+                    </span>
                   </div>
                   
                   <button
