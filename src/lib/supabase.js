@@ -9,26 +9,26 @@ const getRedirectUrl = () => {
   if (process.env.REACT_APP_PRODUCTION_URL) {
     return process.env.REACT_APP_PRODUCTION_URL;
   }
-  
-  // Production fallback
+
+  // Production fallback - use the correct production domain
   if (process.env.NODE_ENV === 'production') {
-    return 'https://notecraft-pro.vercel.app';
+    return 'https://www.notecraft.pro';
   }
-  
+
   // Development fallback - use localhost for testing
   return window.location.origin;
 };
 
 /* 
  * IMPORTANT: Supabase Dashboard Configuration
- * 
+ *
  * To fix email confirmation redirects completely, you also need to:
  * 1. Go to your Supabase Dashboard → Authentication → URL Configuration
- * 2. Set Site URL to: https://notecraft-pro.vercel.app (or your production domain)
- * 3. Add Redirect URLs: 
- *    - https://notecraft-pro.vercel.app/**
+ * 2. Set Site URL to: https://www.notecraft.pro
+ * 3. Add Redirect URLs:
+ *    - https://www.notecraft.pro/**
  *    - http://localhost:3000/** (for development testing)
- * 
+ *
  * This ensures emails use the correct redirect URL regardless of where the request originates.
  */
 

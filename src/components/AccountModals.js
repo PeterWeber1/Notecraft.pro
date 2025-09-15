@@ -30,10 +30,22 @@ export function LoginModal({ isOpen, onClose, theme }) {
   const handleGoogleLogin = async () => {
     try {
       const { supabase } = await import('../lib/supabase.js');
+
+      // Get proper redirect URL based on environment
+      const getRedirectUrl = () => {
+        if (process.env.REACT_APP_PRODUCTION_URL) {
+          return process.env.REACT_APP_PRODUCTION_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return 'https://www.notecraft.pro';
+        }
+        return window.location.origin;
+      };
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: getRedirectUrl()
         }
       });
 
@@ -285,10 +297,22 @@ export function RegisterModal({ isOpen, onClose, theme }) {
   const handleGoogleSignUp = async () => {
     try {
       const { supabase } = await import('../lib/supabase.js');
+
+      // Get proper redirect URL based on environment
+      const getRedirectUrl = () => {
+        if (process.env.REACT_APP_PRODUCTION_URL) {
+          return process.env.REACT_APP_PRODUCTION_URL;
+        }
+        if (process.env.NODE_ENV === 'production') {
+          return 'https://www.notecraft.pro';
+        }
+        return window.location.origin;
+      };
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: getRedirectUrl()
         }
       });
 
