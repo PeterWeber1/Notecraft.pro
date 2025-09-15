@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAccount } from '../AccountManager.js';
 
 // Enhanced Login Modal
@@ -7,6 +7,20 @@ export function LoginModal({ isOpen, onClose, theme }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -237,6 +251,20 @@ export function RegisterModal({ isOpen, onClose, theme }) {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -529,6 +557,20 @@ export function ProfileModal({ isOpen, onClose, theme }) {
     preferences: user?.preferences || {}
   });
 
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await updateProfile(formData);
@@ -776,6 +818,20 @@ export function BillingModal({ isOpen, onClose, theme }) {
   const { subscription, cancelSubscription, isAuthenticating, getDaysRemaining } = useAccount();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const handleCancelSubscription = async () => {
     await cancelSubscription();
     setShowCancelConfirm(false);
@@ -1017,6 +1073,20 @@ export function BillingModal({ isOpen, onClose, theme }) {
 export function UpgradeModal({ isOpen, onClose, theme }) {
   const { upgradeSubscription, isAuthenticating } = useAccount();
   const [selectedPlan, setSelectedPlan] = useState(null);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const plans = [
     {
