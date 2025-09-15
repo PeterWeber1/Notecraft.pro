@@ -574,12 +574,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
 
 // Profile Management Modal
 export function ProfileModal({ isOpen, onClose, theme }) {
-  const { user, updateProfile, isAuthenticating } = useAccount();
-  const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    preferences: user?.preferences || {}
-  });
+  const { user, logout, setShowUpgradeModal, setShowBillingModal } = useAccount();
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -595,20 +590,19 @@ export function ProfileModal({ isOpen, onClose, theme }) {
     };
   }, [isOpen]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await updateProfile(formData);
+  const handleUpgrade = () => {
+    onClose();
+    setShowUpgradeModal(true);
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleBilling = () => {
+    onClose();
+    setShowBillingModal(true);
   };
 
-  const handlePreferenceChange = (key, value) => {
-    setFormData(prev => ({
-      ...prev,
-      preferences: { ...prev.preferences, [key]: value }
-    }));
+  const handleSignOut = async () => {
+    await logout();
+    onClose();
   };
 
   if (!isOpen || !user) return null;
@@ -661,13 +655,10 @@ export function ProfileModal({ isOpen, onClose, theme }) {
         >
           ×
         </button>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '1.5rem' }}>
-            Profile Settings
+            Account
           </h2>
-          <p style={{ color: theme.color + '80', fontSize: '0.9rem' }}>
-            Manage your account information and preferences
-          </p>
         </div>
 
         {/* Profile Picture Section */}
@@ -711,127 +702,67 @@ export function ProfileModal({ isOpen, onClose, theme }) {
               {(user?.email?.charAt(0) || user?.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
             </span>
           </div>
-          <p style={{ color: theme.color + '60', fontSize: '0.85rem', margin: 0 }}>
-            {user?.user_metadata?.avatar_url ? 'Profile picture from Google' : 'Sign in with Google to get your profile picture'}
+          <p style={{ color: theme.color, fontSize: '1rem', margin: 0, fontWeight: '500' }}>
+            {user?.email}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              required
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: `1px solid ${theme.cardBorder}`,
-                background: theme.background,
-                color: theme.color,
-                fontSize: '1rem',
-                outline: 'none'
-              }}
-            />
-          </div>
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <button
+            onClick={handleUpgrade}
+            style={{
+              width: '100%',
+              background: theme.primary,
+              color: 'white',
+              border: 'none',
+              padding: '16px 24px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s'
+            }}
+          >
+            Upgrade Plan
+          </button>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              required
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: `1px solid ${theme.cardBorder}`,
-                background: theme.background,
-                color: theme.color,
-                fontSize: '1rem',
-                outline: 'none'
-              }}
-            />
-          </div>
+          <button
+            onClick={handleBilling}
+            style={{
+              width: '100%',
+              background: 'transparent',
+              color: theme.color,
+              border: `1px solid ${theme.color}40`,
+              padding: '16px 24px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '500',
+              transition: 'all 0.2s'
+            }}
+          >
+            Billing
+          </button>
 
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ color: theme.color, marginBottom: '16px', fontSize: '1.1rem' }}>
-              Preferences
-            </h3>
-            
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={formData.preferences.emailNotifications || false}
-                  onChange={(e) => handlePreferenceChange('emailNotifications', e.target.checked)}
-                  style={{ margin: 0 }}
-                />
-                <span style={{ color: theme.color, fontSize: '0.9rem' }}>
-                  Receive email notifications
-                </span>
-              </label>
-            </div>
-
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={formData.preferences.marketingEmails || false}
-                  onChange={(e) => handlePreferenceChange('marketingEmails', e.target.checked)}
-                  style={{ margin: 0 }}
-                />
-                <span style={{ color: theme.color, fontSize: '0.9rem' }}>
-                  Receive marketing emails
-                </span>
-              </label>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button
-              type="submit"
-              disabled={isAuthenticating}
-              style={{
-                flex: 1,
-                background: isAuthenticating ? theme.color + '40' : theme.primary,
-                color: 'white',
-                border: 'none',
-                padding: '14px 24px',
-                borderRadius: '8px',
-                cursor: isAuthenticating ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-                fontWeight: '600',
-                transition: 'all 0.2s'
-              }}
-            >
-              {isAuthenticating ? 'Saving...' : 'Save Changes'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                background: 'transparent',
-                color: theme.color,
-                border: `1px solid ${theme.cardBorder}`,
-                padding: '14px 24px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                fontWeight: '500'
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+          <button
+            onClick={handleSignOut}
+            style={{
+              width: '100%',
+              background: 'transparent',
+              color: '#dc3545',
+              border: '1px solid #dc3545',
+              padding: '16px 24px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '500',
+              transition: 'all 0.2s'
+            }}
+          >
+            Sign Out
+          </button>
+        </div>
       </div>
     </div>
   );
