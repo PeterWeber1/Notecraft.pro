@@ -1,0 +1,40 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Important pages for AI text humanization
+Allow: /
+Allow: /notepad
+Allow: /privacy
+Allow: /terms
+
+# Block admin or sensitive areas (if they exist)
+Disallow: /admin/
+Disallow: /api/
+Disallow: /.env
+Disallow: /config/
+
+# Sitemap location
+Sitemap: https://www.notecraft.pro/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Allow common SEO bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /

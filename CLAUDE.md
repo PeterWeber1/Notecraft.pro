@@ -14,8 +14,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Find port usage: `netstat -ano | findstr :3000`
 
 ### Backend Services
-- **Python API** (`/api`): `python main.py` or `python start.py` - FastAPI server for AI text humanization
-- **Node Server** (`/server`): `node server.js` - Alternative Express.js API with OpenAI integration
+- **Python API** (`/api`): `python main.py` or `python start.py` - FastAPI server for AI text humanization using T5/PEGASUS models
+- **Node Server** (`/server`): `node server.js` - Alternative Express.js API with OpenAI GPT-4 integration
+- Install Python dependencies: `pip install -r api/requirements.txt`
 
 ## Architecture Overview
 
@@ -72,15 +73,17 @@ The app uses **Supabase Authentication** with real user management:
 ### Backend API Architecture
 
 **Python FastAPI** (`/api`):
-- Main humanization API using Transformers models (T5, PEGASUS)
-- Implements text paraphrasing and AI humanization
-- CORS-enabled for frontend integration
-- Model caching for performance
+- Main humanization API using Transformers models (T5 paraphrase model: `Vamsi/T5_Paraphrase_Paws`)
+- Advanced humanization pipeline with quality validation and content similarity scoring
+- Sentence-by-sentence processing to preserve content structure
+- Fallback rule-based humanization when models fail
+- CORS-enabled for frontend integration with model caching
 
 **Node.js Express API** (`/server`):
-- Alternative API implementation using OpenAI GPT models
-- Health check endpoints and text processing
-- JSON request/response handling
+- Alternative API implementation using OpenAI GPT-4
+- Endpoints: `/api/humanize`, `/api/grammar`, `/api/detect`, `/api/humanize-advanced`
+- Advanced humanization with style options (tone, creativity, target audience)
+- Built-in AI detection scoring using GPT-4 analysis
 
 ### Routing Structure
 - `/` - HomePage with text humanization interface
@@ -97,17 +100,17 @@ Multiple versions exist for debugging and development:
 - `App.js` (current: production) vs `App-complex.js`, `App-test.js`, `App-step1.js` (debugging versions)
 - Swap versions with: `copy AccountManager-mock.js AccountManager.js` (Windows) or `cp AccountManager-mock.js AccountManager.js` (Unix)
 
+### Text Processing Pipeline
+- **Frontend**: Real-time word/character counting, AI score simulation, clipboard operations
+- **API Fallback**: HomePage.js implements advanced rule-based humanization when API unavailable
+- **Quality Validation**: Python API includes content similarity scoring and length preservation checks
+
 ### Theme System
 - CSS custom properties with Stripe-inspired design
 - Theme object passed through AccountManager context
 - Dark/light mode toggle with `.dark-mode` class on document body
 - Consistent color scheme: primary (#635bff), background/text dynamic
 
-### Text Processing Features
-- Real-time word/character counting
-- Mock AI detection scoring (10-50% range)
-- Reading time estimation (200 words/minute)
-- Copy/clear text functionality with clipboard API fallback
 
 ## Common Development Tasks
 
@@ -128,7 +131,12 @@ Multiple versions exist for debugging and development:
 ### API Integration
 - Frontend expects `/api/humanize` POST endpoint with format: `{ text, tone, style, length }`
 - **Python API**: Start with `python main.py` or `python start.py` in `/api` directory
+  - Requires `pip install -r api/requirements.txt` for dependencies (transformers, torch, nltk, fastapi)
+  - Uses T5 model for paraphrasing with advanced quality validation
+  - Endpoints: `/humanize`, `/healthz`, `/` (root info)
 - **Node.js API**: Start with `node server.js` in `/server` directory
+  - Requires OpenAI API key in environment variables
+  - Additional endpoints: `/api/grammar` (LanguageTool), `/api/detect` (AI detection)
 - Contains extensive test files for API validation (`test_*.py` and `test-api.js`)
 
 ## Project Structure Notes

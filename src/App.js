@@ -5,6 +5,7 @@ import Notepad from './Notepad';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 import AccountManager from './AccountManager';
+import Breadcrumbs from './components/Breadcrumbs';
 import { LoginModal, RegisterModal, ProfileModal, BillingModal, UpgradeModal } from './components/AccountModals.js';
 
 function App() {
@@ -60,11 +61,14 @@ function App() {
           theme
         }) => (
           <>
-            <div style={{ 
+            <div style={{
               paddingTop: showEmailConfirmationBanner ? '60px' : '0px',
               transition: 'padding-top 0.3s ease',
               minHeight: '100vh'
             }}>
+              {/* SEO Breadcrumbs */}
+              <Breadcrumbs theme={theme} />
+
               <Routes>
               <Route 
                 path="/" 

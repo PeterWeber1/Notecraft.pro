@@ -519,15 +519,15 @@ function HomePage({
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section with SEO-optimized headings */}
       <section className="section" style={{ paddingTop: '120px', paddingBottom: '60px', textAlign: 'center', background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)', color: theme.text }}>
         <div className="container" style={{ maxWidth: '1200px' }}>
-          <h1 style={{ marginBottom: '1.2rem' }}>
-            Writing, Perfected.<br />
-            Humanize AI with <span className="text-accent">Notecraft Pro</span>
+          <h1 style={{ marginBottom: '1.2rem', fontSize: '3rem', fontWeight: 'bold' }}>
+            AI Text Humanizer - Convert AI Writing to Human Content<br />
+            <span className="text-accent" style={{ color: theme.primary }}>Notecraft Pro</span>
           </h1>
           <p style={{ fontSize: '1.3rem', marginBottom: '2rem', opacity: 0.95 }}>
-            Turn AI into natural human writing with the world's most advanced AI Humanizer.
+            Transform AI-generated text into natural, human-like writing. Bypass AI detectors like GPTZero, Copyleaks, and Originality with our advanced humanization technology.
           </p>
           
           {/* Plan Selection */}
@@ -1241,7 +1241,7 @@ function HomePage({
       {/* Features Section */}
       <section className="section" style={{ background: theme.secondary }}>
         <div className="container" style={{ maxWidth: '1100px' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Why Notecraft Pro?</h2>
+          <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Why Choose Our AI Text Humanizer?</h2>
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(3, 1fr)', 
