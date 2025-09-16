@@ -283,6 +283,7 @@ export function LoginModal({ isOpen, onClose, theme }) {
 // Enhanced Registration Modal
 export function RegisterModal({ isOpen, onClose, theme }) {
   const { register, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
+  const { height } = useWindowSize();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -373,9 +374,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
         transform: 'translate(-50%, -50%)',
         maxWidth: '450px',
         width: 'min(90vw, 450px)',
-        padding: 'clamp(1rem, 4vw, 2rem)',
-        maxHeight: '90vh',
-        overflowY: 'auto',
+        padding: height < 700 ? 'clamp(0.75rem, 3vw, 1.5rem)' : 'clamp(1rem, 4vw, 2rem)',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
@@ -400,17 +399,17 @@ export function RegisterModal({ isOpen, onClose, theme }) {
         >
           ×
         </button>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: '2rem', fontWeight: '600' }}>
+        <div style={{ textAlign: 'center', marginBottom: height < 700 ? '20px' : '32px' }}>
+          <h2 style={{ color: theme.color, marginBottom: '8px', fontSize: height < 700 ? '1.5rem' : '2rem', fontWeight: '600' }}>
             Sign Up
           </h2>
-          <p style={{ color: theme.color + '80', fontSize: '1rem' }}>
+          <p style={{ color: theme.color + '80', fontSize: height < 700 ? '0.9rem' : '1rem' }}>
             Enter your information to create an account
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '16px', marginBottom: height < 700 ? '16px' : '20px' }}>
             <div style={{ flex: 1 }}>
               <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
                 First Name
@@ -459,52 +458,59 @@ export function RegisterModal({ isOpen, onClose, theme }) {
             </div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Email
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              required
-              placeholder="m@example.com"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: `1px solid ${theme.cardBorder}`,
-                background: theme.background,
-                color: theme.color,
-                fontSize: '1rem',
-                outline: 'none',
-                boxSizing: 'border-box'
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
-              Password
-            </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              required
-              placeholder=""
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                borderRadius: '8px',
-                border: `1px solid ${theme.cardBorder}`,
-                background: theme.background,
-                color: theme.color,
-                fontSize: '1rem',
-                outline: 'none',
-                boxSizing: 'border-box'
-              }}
-            />
+          {/* Email and Password - responsive layout based on screen height */}
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            marginBottom: height < 700 ? '20px' : '32px',
+            flexDirection: height < 700 ? 'row' : 'column'
+          }}>
+            <div style={{ flex: height < 700 ? 1 : 'none', width: height < 700 ? 'auto' : '100%' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
+                Email
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                required
+                placeholder="m@example.com"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: `1px solid ${theme.cardBorder}`,
+                  background: theme.background,
+                  color: theme.color,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            <div style={{ flex: height < 700 ? 1 : 'none', width: height < 700 ? 'auto' : '100%', marginTop: height < 700 ? '0' : '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
+                Password
+              </label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                required
+                placeholder=""
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: `1px solid ${theme.cardBorder}`,
+                  background: theme.background,
+                  color: theme.color,
+                  fontSize: '1rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
           </div>
 
 
@@ -543,7 +549,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
               fontSize: '1rem',
               fontWeight: '500',
               transition: 'all 0.2s',
-              marginBottom: '24px',
+              marginBottom: height < 700 ? '16px' : '24px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -559,7 +565,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
             Sign Up with Google
           </button>
 
-          <div style={{ textAlign: 'center', fontSize: '0.9rem', color: theme.color + '80', marginBottom: '16px' }}>
+          <div style={{ textAlign: 'center', fontSize: '0.9rem', color: theme.color + '80', marginBottom: height < 700 ? '12px' : '16px' }}>
             By signing up, you agree to our{' '}
             <a href="/terms" style={{ color: theme.color, textDecoration: 'underline' }}>
               Terms and Conditions
