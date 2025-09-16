@@ -387,16 +387,32 @@ function Dashboard({
 
       {/* Dashboard Header */}
       <section style={{ paddingTop: '100px', paddingBottom: '40px', textAlign: 'center', background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)', color: theme.text }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <h1 style={{ marginBottom: '1rem', fontSize: '2.5rem', fontWeight: 'bold' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+          <h1 style={{
+            marginBottom: '1rem',
+            fontSize: 'clamp(1.8rem, 5vw, 2.5rem)',
+            fontWeight: 'bold',
+            lineHeight: '1.2'
+          }}>
             Welcome back, {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}!
           </h1>
-          <p style={{ fontSize: '1.1rem', color: theme.muted, marginBottom: '2rem' }}>
+          <p style={{
+            fontSize: 'clamp(1rem, 3vw, 1.1rem)',
+            color: theme.muted,
+            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            lineHeight: '1.5'
+          }}>
             Transform your AI-generated text into natural, human-like writing
           </p>
 
           {/* Usage Stats */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 'clamp(1rem, 4vw, 2rem)',
+            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            flexWrap: 'wrap'
+          }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.primary }}>{currentLimit.toLocaleString()}</div>
               <div style={{ fontSize: '0.9rem', color: theme.muted }}>Words per request</div>

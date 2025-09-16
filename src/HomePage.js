@@ -337,9 +337,9 @@ function HomePage({
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <div style={{ 
-            fontSize: '1.5rem', 
-            fontWeight: 'var(--stripe-font-weight-bold)', 
+          <div style={{
+            fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+            fontWeight: 'var(--stripe-font-weight-bold)',
             color: theme.primary
           }}>
             Notecraft Pro
@@ -522,12 +522,22 @@ function HomePage({
 
       {/* Hero Section with SEO-optimized headings */}
       <section className="section" style={{ paddingTop: '120px', paddingBottom: '60px', textAlign: 'center', background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)', color: theme.text }}>
-        <div className="container" style={{ maxWidth: '1200px' }}>
-          <h1 style={{ marginBottom: '1.2rem', fontSize: '3rem', fontWeight: 'bold' }}>
+        <div className="container" style={{ maxWidth: '1200px', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+          <h1 style={{
+            marginBottom: 'clamp(1rem, 3vw, 1.2rem)',
+            fontSize: 'clamp(2rem, 6vw, 3rem)',
+            fontWeight: 'bold',
+            lineHeight: '1.2'
+          }}>
             AI Text Humanizer - Convert AI Writing to Human Content<br />
             <span className="text-accent" style={{ color: theme.primary }}>Notecraft Pro</span>
           </h1>
-          <p style={{ fontSize: '1.3rem', marginBottom: '2rem', opacity: 0.95 }}>
+          <p style={{
+            fontSize: 'clamp(1rem, 3vw, 1.3rem)',
+            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            opacity: 0.95,
+            lineHeight: '1.5'
+          }}>
             Transform AI-generated text into natural, human-like writing. Bypass AI detectors like GPTZero, Copyleaks, and Originality with our advanced humanization technology.
           </p>
           
@@ -1208,8 +1218,20 @@ function HomePage({
       {/* Steps Section */}
       <section className="section" style={{ background: theme.secondary }}>
         <div className="container" style={{ maxWidth: '900px' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Humanize AI text in three simple steps:</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
+          <h2 style={{
+            textAlign: 'center',
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 'bold',
+            marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+            padding: '0 clamp(1rem, 4vw, 2rem)',
+            lineHeight: '1.3'
+          }}>Humanize AI text in three simple steps:</h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(1.5rem, 4vw, 2rem)',
+            padding: '0 clamp(1rem, 4vw, 2rem)'
+          }}>
             <div className="card">
               <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>1️⃣</div>
               <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Copy AI-generated text</div>
@@ -1242,21 +1264,27 @@ function HomePage({
       {/* Features Section */}
       <section className="section" style={{ background: theme.secondary }}>
         <div className="container" style={{ maxWidth: '1100px' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Why Choose Our AI Text Humanizer?</h2>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(3, 1fr)', 
-            gap: '2rem', 
-            justifyContent: 'center',
+          <h2 style={{
+            textAlign: 'center',
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 'bold',
+            marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+            padding: '0 clamp(1rem, 4vw, 2rem)',
+            lineHeight: '1.3'
+          }}>Why Choose Our AI Text Humanizer?</h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(1.5rem, 4vw, 2rem)',
             maxWidth: '1200px',
             margin: '0 auto',
-            placeItems: 'center'
+            padding: '0 clamp(1rem, 4vw, 2rem)'
           }}>
             {/* First row - 3 cards */}
             <div style={{ 
               background: theme.card, 
               borderRadius: '1rem', 
-              padding: '2rem', 
+              padding: 'clamp(1.5rem, 4vw, 2rem)', 
               border: `1px solid ${theme.border}`, 
               textAlign: 'center',
               height: 'fit-content',
@@ -1271,7 +1299,7 @@ function HomePage({
             <div style={{ 
               background: theme.card, 
               borderRadius: '1rem', 
-              padding: '2rem', 
+              padding: 'clamp(1.5rem, 4vw, 2rem)', 
               border: `1px solid ${theme.border}`, 
               textAlign: 'center',
               height: 'fit-content',
@@ -1286,7 +1314,7 @@ function HomePage({
             <div style={{ 
               background: theme.card, 
               borderRadius: '1rem', 
-              padding: '2rem', 
+              padding: 'clamp(1.5rem, 4vw, 2rem)', 
               border: `1px solid ${theme.border}`, 
               textAlign: 'center',
               height: 'fit-content',
@@ -1302,7 +1330,7 @@ function HomePage({
              <div style={{ 
                background: theme.card, 
                borderRadius: '1rem', 
-               padding: '2rem', 
+               padding: 'clamp(1.5rem, 4vw, 2rem)', 
                border: `1px solid ${theme.border}`, 
                textAlign: 'center',
                height: 'fit-content',
@@ -1317,7 +1345,7 @@ function HomePage({
              <div style={{ 
                background: theme.card, 
                borderRadius: '1rem', 
-               padding: '2rem', 
+               padding: 'clamp(1.5rem, 4vw, 2rem)', 
                border: `1px solid ${theme.border}`, 
                textAlign: 'center',
                height: 'fit-content',
@@ -1332,7 +1360,7 @@ function HomePage({
              <div style={{ 
                background: theme.card, 
                borderRadius: '1rem', 
-               padding: '2rem', 
+               padding: 'clamp(1.5rem, 4vw, 2rem)', 
                border: `1px solid ${theme.border}`, 
                textAlign: 'center',
                height: 'fit-content',
@@ -1351,15 +1379,36 @@ function HomePage({
 
       {/* Pricing Section */}
       <section style={{ padding: '60px 0', background: theme.background }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 2rem' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Choose the plan that’s right for you.</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+          <h2 style={{
+            textAlign: 'center',
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 'bold',
+            marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+            lineHeight: '1.3'
+          }}>Choose the plan that's right for you.</h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(1rem, 3vw, 2rem)',
+            justifyItems: 'center'
+          }}>
             {[
               { name: 'Basic', price: '$0', period: 'Free tier', features: ['500 words per request', 'Basic humanization', 'Word count & reading time', 'Auto-save'], badge: 'Best for light users' },
               { name: 'Pro', price: '$29.99', period: 'Per month', features: ['2000 words per request', 'Advanced humanization', 'AI detection', 'Export options', 'Style customization'], badge: 'Best for most users', highlight: true },
               { name: 'Ultra', price: '$59.99', period: 'Per month', features: ['10000 words per request', 'Ultra humanization', 'All Pro features', 'Bulk processing', 'Priority support'], badge: 'Best for power users' }
             ].map((plan, i) => (
-              <div key={i} style={{ background: plan.highlight ? theme.primary : theme.card, color: plan.highlight ? '#fff' : theme.text, borderRadius: '1rem', padding: '2rem', minWidth: '260px', maxWidth: '320px', border: `2px solid ${plan.highlight ? theme.primary : theme.border}`, boxShadow: plan.highlight ? '0 4px 24px rgba(99,102,241,0.15)' : 'none', position: 'relative' }}>
+              <div key={i} style={{
+                background: plan.highlight ? theme.primary : theme.card,
+                color: plan.highlight ? '#fff' : theme.text,
+                borderRadius: '1rem',
+                padding: 'clamp(1.5rem, 4vw, 2rem)',
+                width: '100%',
+                maxWidth: '320px',
+                border: `2px solid ${plan.highlight ? theme.primary : theme.border}`,
+                boxShadow: plan.highlight ? '0 4px 24px rgba(99,102,241,0.15)' : 'none',
+                position: 'relative'
+              }}>
                 <div style={{ position: 'absolute', top: '-1.5rem', left: '50%', transform: 'translateX(-50%)', background: theme.accent, color: '#1a1a1a', borderRadius: '1rem', padding: '0.3rem 1.2rem', fontWeight: 600, fontSize: '0.95rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>{plan.badge}</div>
                 <div style={{ fontWeight: 'bold', fontSize: '1.3rem', marginBottom: '0.5rem', marginTop: '1.5rem' }}>{plan.name}</div>
                 <div style={{ fontSize: '2.2rem', fontWeight: 'bold', marginBottom: '0.2rem' }}>
@@ -1427,10 +1476,15 @@ function HomePage({
 
       {/* Testimonial Section */}
       <section style={{ padding: '60px 0', background: theme.secondary }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>“</div>
-          <div style={{ fontSize: '1.2rem', fontStyle: 'italic', marginBottom: '1rem' }}>
-            As a digital marketer, my writing gains warmth and personality, as if I’d spent days perfecting it.
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)', textAlign: 'center' }}>
+          <div style={{ fontSize: 'clamp(2rem, 6vw, 2.5rem)', marginBottom: '1rem' }}>"</div>
+          <div style={{
+            fontSize: 'clamp(1rem, 4vw, 1.2rem)',
+            fontStyle: 'italic',
+            marginBottom: '1rem',
+            lineHeight: '1.5'
+          }}>
+            As a digital marketer, my writing gains warmth and personality, as if I'd spent days perfecting it.
           </div>
           <div style={{ fontWeight: 'bold', color: theme.primary }}>— Yuna K.</div>
         </div>
@@ -1438,11 +1492,24 @@ function HomePage({
 
       {/* FAQ Section */}
       <section style={{ padding: '60px 0', background: theme.background }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 2rem' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Frequently Asked Questions</h2>
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+          <h2 style={{
+            textAlign: 'center',
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 'bold',
+            marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+            lineHeight: '1.3'
+          }}>Frequently Asked Questions</h2>
           <div style={{ display: 'grid', gap: '1.5rem' }}>
             {faqs.map((faq, i) => (
-              <div key={i} style={{ background: theme.card, borderRadius: '1rem', padding: '1.5rem 2rem', border: `1px solid ${theme.border}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }} onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
+              <div key={i} style={{
+                background: theme.card,
+                borderRadius: '1rem',
+                padding: 'clamp(1rem, 4vw, 1.5rem) clamp(1.5rem, 5vw, 2rem)',
+                border: `1px solid ${theme.border}`,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+              }} onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
                 <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem', color: theme.primary }}>{faq.q}</div>
                 <div style={{ color: theme.muted, maxHeight: faqOpen === i ? '200px' : '0', overflow: 'hidden', transition: 'max-height 0.3s', fontSize: '1rem' }}>{faqOpen === i && faq.a}</div>
               </div>
@@ -1453,9 +1520,19 @@ function HomePage({
 
       {/* Final CTA */}
       <section style={{ padding: '60px 0', background: theme.primary, color: 'white', textAlign: 'center' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Humanize your AI writing with Notecraft Pro.</h2>
-          <p style={{ fontSize: '1.1rem', marginBottom: '2rem', opacity: 0.95 }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+          <h2 style={{
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 'bold',
+            marginBottom: 'clamp(1rem, 3vw, 1.5rem)',
+            lineHeight: '1.3'
+          }}>Humanize your AI writing with Notecraft Pro.</h2>
+          <p style={{
+            fontSize: 'clamp(1rem, 3vw, 1.1rem)',
+            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            opacity: 0.95,
+            lineHeight: '1.5'
+          }}>
             Transform your AI-generated text into authentic, human-quality content—trusted by professionals, creators, and marketers worldwide.
           </p>
           <Link to="/notepad" target="_blank" rel="noopener noreferrer" className="btn btn-gradient btn-lg" style={{ textDecoration: 'none' }}>Start Humanizing Now</Link>
@@ -1464,12 +1541,28 @@ function HomePage({
 
       {/* Footer */}
       <footer style={{ backgroundColor: theme.card, borderTop: `1px solid ${theme.border}`, padding: '3rem 0 2rem' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: theme.primary, marginBottom: '1rem' }}>Notecraft Pro</div>
-          <p style={{ color: theme.muted, marginBottom: '2rem' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)', textAlign: 'center' }}>
+          <div style={{
+            fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+            fontWeight: 'bold',
+            color: theme.primary,
+            marginBottom: '1rem'
+          }}>Notecraft Pro</div>
+          <p style={{
+            color: theme.muted,
+            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            fontSize: 'clamp(0.9rem, 3vw, 1rem)',
+            lineHeight: '1.5'
+          }}>
             The ultimate AI-powered humanizer for professionals and creators.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 'clamp(1rem, 4vw, 2rem)',
+            flexWrap: 'wrap',
+            marginBottom: 'clamp(1.5rem, 4vw, 2rem)'
+          }}>
             <Link to="/notepad" target="_blank" rel="noopener noreferrer" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Try Now</Link>
             <Link to="/privacy" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Privacy Policy</Link>
             <Link to="/terms" style={{ color: theme.text, textDecoration: 'none', fontWeight: '500' }}>Terms of Service</Link>
