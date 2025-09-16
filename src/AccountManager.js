@@ -211,6 +211,7 @@ function AccountManager({ children, isDarkMode = false }) {
       // Register with Supabase
       const { data, error } = await authHelpers.signUp(userData.email, userData.password, {
         full_name: userData.name,
+        username: userData.username || userData.email.split('@')[0],
         preferences: {
           emailNotifications: true,
           marketingEmails: false,

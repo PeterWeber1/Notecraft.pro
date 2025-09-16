@@ -364,7 +364,7 @@ function Dashboard({
               }}
               onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
               onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-              title={`${user.email} - Click to manage profile`}
+              title={`${user.user_metadata?.username || user.email?.split('@')[0]} - Click to manage profile`}
             >
               {user.user_metadata?.avatar_url ? (
                 <img
@@ -378,7 +378,7 @@ function Dashboard({
                   }}
                 />
               ) : (
-                (user.email?.charAt(0) || user.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()
+                (user.user_metadata?.username?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()
               )}
             </div>
           </div>
@@ -389,7 +389,7 @@ function Dashboard({
       <section style={{ paddingTop: '100px', paddingBottom: '40px', textAlign: 'center', background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)', color: theme.text }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
           <h1 style={{ marginBottom: '1rem', fontSize: '2.5rem', fontWeight: 'bold' }}>
-            Welcome back, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}!
+            Welcome back, {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}!
           </h1>
           <p style={{ fontSize: '1.1rem', color: theme.muted, marginBottom: '2rem' }}>
             Transform your AI-generated text into natural, human-like writing

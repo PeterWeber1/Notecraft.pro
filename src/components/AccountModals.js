@@ -767,10 +767,13 @@ export function ProfileModal({ isOpen, onClose, theme }) {
             <span style={{
               display: user?.user_metadata?.avatar_url ? 'none' : 'block'
             }}>
-              {(user?.email?.charAt(0) || user?.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
+              {(user?.user_metadata?.username?.charAt(0) || user?.email?.charAt(0) || 'U').toUpperCase()}
             </span>
           </div>
-          <p style={{ color: theme.color, fontSize: '0.9rem', margin: 0, fontWeight: '500' }}>
+          <p style={{ color: theme.color, fontSize: '1rem', margin: '0 0 4px 0', fontWeight: '600' }}>
+            {user?.user_metadata?.username || user?.email?.split('@')[0] || 'User'}
+          </p>
+          <p style={{ color: theme.color + '80', fontSize: '0.9rem', margin: 0, fontWeight: '500' }}>
             {user?.email}
           </p>
         </div>

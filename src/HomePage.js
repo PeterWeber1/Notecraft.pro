@@ -444,7 +444,7 @@ function HomePage({
                     }}
                     onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                    title={`${user.email} - Click to manage profile`}
+                    title={`${user.user_metadata?.username || user.email?.split('@')[0]} - Click to manage profile`}
                   >
                     {user.user_metadata?.avatar_url ? (
                       <img
@@ -465,7 +465,7 @@ function HomePage({
                     <span style={{
                       display: user.user_metadata?.avatar_url ? 'none' : 'block'
                     }}>
-                      {(user.email?.charAt(0) || user.user_metadata?.full_name?.charAt(0) || 'U').toUpperCase()}
+                      {(user.user_metadata?.username?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
                     </span>
                   </div>
                 </div>
