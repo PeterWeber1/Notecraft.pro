@@ -86,10 +86,15 @@ The app uses **Supabase Authentication** with real user management:
 - Built-in AI detection scoring using GPT-4 analysis
 
 ### Routing Structure
-- `/` - HomePage with text humanization interface
+- `/` - HomePage with text humanization interface (www.notecraft.pro)
+- `/dashboard` - User dashboard for logged-in users (app.notecraft.pro/dashboard)
 - `/notepad` - Rich text editor with formatting tools
 - `/privacy` - Privacy Policy page
 - `/terms` - Terms of Service page
+
+### Subdomain Architecture
+- **www.notecraft.pro** - Public landing page and marketing site
+- **app.notecraft.pro/dashboard** - Authenticated user dashboard and workspace
 
 ## Development Workflow
 

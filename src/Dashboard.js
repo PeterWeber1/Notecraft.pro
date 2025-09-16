@@ -24,12 +24,12 @@ function Dashboard({
 }) {
   const navigate = useNavigate();
 
-  // Redirect to home if not logged in
+  // Redirect to main website if not logged in
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      window.location.href = 'https://www.notecraft.pro';
     }
-  }, [user, navigate]);
+  }, [user]);
 
   // If user is not logged in, don't render anything (will redirect)
   if (!user) {

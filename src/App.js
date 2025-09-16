@@ -98,7 +98,7 @@ function App() {
                 } 
               />
               <Route
-                path="/dash"
+                path="/dashboard"
                 element={
                   <Dashboard
                     isDarkMode={isDarkMode}

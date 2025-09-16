@@ -128,11 +128,11 @@ function AccountManager({ children, isDarkMode = false }) {
 
   // Handle redirect from protected routes when user logs out
   useEffect(() => {
-    if (!isLoading && !user && location.pathname === '/dash') {
+    if (!isLoading && !user && (location.pathname === '/dash' || location.pathname === '/dashboard')) {
       console.log('🔄 Redirecting from protected route after logout');
-      navigate('/', { replace: true });
+      window.location.href = 'https://www.notecraft.pro';
     }
-  }, [user, isLoading, location.pathname, navigate]);
+  }, [user, isLoading, location.pathname]);
 
   // Monitor email verification status
   useEffect(() => {
@@ -233,7 +233,7 @@ function AccountManager({ children, isDarkMode = false }) {
             await loadUserSubscription(data.user.id);
             showSuccess('Account created successfully! Please check your email to verify your account.');
             setTimeout(() => {
-              navigate('/dash');
+              window.location.href = 'https://app.notecraft.pro/dashboard';
             }, 1000);
           }
         } else {
@@ -243,7 +243,7 @@ function AccountManager({ children, isDarkMode = false }) {
           await loadUserSubscription(data.user.id);
           showSuccess('Welcome! Your account has been created and verified successfully.');
           setTimeout(() => {
-            navigate('/dash');
+            window.location.href = 'https://app.notecraft.pro/dashboard';
           }, 1000);
         }
       }
@@ -279,9 +279,9 @@ function AccountManager({ children, isDarkMode = false }) {
         showSuccess('Welcome back! You have been signed in successfully.');
         setShowLoginModal(false);
 
-        // Redirect to dashboard after successful login
+        // Redirect to app subdomain dashboard after successful login
         setTimeout(() => {
-          navigate('/dash');
+          window.location.href = 'https://app.notecraft.pro/dashboard';
         }, 1000); // Small delay to show success message
 
         return { success: true };
@@ -323,11 +323,9 @@ function AccountManager({ children, isDarkMode = false }) {
         setError(null);
         setIsLoading(false);
 
-        // Redirect to homepage after successful logout
+        // Redirect to main website homepage after successful logout
         setTimeout(() => {
-          if (location.pathname !== '/') {
-            navigate('/', { replace: true });
-          }
+          window.location.href = 'https://www.notecraft.pro';
         }, 1000); // Small delay to show success message
       }
     } catch (error) {

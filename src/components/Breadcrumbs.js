@@ -8,7 +8,7 @@ const Breadcrumbs = ({ theme }) => {
   // Define route labels for better SEO
   const routeLabels = {
     '': 'AI Text Humanizer',
-    'dash': 'Dashboard',
+    'dashboard': 'Dashboard',
     'notepad': 'AI Writing Editor',
     'privacy': 'Privacy Policy',
     'terms': 'Terms of Service',
