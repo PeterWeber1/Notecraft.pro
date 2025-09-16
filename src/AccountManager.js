@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authHelpers } from './lib/supabase';
 
 // Account Management Context
@@ -14,6 +15,8 @@ export const useAccount = () => {
 
 // Enhanced Account Manager with Supabase Authentication
 function AccountManager({ children, isDarkMode = false }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -213,11 +216,15 @@ function AccountManager({ children, isDarkMode = false }) {
 
           if (loginResult.success) {
             showSuccess('Account created successfully! Please check your email to verify your account.');
+            // Redirect happens in login function
           } else {
             // If automatic login fails, still set user manually to trigger UI updates
             setUser(data.user);
             await loadUserSubscription(data.user.id);
             showSuccess('Account created successfully! Please check your email to verify your account.');
+            setTimeout(() => {
+              navigate('/dash');
+            }, 1000);
           }
         } else {
           // User is automatically signed in and verified
@@ -225,6 +232,9 @@ function AccountManager({ children, isDarkMode = false }) {
           setUser(data.user);
           await loadUserSubscription(data.user.id);
           showSuccess('Welcome! Your account has been created and verified successfully.');
+          setTimeout(() => {
+            navigate('/dash');
+          }, 1000);
         }
       }
       
@@ -258,6 +268,12 @@ function AccountManager({ children, isDarkMode = false }) {
         console.log('✅ User signed in successfully:', data.user.email);
         showSuccess('Welcome back! You have been signed in successfully.');
         setShowLoginModal(false);
+
+        // Redirect to dashboard after successful login
+        setTimeout(() => {
+          navigate('/dash');
+        }, 1000); // Small delay to show success message
+
         return { success: true };
       }
       
