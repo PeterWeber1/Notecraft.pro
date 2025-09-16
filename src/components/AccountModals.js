@@ -288,7 +288,8 @@ export function RegisterModal({ isOpen, onClose, theme }) {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
+    username: ''
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -312,14 +313,27 @@ export function RegisterModal({ isOpen, onClose, theme }) {
     // Combine first and last name for registration
     const registrationData = {
       ...formData,
-      name: `${formData.firstName} ${formData.lastName}`.trim()
+      name: `${formData.firstName} ${formData.lastName}`.trim(),
+      username: formData.username || formData.email.split('@')[0]
     };
 
     await register(registrationData);
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+
+      // Auto-generate username from email
+      if (field === 'email' && value) {
+        const emailParts = value.split('@');
+        if (emailParts.length > 0) {
+          newData.username = emailParts[0];
+        }
+      }
+
+      return newData;
+    });
   };
 
   const handleGoogleSignUp = async () => {
@@ -456,6 +470,30 @@ export function RegisterModal({ isOpen, onClose, theme }) {
                 }}
               />
             </div>
+          </div>
+
+          {/* Username field - auto-generated from email */}
+          <div style={{ marginBottom: height < 700 ? '16px' : '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', color: theme.color, fontWeight: '500' }}>
+              Username <span style={{ color: theme.color + '60', fontSize: '0.9rem' }}>(auto-generated)</span>
+            </label>
+            <input
+              type="text"
+              value={formData.username}
+              onChange={(e) => handleInputChange('username', e.target.value)}
+              placeholder="Will be generated from email"
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: `1px solid ${theme.cardBorder}`,
+                background: formData.username ? theme.background : '#f8f8f8',
+                color: formData.username ? theme.color : theme.color + '60',
+                fontSize: '1rem',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+            />
           </div>
 
           {/* Email and Password - responsive layout based on screen height */}
