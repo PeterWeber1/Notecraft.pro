@@ -102,13 +102,16 @@ export function LoginModal({ isOpen, onClose, theme }) {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         maxWidth: '400px',
-        width: '90%',
-        padding: 'var(--stripe-space-8)',
+        width: 'min(90vw, 400px)',
+        padding: 'clamp(1rem, 4vw, 2rem)',
+        maxHeight: '90vh',
+        overflowY: 'auto',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        border: '1px solid rgba(255, 255, 255, 0.2)'
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '12px'
       }}>
         <button
           onClick={onClose}
@@ -369,16 +372,16 @@ export function RegisterModal({ isOpen, onClose, theme }) {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         maxWidth: '450px',
-        width: '90%',
-        padding: 'var(--stripe-space-8)',
+        width: 'min(90vw, 450px)',
+        padding: 'clamp(1rem, 4vw, 2rem)',
         maxHeight: '90vh',
         overflowY: 'auto',
-        position: 'relative',
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        border: '1px solid rgba(255, 255, 255, 0.2)'
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '12px'
       }}>
         <button
           onClick={onClose}
@@ -836,13 +839,14 @@ export function BillingModal({ isOpen, onClose, theme }) {
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        padding: '32px',
+        padding: 'clamp(1.5rem, 5vw, 2rem)',
         borderRadius: '16px',
         maxWidth: '500px',
-        width: '90%',
+        width: 'min(90vw, 500px)',
+        maxHeight: '90vh',
+        overflowY: 'auto',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        position: 'relative'
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
       }}>
         <button
           onClick={onClose}
@@ -1131,15 +1135,14 @@ export function UpgradeModal({ isOpen, onClose, theme }) {
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        padding: '32px',
+        padding: 'clamp(1.5rem, 5vw, 2rem)',
         borderRadius: '16px',
         maxWidth: '600px',
-        width: '90%',
+        width: 'min(90vw, 600px)',
         border: '1px solid rgba(255, 255, 255, 0.2)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
         maxHeight: '90vh',
-        overflowY: 'auto',
-        position: 'relative'
+        overflowY: 'auto'
       }}>
         <button
           onClick={onClose}
