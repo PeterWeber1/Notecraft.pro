@@ -695,17 +695,17 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       <div style={{
         position: 'fixed',
         top: '80px',
-        right: width <= 768 ? '10px' : '20px',
+        right: width <= 480 ? '10px' : 'calc(20px + 18px)', // 20px nav padding + 18px (half of 36px avatar)
         background: 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         padding: '24px',
         borderRadius: '12px',
-        width: Math.min(280, width - (width <= 768 ? 20 : 40)) + 'px',
+        width: Math.min(280, width - (width <= 480 ? 20 : 76)) + 'px',
         border: '1px solid rgba(0, 0, 0, 0.1)',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         zIndex: 1001,
-        transform: width <= 768 ? 'none' : 'translateX(calc(-50% + 140px))'
+        transform: width <= 480 ? 'none' : 'translateX(50%)'
       }}>
         <button
           onClick={onClose}
