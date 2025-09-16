@@ -108,6 +108,15 @@ function AccountManager({ children, isDarkMode = false }) {
           await loadUserSubscription(session.user.id);
           setError(null);
           setMessage(null);
+
+          // Redirect to dashboard for all sign-in methods (including Google OAuth)
+          // Only redirect if we're not already on dashboard and not in loading state
+          if (location.pathname !== '/dashboard' && !isLoading) {
+            console.log('🔄 Redirecting to dashboard after sign-in');
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 500); // Short delay to ensure state is updated
+          }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setSubscription(null);
@@ -125,7 +134,7 @@ function AccountManager({ children, isDarkMode = false }) {
     return () => {
       authSubscription?.unsubscribe();
     };
-  }, []);
+  }, [location.pathname, navigate, isLoading]);
 
   // Handle redirect from protected routes when user logs out
   useEffect(() => {
