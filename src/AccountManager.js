@@ -130,9 +130,9 @@ function AccountManager({ children, isDarkMode = false }) {
   useEffect(() => {
     if (!isLoading && !user && (location.pathname === '/dash' || location.pathname === '/dashboard')) {
       console.log('🔄 Redirecting from protected route after logout');
-      window.location.href = 'https://www.notecraft.pro';
+      navigate('/', { replace: true });
     }
-  }, [user, isLoading, location.pathname]);
+  }, [user, isLoading, location.pathname, navigate]);
 
   // Monitor email verification status
   useEffect(() => {
@@ -233,12 +233,7 @@ function AccountManager({ children, isDarkMode = false }) {
             await loadUserSubscription(data.user.id);
             showSuccess('Account created successfully! Please check your email to verify your account.');
             setTimeout(() => {
-              const currentDomain = window.location.hostname;
-              if (currentDomain === 'app.notecraft.pro') {
-                window.location.reload();
-              } else {
-                window.location.href = 'https://app.notecraft.pro/dashboard';
-              }
+              navigate('/dashboard');
             }, 1000);
           }
         } else {
@@ -248,12 +243,7 @@ function AccountManager({ children, isDarkMode = false }) {
           await loadUserSubscription(data.user.id);
           showSuccess('Welcome! Your account has been created and verified successfully.');
           setTimeout(() => {
-            const currentDomain = window.location.hostname;
-            if (currentDomain === 'app.notecraft.pro') {
-              window.location.reload();
-            } else {
-              window.location.href = 'https://app.notecraft.pro/dashboard';
-            }
+            navigate('/dashboard');
           }, 1000);
         }
       }
@@ -291,14 +281,7 @@ function AccountManager({ children, isDarkMode = false }) {
 
         // Redirect to dashboard after successful login
         setTimeout(() => {
-          const currentDomain = window.location.hostname;
-          if (currentDomain === 'app.notecraft.pro') {
-            // Already on app subdomain, just reload or navigate to root
-            window.location.reload();
-          } else {
-            // From main site, redirect to app subdomain
-            window.location.href = 'https://app.notecraft.pro/dashboard';
-          }
+          navigate('/dashboard');
         }, 1000); // Small delay to show success message
 
         return { success: true };
@@ -340,9 +323,9 @@ function AccountManager({ children, isDarkMode = false }) {
         setError(null);
         setIsLoading(false);
 
-        // Redirect to main website homepage after successful logout
+        // Redirect to homepage after successful logout
         setTimeout(() => {
-          window.location.href = 'https://www.notecraft.pro';
+          navigate('/');
         }, 1000); // Small delay to show success message
       }
     } catch (error) {

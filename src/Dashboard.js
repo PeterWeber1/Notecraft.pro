@@ -24,80 +24,37 @@ function Dashboard({
 }) {
   const navigate = useNavigate();
 
-  // Handle non-authenticated users differently based on domain
+  // Redirect non-authenticated users to homepage
   useEffect(() => {
     if (!user) {
-      // If on app subdomain, don't redirect - show login form instead
-      const isAppSubdomain = window.location.hostname === 'app.notecraft.pro';
-      if (!isAppSubdomain) {
-        window.location.href = 'https://www.notecraft.pro';
-      }
+      navigate('/');
     }
-  }, [user]);
+  }, [user, navigate]);
 
-  // If user is not logged in on app subdomain, show login interface
+  // Show loading while redirecting
   if (!user) {
-    const isAppSubdomain = window.location.hostname === 'app.notecraft.pro';
-    if (isAppSubdomain) {
-      return (
-        <div style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)'
-        }}>
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
           <div style={{
-            background: '#ffffff',
-            padding: '3rem',
-            borderRadius: '16px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-            textAlign: 'center',
-            maxWidth: '400px',
-            width: '90%'
-          }}>
-            <h1 style={{ color: theme.primary, marginBottom: '1rem' }}>Notecraft Pro</h1>
-            <p style={{ color: theme.muted, marginBottom: '2rem' }}>
-              Please log in to access your dashboard
-            </p>
-            <button
-              onClick={() => setShowLoginModal(true)}
-              style={{
-                width: '100%',
-                padding: '12px 24px',
-                background: theme.primary,
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                marginBottom: '1rem'
-              }}
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => setShowRegisterModal(true)}
-              style={{
-                width: '100%',
-                padding: '12px 24px',
-                background: 'transparent',
-                color: theme.primary,
-                border: `2px solid ${theme.primary}`,
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer'
-              }}
-            >
-              Create Account
-            </button>
-          </div>
+            width: '40px',
+            height: '40px',
+            border: '4px solid #f3f3f3',
+            borderTop: '4px solid #635bff',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{ color: '#606060' }}>Redirecting...</p>
         </div>
-      );
-    }
-    return null;
+      </div>
+    );
   }
 
   const theme = {
