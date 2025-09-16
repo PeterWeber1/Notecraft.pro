@@ -16,6 +16,10 @@ function App() {
     return savedTheme === 'dark';
   });
 
+  // Check if we're on the app subdomain (or localhost for development)
+  const isAppSubdomain = window.location.hostname === 'app.notecraft.pro' ||
+                        (window.location.hostname === 'localhost' && window.location.pathname.startsWith('/dashboard'));
+
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
@@ -71,31 +75,55 @@ function App() {
               <Breadcrumbs theme={theme} />
 
               <Routes>
-              <Route 
-                path="/" 
+              <Route
+                path="/"
                 element={
-                  <HomePage 
-                    isDarkMode={isDarkMode} 
-                    toggleTheme={toggleTheme}
-                    user={user}
-                    subscription={subscription}
-                    getUserTier={getUserTier}
-                    canAccessFeature={canAccessFeature}
-                    login={login}
-                    logout={logout}
-                    upgradeSubscription={upgradeSubscription}
-                    register={register}
-                    updateProfile={updateProfile}
-                    cancelSubscription={cancelSubscription}
-                    setShowLoginModal={setShowLoginModal}
-                    setShowRegisterModal={setShowRegisterModal}
-                    setShowUpgradeModal={setShowUpgradeModal}
-                    setShowProfileModal={setShowProfileModal}
-                    setShowBillingModal={setShowBillingModal}
-                    showEmailConfirmationBanner={showEmailConfirmationBanner}
-                    isEmailVerified={isEmailVerified}
-                  />
-                } 
+                  isAppSubdomain ? (
+                    <Dashboard
+                      isDarkMode={isDarkMode}
+                      toggleTheme={toggleTheme}
+                      user={user}
+                      subscription={subscription}
+                      getUserTier={getUserTier}
+                      canAccessFeature={canAccessFeature}
+                      login={login}
+                      logout={logout}
+                      upgradeSubscription={upgradeSubscription}
+                      register={register}
+                      updateProfile={updateProfile}
+                      cancelSubscription={cancelSubscription}
+                      setShowLoginModal={setShowLoginModal}
+                      setShowRegisterModal={setShowRegisterModal}
+                      setShowUpgradeModal={setShowUpgradeModal}
+                      setShowProfileModal={setShowProfileModal}
+                      setShowBillingModal={setShowBillingModal}
+                      showEmailConfirmationBanner={showEmailConfirmationBanner}
+                      isEmailVerified={isEmailVerified}
+                    />
+                  ) : (
+                    <HomePage
+                      isDarkMode={isDarkMode}
+                      toggleTheme={toggleTheme}
+                      user={user}
+                      subscription={subscription}
+                      getUserTier={getUserTier}
+                      canAccessFeature={canAccessFeature}
+                      login={login}
+                      logout={logout}
+                      upgradeSubscription={upgradeSubscription}
+                      register={register}
+                      updateProfile={updateProfile}
+                      cancelSubscription={cancelSubscription}
+                      setShowLoginModal={setShowLoginModal}
+                      setShowRegisterModal={setShowRegisterModal}
+                      setShowUpgradeModal={setShowUpgradeModal}
+                      setShowProfileModal={setShowProfileModal}
+                      setShowBillingModal={setShowBillingModal}
+                      showEmailConfirmationBanner={showEmailConfirmationBanner}
+                      isEmailVerified={isEmailVerified}
+                    />
+                  )
+                }
               />
               <Route
                 path="/dashboard"

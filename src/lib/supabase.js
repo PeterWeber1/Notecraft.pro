@@ -3,15 +3,19 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://mxkmwaenxhkwbjbkpglv.supabase.co'
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14a213YWVueGhrd2JqYmtwZ2x2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDA3NTcsImV4cCI6MjA3MDA3Njc1N30.4FgFW-aaiNBz1FKIh-RroWw4UHEICEqmVPkf2gG2efI'
 
-// Get the redirect URL based on environment
+// Get the redirect URL based on environment and current domain
 const getRedirectUrl = () => {
   // Priority: 1. Environment variable, 2. Production fallback, 3. Current origin (development)
   if (process.env.REACT_APP_PRODUCTION_URL) {
     return process.env.REACT_APP_PRODUCTION_URL;
   }
 
-  // Production fallback - use the correct production domain
+  // Production fallback - use the current domain to support both www and app subdomains
   if (process.env.NODE_ENV === 'production') {
+    const currentHostname = window.location.hostname;
+    if (currentHostname === 'app.notecraft.pro') {
+      return 'https://app.notecraft.pro';
+    }
     return 'https://www.notecraft.pro';
   }
 

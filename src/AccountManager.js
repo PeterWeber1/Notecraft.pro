@@ -233,7 +233,12 @@ function AccountManager({ children, isDarkMode = false }) {
             await loadUserSubscription(data.user.id);
             showSuccess('Account created successfully! Please check your email to verify your account.');
             setTimeout(() => {
-              window.location.href = 'https://app.notecraft.pro/dashboard';
+              const currentDomain = window.location.hostname;
+              if (currentDomain === 'app.notecraft.pro') {
+                window.location.reload();
+              } else {
+                window.location.href = 'https://app.notecraft.pro/dashboard';
+              }
             }, 1000);
           }
         } else {
@@ -243,7 +248,12 @@ function AccountManager({ children, isDarkMode = false }) {
           await loadUserSubscription(data.user.id);
           showSuccess('Welcome! Your account has been created and verified successfully.');
           setTimeout(() => {
-            window.location.href = 'https://app.notecraft.pro/dashboard';
+            const currentDomain = window.location.hostname;
+            if (currentDomain === 'app.notecraft.pro') {
+              window.location.reload();
+            } else {
+              window.location.href = 'https://app.notecraft.pro/dashboard';
+            }
           }, 1000);
         }
       }
@@ -279,9 +289,16 @@ function AccountManager({ children, isDarkMode = false }) {
         showSuccess('Welcome back! You have been signed in successfully.');
         setShowLoginModal(false);
 
-        // Redirect to app subdomain dashboard after successful login
+        // Redirect to dashboard after successful login
         setTimeout(() => {
-          window.location.href = 'https://app.notecraft.pro/dashboard';
+          const currentDomain = window.location.hostname;
+          if (currentDomain === 'app.notecraft.pro') {
+            // Already on app subdomain, just reload or navigate to root
+            window.location.reload();
+          } else {
+            // From main site, redirect to app subdomain
+            window.location.href = 'https://app.notecraft.pro/dashboard';
+          }
         }, 1000); // Small delay to show success message
 
         return { success: true };
