@@ -694,7 +694,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
     }}>
       <div style={{
         position: 'fixed',
-        top: '80px',
+        top: '70px',
         right: width <= 480 ? '10px' : '20px',
         background: 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(10px)',
@@ -704,8 +704,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
         width: Math.min(280, width - (width <= 480 ? 20 : 40)) + 'px',
         border: '1px solid rgba(0, 0, 0, 0.1)',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-        zIndex: 1001,
-        transform: width <= 480 ? 'none' : 'translateX(calc(50% - 18px))'
+        zIndex: 1001
       }}>
         <button
           onClick={onClose}
