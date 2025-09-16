@@ -1,6 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+// Import useWindowSize hook from AccountModals for responsive layout
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 function Dashboard({
   isDarkMode = false,
   toggleTheme = () => {},
@@ -23,6 +47,7 @@ function Dashboard({
   isEmailVerified
 }) {
   const navigate = useNavigate();
+  const { width } = useWindowSize();
 
   // Redirect non-authenticated users to homepage
   useEffect(() => {
@@ -282,7 +307,7 @@ function Dashboard({
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '0 2rem',
+          padding: '0 clamp(1rem, 4vw, 2rem)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
@@ -431,14 +456,16 @@ function Dashboard({
 
       {/* Main Humanizer Interface */}
       <section style={{ padding: '40px 0', background: theme.background }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
 
-          {/* Advanced Humanizer Grid */}
+          {/* Advanced Humanizer Grid - Mobile Responsive */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1.2fr 1.2fr 0.8fr',
-            gap: '1rem',
-            marginBottom: '2rem'
+            gridTemplateColumns: width <= 768 ? '1fr' :
+                                width <= 1024 ? '1fr 1fr' :
+                                '1.2fr 1.2fr 0.8fr',
+            gap: 'clamp(0.5rem, 2vw, 1rem)',
+            marginBottom: 'clamp(1rem, 3vw, 2rem)'
           }}>
 
             {/* Original Text Panel */}
@@ -450,7 +477,7 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: '400px'
+              minHeight: width <= 768 ? '300px' : '400px'
             }}>
               <div style={{
                 display: 'flex',
@@ -528,7 +555,7 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: '400px'
+              minHeight: width <= 768 ? '300px' : '400px'
             }}>
               <div style={{
                 display: 'flex',
