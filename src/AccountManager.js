@@ -112,6 +112,8 @@ function AccountManager({ children, isDarkMode = false }) {
           setSubscription(null);
           setError(null);
           setMessage(null);
+          // Ensure we're not stuck in loading state after logout
+          setIsLoading(false);
         }
         
         setIsLoading(false);
@@ -123,6 +125,14 @@ function AccountManager({ children, isDarkMode = false }) {
       authSubscription?.unsubscribe();
     };
   }, []);
+
+  // Handle redirect from protected routes when user logs out
+  useEffect(() => {
+    if (!isLoading && !user && location.pathname === '/dash') {
+      console.log('🔄 Redirecting from protected route after logout');
+      navigate('/', { replace: true });
+    }
+  }, [user, isLoading, location.pathname, navigate]);
 
   // Monitor email verification status
   useEffect(() => {
@@ -291,6 +301,13 @@ function AccountManager({ children, isDarkMode = false }) {
     try {
       console.log('🔧 Signing out user...');
 
+      // Close any open modals first
+      setShowLoginModal(false);
+      setShowRegisterModal(false);
+      setShowUpgradeModal(false);
+      setShowProfileModal(false);
+      setShowBillingModal(false);
+
       const { error } = await authHelpers.signOut();
 
       if (error) {
@@ -300,16 +317,17 @@ function AccountManager({ children, isDarkMode = false }) {
         console.log('✅ User signed out successfully');
         showSuccess('You have been signed out successfully.');
 
-        // Close any open modals
-        setShowLoginModal(false);
-        setShowRegisterModal(false);
-        setShowUpgradeModal(false);
-        setShowProfileModal(false);
-        setShowBillingModal(false);
+        // Clear user state immediately
+        setUser(null);
+        setSubscription(null);
+        setError(null);
+        setIsLoading(false);
 
         // Redirect to homepage after successful logout
         setTimeout(() => {
-          navigate('/');
+          if (location.pathname !== '/') {
+            navigate('/', { replace: true });
+          }
         }, 1000); // Small delay to show success message
       }
     } catch (error) {
@@ -568,7 +586,8 @@ function AccountManager({ children, isDarkMode = false }) {
     theme
   };
 
-  if (isLoading) {
+  // Only show loading on initial load, not after logout
+  if (isLoading && !user && !error) {
     return (
       <div style={{
         display: 'flex',
@@ -580,7 +599,7 @@ function AccountManager({ children, isDarkMode = false }) {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Loading...</div>
-          <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>Initializing Firebase authentication</div>
+          <div style={{ fontSize: '0.9rem', color: theme.color + '80' }}>Initializing authentication</div>
         </div>
       </div>
     );
