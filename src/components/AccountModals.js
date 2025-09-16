@@ -1,6 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount } from '../AccountManager.js';
 
+// Custom hook for window dimensions
+const useWindowSize = () => {
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800,
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowSize;
+};
+
 // Enhanced Login Modal
 export function LoginModal({ isOpen, onClose, theme }) {
   const { login, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
@@ -575,6 +599,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
 // Profile Management Modal
 export function ProfileModal({ isOpen, onClose, theme }) {
   const { user, logout, setShowUpgradeModal, setShowBillingModal } = useAccount();
+  const { width } = useWindowSize();
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -623,13 +648,13 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       <div style={{
         position: 'fixed',
         top: '80px',
-        left: 'calc(50% + 600px - 250px)',
+        right: '20px',
         background: 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         padding: '24px',
         borderRadius: '12px',
-        width: '280px',
+        width: Math.min(280, width - 40) + 'px',
         border: '1px solid rgba(0, 0, 0, 0.1)',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         zIndex: 1001

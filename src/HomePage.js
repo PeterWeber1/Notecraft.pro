@@ -329,13 +329,13 @@ function HomePage({
         backdropFilter: 'blur(20px)',
         padding: '1rem 0'
       }}>
-        <div style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto', 
-          padding: '0 2rem', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center' 
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 clamp(1rem, 4vw, 2rem)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
           <div style={{ 
             fontSize: '1.5rem', 
@@ -347,7 +347,8 @@ function HomePage({
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '1rem'
+            gap: 'clamp(0.5rem, 2vw, 1rem)',
+            flexWrap: 'wrap'
           }}>
             <Link
               to="/notepad"
