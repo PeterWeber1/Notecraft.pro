@@ -290,22 +290,27 @@ function AccountManager({ children, isDarkMode = false }) {
   const logout = async () => {
     try {
       console.log('🔧 Signing out user...');
-      
+
       const { error } = await authHelpers.signOut();
-      
+
       if (error) {
         console.error('Logout error:', error);
         showError('Failed to sign out');
       } else {
         console.log('✅ User signed out successfully');
         showSuccess('You have been signed out successfully.');
-        
+
         // Close any open modals
         setShowLoginModal(false);
         setShowRegisterModal(false);
         setShowUpgradeModal(false);
         setShowProfileModal(false);
         setShowBillingModal(false);
+
+        // Redirect to homepage after successful logout
+        setTimeout(() => {
+          navigate('/');
+        }, 1000); // Small delay to show success message
       }
     } catch (error) {
       console.error('Logout error:', error);
