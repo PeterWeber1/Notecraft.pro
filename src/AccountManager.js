@@ -21,6 +21,7 @@ function AccountManager({ children, isDarkMode = false }) {
   const [subscription, setSubscription] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null); // { text: string, type: 'success' | 'error' | 'warning' | 'info' }
   const [showEmailConfirmationBanner, setShowEmailConfirmationBanner] = useState(false);
@@ -300,6 +301,7 @@ function AccountManager({ children, isDarkMode = false }) {
   const logout = async () => {
     try {
       console.log('🔧 Signing out user...');
+      setIsLoggingOut(true);
 
       // Close any open modals first
       setShowLoginModal(false);
@@ -313,6 +315,7 @@ function AccountManager({ children, isDarkMode = false }) {
       if (error) {
         console.error('Logout error:', error);
         showError('Failed to sign out');
+        setIsLoggingOut(false);
       } else {
         console.log('✅ User signed out successfully');
         showSuccess('You have been signed out successfully.');
@@ -323,14 +326,18 @@ function AccountManager({ children, isDarkMode = false }) {
         setError(null);
         setIsLoading(false);
 
-        // Redirect to homepage after successful logout
+        // Navigate immediately without delay to prevent blank screen
+        navigate('/', { replace: true });
+
+        // Clear logout flag after navigation
         setTimeout(() => {
-          navigate('/');
-        }, 1000); // Small delay to show success message
+          setIsLoggingOut(false);
+        }, 100);
       }
     } catch (error) {
       console.error('Logout error:', error);
       showError('Failed to sign out');
+      setIsLoggingOut(false);
     }
   };
 
@@ -584,8 +591,8 @@ function AccountManager({ children, isDarkMode = false }) {
     theme
   };
 
-  // Only show loading on initial load, not after logout
-  if (isLoading && !user && !error) {
+  // Only show loading on initial load, not after logout or during logout
+  if (isLoading && !user && !error && !isLoggingOut) {
     return (
       <div style={{
         display: 'flex',
