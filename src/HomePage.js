@@ -1524,7 +1524,7 @@ function HomePage({
           <p style={{
             fontSize: 'clamp(1rem, 3vw, 1.1rem)',
             marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
-            opacity: 0.95,
+            opacity: 1,
             lineHeight: '1.5'
           }}>
             Transform your AI-generated text into authentic, human-quality content—trusted by professionals, creators, and marketers worldwide.
@@ -1538,8 +1538,27 @@ function HomePage({
                 }, 500);
               }
             }}
-            className="btn btn-gradient btn-lg"
-            style={{ border: 'none', cursor: 'pointer' }}
+            className="btn btn-lg"
+            style={{
+              border: 'none',
+              cursor: 'pointer',
+              background: '#000000',
+              color: '#ffffff',
+              padding: '1rem 2rem',
+              borderRadius: '8px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = '#333333';
+              e.target.style.transform = 'translateY(-2px)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = '#000000';
+              e.target.style.transform = 'translateY(0)';
+            }}
           >
             Start Humanizing Now
           </button>
