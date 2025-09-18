@@ -332,10 +332,10 @@ function HomePage({
         padding: isMobile ? '0.75rem 0' : '1rem 0',
         width: '100%'
       }}>
-        <div className="container" style={{
-          maxWidth: '100%',
+        <div style={{
+          maxWidth: 'clamp(320px, 95vw, 1400px)',
           margin: '0 auto',
-          padding: `0 ${containerPadding}`,
+          padding: '0 clamp(15px, 2vw, 20px)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -535,11 +535,7 @@ function HomePage({
         width: '100%',
         overflow: 'hidden'
       }}>
-        <div className="container" style={{
-          maxWidth: '100%',
-          padding: `0 ${containerPadding}`,
-          width: '100%'
-        }}>
+        <div className="container">
           <h1 style={{
             marginBottom: 'clamp(1rem, 3vw, 1.2rem)',
             fontSize: 'clamp(2rem, 6vw, 3rem)',
@@ -644,18 +640,18 @@ function HomePage({
           </div>
 
           {/* Advanced Humanizer Interface */}
-          <div className="humanizer-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: responsive('1fr', '1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
-            gap: isMobile ? '0.5rem' : '1rem',
-            marginBottom: '2rem',
-            maxWidth: '100%',
-            margin: '0 auto',
-            padding: `0 ${containerPadding}`,
-            width: '100%',
-            overflowX: 'auto'
-          }}>
-            
+          <div className="container">
+            <div className="humanizer-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: responsive('1fr', '1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
+              gap: isMobile ? '0.5rem' : '1rem',
+              marginBottom: '2rem',
+              maxWidth: '1400px',
+              margin: '0 auto',
+              width: '100%',
+              overflowX: 'auto'
+            }}>
+
             {/* Original Text Panel */}
             <div style={{
               background: '#ffffff',
@@ -1007,15 +1003,15 @@ function HomePage({
               </div>
             </div>
           </div>
-
+        </div>
         </div>
       </section>
 
       {/* Advanced Options Section */}
       <section className="section" style={{ background: theme.background }}>
-        <div className="container" style={{ maxWidth: '1200px' }}>
+        <div className="container">
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            <div style={{ width: '100%', maxWidth: '1380px', margin: '0 auto' }}>
+            <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
               {/* Advanced Options (Pro & Ultra) */}
               {(selectedTier === 'pro' || selectedTier === 'ultra') && canAccessFeature && canAccessFeature(selectedTier) && (
                 <div style={{

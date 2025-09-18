@@ -281,10 +281,10 @@ function Dashboard({
         backdropFilter: 'blur(20px)',
         padding: '1rem 0'
       }}>
-        <div className="container" style={{
-          maxWidth: '100%',
+        <div style={{
+          maxWidth: 'clamp(320px, 95vw, 1400px)',
           margin: '0 auto',
-          padding: `0 ${containerPadding}`,
+          padding: '0 clamp(15px, 2vw, 20px)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -447,12 +447,7 @@ function Dashboard({
 
       {/* Main Humanizer Interface */}
       <section style={{ padding: '40px 0', background: theme.background }}>
-        <div className="container" style={{
-          maxWidth: '100%',
-          margin: '0 auto',
-          padding: `0 ${containerPadding}`,
-          width: '100%'
-        }}>
+        <div className="container">
 
           {/* Advanced Humanizer Grid - Mobile Responsive */}
           <div className="humanizer-interface dashboard-grid" style={{
@@ -460,6 +455,8 @@ function Dashboard({
             gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
             gap: isMobile ? '0.5rem' : '1rem',
             marginBottom: isMobile ? '1rem' : '2rem',
+            maxWidth: '1400px',
+            margin: '0 auto',
             width: '100%'
           }}>
 

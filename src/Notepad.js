@@ -907,10 +907,10 @@ function Notepad({
         backdropFilter: 'blur(20px)',
         padding: '0.75rem 0'
       }}>
-        <div style={{ 
-          maxWidth: 'clamp(320px, 95vw, 1400px)', 
-          margin: '0 auto', 
-          padding: '0 clamp(20px, 3vw, 40px)', 
+        <div style={{
+          maxWidth: 'clamp(320px, 95vw, 1400px)',
+          margin: '0 auto',
+          padding: '0 clamp(15px, 2vw, 20px)', 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
@@ -1066,7 +1066,7 @@ function Notepad({
       <div style={{
         maxWidth: 'clamp(320px, 95vw, 1400px)',
         margin: '0 auto',
-        padding: 'clamp(12px, 3vw, 20px)',
+        padding: '0 clamp(20px, 3vw, 30px)',
         paddingTop: '80px', // Reduced space from fixed header
         boxSizing: 'border-box',
         boxShadow: 'none',
@@ -1076,7 +1076,7 @@ function Notepad({
         {/* Editor Card */}
         <div style={{ 
           background: theme.background, // Match background for seamlessness
-          padding: 'clamp(20px, 3vw, 40px)', 
+          padding: 'clamp(15px, 2vw, 20px)', 
           borderRadius: 0, // Remove radius
           boxShadow: 'none', // Remove shadow
           border: 'none', // Remove border

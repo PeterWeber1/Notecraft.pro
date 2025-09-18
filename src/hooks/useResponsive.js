@@ -56,8 +56,8 @@ export const useResponsive = () => {
     return xl || lg || md || sm || xs;
   };
 
-  // Container padding based on screen size
-  const containerPadding = responsive('1rem', '1.5rem', '2rem', '2.5rem', '3rem');
+  // Container padding based on screen size - more generous margins
+  const containerPadding = responsive('1.5rem', '2rem', '3rem', '4rem', '5rem');
 
   // Grid columns based on screen size
   const gridCols = responsive(1, 1, 2, 3, 3);
