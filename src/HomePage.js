@@ -545,7 +545,7 @@ function HomePage({
           <p style={{
             fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
             marginBottom: 'clamp(1rem, 3vw, 1.2rem)',
-            opacity: 0.95,
+            opacity: 1,
             lineHeight: '1.4'
           }}>
             Transform AI-generated text into natural, human-like writing. Bypass AI detectors like GPTZero, Copyleaks, and Originality with our advanced humanization technology.
@@ -608,7 +608,7 @@ function HomePage({
                 );
               })}
             </div>
-            <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
+            <div style={{ fontSize: '0.9rem', opacity: 1 }}>
               {currentTier.wordLimit} words • {currentTier.features.join(' • ')}
               {!user && (
                 <>
