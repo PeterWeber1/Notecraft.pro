@@ -1,29 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-// Import useWindowSize hook from AccountModals for responsive layout
-const useWindowSize = () => {
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowSize;
-};
+import { useResponsive } from './hooks/useResponsive';
 
 function Dashboard({
   isDarkMode = false,
@@ -47,7 +24,7 @@ function Dashboard({
   isEmailVerified
 }) {
   const navigate = useNavigate();
-  const { width } = useWindowSize();
+  const { windowSize, isMobile, isTablet, responsive, containerPadding } = useResponsive();
 
   // Redirect non-authenticated users to homepage
   useEffect(() => {
@@ -304,13 +281,15 @@ function Dashboard({
         backdropFilter: 'blur(20px)',
         padding: '1rem 0'
       }}>
-        <div style={{
-          maxWidth: '1200px',
+        <div className="container" style={{
+          maxWidth: '100%',
           margin: '0 auto',
-          padding: '0 clamp(1rem, 4vw, 2rem)',
+          padding: `0 ${containerPadding}`,
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          gap: isMobile ? '0.5rem' : '1rem'
         }}>
           <Link to="/" style={{
             fontSize: '1.5rem',
@@ -411,8 +390,20 @@ function Dashboard({
       </nav>
 
       {/* Dashboard Header */}
-      <section style={{ paddingTop: '100px', paddingBottom: '40px', textAlign: 'center', background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)', color: theme.text }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+      <section style={{
+        paddingTop: isMobile ? '80px' : '100px',
+        paddingBottom: isMobile ? '30px' : '40px',
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)',
+        color: theme.text,
+        width: '100%'
+      }}>
+        <div className="container" style={{
+          maxWidth: '100%',
+          margin: '0 auto',
+          padding: `0 ${containerPadding}`,
+          width: '100%'
+        }}>
           <h1 style={{
             marginBottom: '1rem',
             fontSize: 'clamp(1.8rem, 5vw, 2.5rem)',
@@ -456,16 +447,20 @@ function Dashboard({
 
       {/* Main Humanizer Interface */}
       <section style={{ padding: '40px 0', background: theme.background }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+        <div className="container" style={{
+          maxWidth: '100%',
+          margin: '0 auto',
+          padding: `0 ${containerPadding}`,
+          width: '100%'
+        }}>
 
           {/* Advanced Humanizer Grid - Mobile Responsive */}
-          <div style={{
+          <div className="humanizer-interface dashboard-grid" style={{
             display: 'grid',
-            gridTemplateColumns: width <= 768 ? '1fr' :
-                                width <= 1024 ? '1fr 1fr' :
-                                '1.2fr 1.2fr 0.8fr',
-            gap: 'clamp(0.5rem, 2vw, 1rem)',
-            marginBottom: 'clamp(1rem, 3vw, 2rem)'
+            gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
+            gap: isMobile ? '0.5rem' : '1rem',
+            marginBottom: isMobile ? '1rem' : '2rem',
+            width: '100%'
           }}>
 
             {/* Original Text Panel */}
@@ -477,7 +472,7 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: width <= 768 ? '300px' : '400px'
+              minHeight: isMobile ? '250px' : '400px'
             }}>
               <div style={{
                 display: 'flex',
@@ -555,7 +550,7 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: width <= 768 ? '300px' : '400px'
+              minHeight: isMobile ? '250px' : '400px'
             }}>
               <div style={{
                 display: 'flex',

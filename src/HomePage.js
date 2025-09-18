@@ -403,7 +403,7 @@ function HomePage({
               </button>
             )}
             {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div className="user-nav" style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem' }}>
                 {/* Current Plan Badge */}
                 <div style={{
                   background: getUserTier() === 'basic' ? 'rgba(99, 91, 255, 0.1)' : 

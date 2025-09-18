@@ -1,33 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount } from '../AccountManager.js';
-
-// Custom hook for window dimensions
-const useWindowSize = () => {
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowSize;
-};
+import { useResponsive } from '../hooks/useResponsive';
 
 // Enhanced Login Modal
 export function LoginModal({ isOpen, onClose, theme }) {
   const { login, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
+  const { windowSize, isMobile, responsive } = useResponsive();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -283,7 +261,7 @@ export function LoginModal({ isOpen, onClose, theme }) {
 // Enhanced Registration Modal
 export function RegisterModal({ isOpen, onClose, theme }) {
   const { register, isAuthenticating, error, setShowLoginModal, setShowRegisterModal } = useAccount();
-  const { height } = useWindowSize();
+  const { windowSize: { height }, isMobile, responsive } = useResponsive();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -646,7 +624,7 @@ export function RegisterModal({ isOpen, onClose, theme }) {
 // Profile Management Modal
 export function ProfileModal({ isOpen, onClose, theme }) {
   const { user, logout, setShowUpgradeModal, setShowBillingModal } = useAccount();
-  const { width } = useWindowSize();
+  const { windowSize: { width }, isMobile, responsive } = useResponsive();
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -844,6 +822,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
 // Billing and Subscription Modal
 export function BillingModal({ isOpen, onClose, theme }) {
   const { subscription, cancelSubscription, isAuthenticating, getDaysRemaining } = useAccount();
+  const { windowSize, isMobile, responsive } = useResponsive();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   // Prevent background scrolling when modal is open
@@ -1101,6 +1080,7 @@ export function BillingModal({ isOpen, onClose, theme }) {
 // Upgrade Modal
 export function UpgradeModal({ isOpen, onClose, theme }) {
   const { upgradeSubscription, isAuthenticating } = useAccount();
+  const { windowSize, isMobile, responsive } = useResponsive();
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   // Prevent background scrolling when modal is open
