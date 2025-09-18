@@ -109,9 +109,14 @@ function AccountManager({ children, isDarkMode = false }) {
           setError(null);
           setMessage(null);
 
-          // Redirect to dashboard for all sign-in methods (including Google OAuth)
-          // Only redirect if we're not already on dashboard and not in loading state
-          if (location.pathname !== '/dashboard' && !isLoading) {
+          // Only redirect to dashboard if we're on a route that requires it
+          // Allow users to stay on notepad, privacy, terms, etc.
+          const publicRoutes = ['/', '/notepad', '/privacy', '/terms'];
+          const shouldRedirectToDashboard = !publicRoutes.includes(location.pathname) &&
+                                          location.pathname !== '/dashboard' &&
+                                          !isLoading;
+
+          if (shouldRedirectToDashboard) {
             console.log('🔄 Redirecting to dashboard after sign-in');
             setTimeout(() => {
               navigate('/dashboard');
@@ -243,9 +248,12 @@ function AccountManager({ children, isDarkMode = false }) {
             setUser(data.user);
             await loadUserSubscription(data.user.id);
             showSuccess('Account created successfully! Please check your email to verify your account.');
-            setTimeout(() => {
-              navigate('/dashboard');
-            }, 1000);
+            const publicRoutes = ['/', '/notepad', '/privacy', '/terms'];
+            if (!publicRoutes.includes(location.pathname)) {
+              setTimeout(() => {
+                navigate('/dashboard');
+              }, 1000);
+            }
           }
         } else {
           // User is automatically signed in and verified
@@ -253,9 +261,12 @@ function AccountManager({ children, isDarkMode = false }) {
           setUser(data.user);
           await loadUserSubscription(data.user.id);
           showSuccess('Welcome! Your account has been created and verified successfully.');
-          setTimeout(() => {
-            navigate('/dashboard');
-          }, 1000);
+          const publicRoutes = ['/', '/notepad', '/privacy', '/terms'];
+          if (!publicRoutes.includes(location.pathname)) {
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 1000);
+          }
         }
       }
       
@@ -290,10 +301,13 @@ function AccountManager({ children, isDarkMode = false }) {
         showSuccess('Welcome back! You have been signed in successfully.');
         setShowLoginModal(false);
 
-        // Redirect to dashboard after successful login
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1000); // Small delay to show success message
+        // Only redirect to dashboard if not on public routes
+        const publicRoutes = ['/', '/notepad', '/privacy', '/terms'];
+        if (!publicRoutes.includes(location.pathname)) {
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000); // Small delay to show success message
+        }
 
         return { success: true };
       }
