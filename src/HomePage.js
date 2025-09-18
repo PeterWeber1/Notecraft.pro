@@ -1,25 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useResponsive } from './hooks/useResponsive';
 
-function HomePage({ 
-  isDarkMode = false, 
-  toggleTheme = () => {}, 
-  user, 
-  subscription, 
-  getUserTier, 
-  canAccessFeature, 
-  login, 
-  logout, 
-  upgradeSubscription, 
+function HomePage({
+  isDarkMode = false,
+  toggleTheme = () => {},
+  user,
+  subscription,
+  getUserTier,
+  canAccessFeature,
+  login,
+  logout,
+  upgradeSubscription,
   register,
   updateProfile,
   cancelSubscription,
-  setShowLoginModal, 
+  setShowLoginModal,
   setShowRegisterModal,
   setShowUpgradeModal,
   setShowProfileModal,
   setShowBillingModal
 }) {
+  const { windowSize, isMobile, isTablet, isDesktop, responsive, containerPadding } = useResponsive();
   // Minimalist theme - Black, White, Blue
   const theme = {
     background: '#ffffff',
@@ -318,24 +320,27 @@ function HomePage({
       )}
 
       {/* Navigation */}
-      <nav style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        zIndex: 1000, 
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
         background: theme.card,
         borderBottom: `1px solid ${theme.border}`,
         backdropFilter: 'blur(20px)',
-        padding: '1rem 0'
+        padding: isMobile ? '0.75rem 0' : '1rem 0',
+        width: '100%'
       }}>
-        <div style={{
-          maxWidth: '1200px',
+        <div className="container" style={{
+          maxWidth: '100%',
           margin: '0 auto',
-          padding: '0 clamp(1rem, 4vw, 2rem)',
+          padding: `0 ${containerPadding}`,
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          gap: isMobile ? '0.5rem' : '1rem'
         }}>
           <div style={{
             fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
@@ -521,8 +526,20 @@ function HomePage({
       </nav>
 
       {/* Hero Section with SEO-optimized headings */}
-      <section className="section" style={{ paddingTop: '120px', paddingBottom: '60px', textAlign: 'center', background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)', color: theme.text }}>
-        <div className="container" style={{ maxWidth: '1200px', padding: '0 clamp(1rem, 4vw, 2rem)' }}>
+      <section className="section" style={{
+        paddingTop: isMobile ? '100px' : '120px',
+        paddingBottom: isMobile ? '40px' : '60px',
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)',
+        color: theme.text,
+        width: '100%',
+        overflow: 'hidden'
+      }}>
+        <div className="container" style={{
+          maxWidth: '100%',
+          padding: `0 ${containerPadding}`,
+          width: '100%'
+        }}>
           <h1 style={{
             marginBottom: 'clamp(1rem, 3vw, 1.2rem)',
             fontSize: 'clamp(2rem, 6vw, 3rem)',
@@ -627,14 +644,16 @@ function HomePage({
           </div>
 
           {/* Advanced Humanizer Interface */}
-          <div className="humanizer-grid" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '1.2fr 1.2fr 0.8fr', 
-            gap: '1rem', 
-            marginBottom: '2rem', 
-            maxWidth: '1400px', 
-            margin: '0 auto', 
-            padding: '0 1rem' 
+          <div className="humanizer-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: responsive('1fr', '1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
+            gap: isMobile ? '0.5rem' : '1rem',
+            marginBottom: '2rem',
+            maxWidth: '100%',
+            margin: '0 auto',
+            padding: `0 ${containerPadding}`,
+            width: '100%',
+            overflowX: 'auto'
           }}>
             
             {/* Original Text Panel */}
@@ -666,17 +685,20 @@ function HomePage({
                   value={text}
                   onChange={handleTextChange}
                   placeholder="Paste or type your text here…"
+                  className="w-full"
                   style={{
                     width: '100%',
                     height: '100%',
                     resize: 'none',
                     outline: 'none',
                     border: 0,
-                    padding: '16px',
+                    padding: isMobile ? '12px' : '16px',
                     background: 'transparent',
                     color: theme.text,
                     lineHeight: 1.55,
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '16px' : '1rem',
+                    minHeight: isMobile ? '250px' : '300px',
+                    boxSizing: 'border-box',
                     fontFamily: 'inherit',
                     caretColor: '#635bff'
                   }}

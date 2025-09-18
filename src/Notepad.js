@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AIWritingAssistant from './AIWritingAssistant';
+import { useResponsive } from './hooks/useResponsive';
 
 function Notepad({ 
   isDarkMode = false, 
@@ -20,6 +21,7 @@ function Notepad({
   setShowProfileModal,
   setShowBillingModal
 }) {
+  const { windowSize, isMobile, isTablet, responsive, containerPadding } = useResponsive();
   const [text, setText] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
   const [showColorPicker, setShowColorPicker] = useState(false);

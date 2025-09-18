@@ -37,14 +37,14 @@ function App() {
   return (
     <Router>
       <AccountManager isDarkMode={isDarkMode}>
-        {({ 
-          user, 
-          subscription, 
-          getUserTier, 
-          canAccessFeature, 
-          login, 
-          logout, 
-          upgradeSubscription, 
+        {({
+          user,
+          subscription,
+          getUserTier,
+          canAccessFeature,
+          login,
+          logout,
+          upgradeSubscription,
           register,
           updateProfile,
           cancelSubscription,
@@ -66,7 +66,10 @@ function App() {
             <div style={{
               paddingTop: showEmailConfirmationBanner ? '60px' : '0px',
               transition: 'padding-top 0.3s ease',
-              minHeight: '100vh'
+              minHeight: '100vh',
+              width: '100%',
+              maxWidth: '100vw',
+              overflowX: 'hidden'
             }}>
               {/* SEO Breadcrumbs */}
               <Breadcrumbs theme={theme} />
