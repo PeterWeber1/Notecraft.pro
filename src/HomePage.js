@@ -1529,7 +1529,20 @@ function HomePage({
           }}>
             Transform your AI-generated text into authentic, human-quality content—trusted by professionals, creators, and marketers worldwide.
           </p>
-          <Link to="/notepad" target="_blank" rel="noopener noreferrer" className="btn btn-gradient btn-lg" style={{ textDecoration: 'none' }}>Start Humanizing Now</Link>
+          <button
+            onClick={() => {
+              if (textareaRef.current) {
+                textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                  textareaRef.current.focus();
+                }, 500);
+              }
+            }}
+            className="btn btn-gradient btn-lg"
+            style={{ border: 'none', cursor: 'pointer' }}
+          >
+            Start Humanizing Now
+          </button>
         </div>
       </section>
 
