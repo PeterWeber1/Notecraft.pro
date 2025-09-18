@@ -271,7 +271,7 @@ function Notepad({
             if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
               const span = document.createElement('span');
               span.style.fontSize = value;
-              span.style.fontFamily = 'Arial';
+              span.style.fontFamily = 'Times New Roman';
               span.textContent = node.textContent;
               node.parentNode.replaceChild(span, node);
             } else if (node.nodeType === Node.ELEMENT_NODE) {
@@ -441,7 +441,7 @@ function Notepad({
           .join('<br>');
         
         if (paragraphHTML) {
-          return `<div style="font-family: Arial; font-size: 16px;">${paragraphHTML}</div>`;
+          return `<div style="font-family: 'Times New Roman'; font-size: 16px;">${paragraphHTML}</div>`;
         }
         return '';
       })
@@ -556,7 +556,7 @@ function Notepad({
                 margin: 1in;
               }
               body {
-                font-family: Arial, sans-serif;
+                font-family: "Times New Roman", serif;
                 font-size: 12pt;
                 line-height: 1.6;
               }
@@ -601,7 +601,7 @@ function Notepad({
           <head>
             <title>Notecraft Note</title>
             <style>
-              body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+              body { font-family: "Times New Roman", serif; margin: 20px; line-height: 1.6; }
               @media print { body { margin: 0; } }
             </style>
           </head>
@@ -858,8 +858,8 @@ function Notepad({
   }, []);
 
   return (
-    <div style={{ 
-      padding: '40px 20px', 
+    <div style={{
+      padding: '40px 20px',
       width: '100%',
       fontFamily: 'Arial, sans-serif',
       backgroundColor: theme.background,
@@ -931,7 +931,6 @@ function Notepad({
           }}>
             <Link
               to="/"
-              className="btn btn-secondary"
               style={{
                 textDecoration: 'none',
                 display: 'inline-flex',
@@ -946,34 +945,17 @@ function Notepad({
                 fontWeight: 'var(--stripe-font-weight-medium)',
                 padding: 'var(--stripe-space-3) var(--stripe-space-6)',
                 borderRadius: 'var(--stripe-radius-md)',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                background: '#635bff',
+                color: '#ffffff',
+                border: 'none',
+                transition: 'background-color 0.2s ease'
               }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#000000'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#635bff'}
             >
               Back to Humanizer
             </Link>
-            {!user && (
-              <button
-                onClick={() => setShowUpgradeModal && setShowUpgradeModal(true)}
-                className="btn btn-secondary"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxSizing: 'border-box',
-                  lineHeight: '1',
-                  minHeight: 'auto',
-                  height: 'auto',
-                  fontFamily: 'inherit',
-                  fontSize: 'var(--stripe-font-size-sm)',
-                  fontWeight: 'var(--stripe-font-weight-medium)',
-                  padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                  borderRadius: 'var(--stripe-radius-md)',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                Pricing
-              </button>
-            )}
             {user ? (
               <div className="user-nav" style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem' }}>
                 {/* Current Plan Badge */}
@@ -1047,50 +1029,33 @@ function Notepad({
                 </div>
               </div>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <button
-                  onClick={() => setShowLoginModal && setShowLoginModal(true)}
-                  className="btn btn-secondary"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxSizing: 'border-box',
-                    lineHeight: '1',
-                    minHeight: 'auto',
-                    height: 'auto',
-                    fontFamily: 'inherit',
-                    fontSize: 'var(--stripe-font-size-sm)',
-                    fontWeight: 'var(--stripe-font-weight-medium)',
-                    padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                    borderRadius: 'var(--stripe-radius-md)',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => setShowRegisterModal && setShowRegisterModal(true)}
-                  className="btn btn-primary"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxSizing: 'border-box',
-                    lineHeight: '1',
-                    minHeight: 'auto',
-                    height: 'auto',
-                    fontFamily: 'inherit',
-                    fontSize: 'var(--stripe-font-size-sm)',
-                    fontWeight: 'var(--stripe-font-weight-medium)',
-                    padding: 'var(--stripe-space-3) var(--stripe-space-6)',
-                    borderRadius: 'var(--stripe-radius-md)',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  Start Free
-                </button>
-              </div>
+              <button
+                onClick={() => setShowLoginModal && setShowLoginModal(true)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
+                  lineHeight: '1',
+                  minHeight: 'auto',
+                  height: 'auto',
+                  fontFamily: 'inherit',
+                  fontSize: 'var(--stripe-font-size-sm)',
+                  fontWeight: 'var(--stripe-font-weight-medium)',
+                  padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                  borderRadius: 'var(--stripe-radius-md)',
+                  whiteSpace: 'nowrap',
+                  background: '#635bff',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#000000'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#635bff'}
+              >
+                Login
+              </button>
             )}
           </div>
         </div>
@@ -1105,9 +1070,9 @@ function Notepad({
         background: 'none',
       }}>
         {/* Editor Card */}
-        <div style={{ 
+        <div style={{
           background: theme.background, // Match background for seamlessness
-          padding: 'clamp(15px, 2vw, 20px)', 
+          padding: '0', // Remove padding to align with header
           borderRadius: 0, // Remove radius
           boxShadow: 'none', // Remove shadow
           border: 'none', // Remove border
@@ -1145,7 +1110,7 @@ function Notepad({
             {/* Font Selection */}
             <select
               onChange={(e) => { formatText('fontName', e.target.value); }}
-              defaultValue="Arial"
+              defaultValue="Times New Roman"
               style={{
                 padding: '6px 10px',
                 borderRadius: '6px',
@@ -1422,9 +1387,9 @@ function Notepad({
             
             <ToolbarSeparator />
             
-            <IconButton icon="≡" onClick={() => { formatText('justifyLeft'); }} title="Align Left" active={!!formatState.justifyLeft} />
-            <IconButton icon="≣" onClick={() => { formatText('justifyCenter'); }} title="Align Center" active={!!formatState.justifyCenter} />
-            <IconButton icon={<span style={{display:'inline-block', transform:'scaleX(-1)'}}>≡</span>} onClick={() => { formatText('justifyRight'); }} title="Align Right" active={!!formatState.justifyRight} />
+            <IconButton icon={<div style={{display:'flex', flexDirection:'column', gap:'2px', width:'16px'}}><div style={{height:'1px', backgroundColor:'currentColor', width:'12px'}}></div><div style={{height:'1px', backgroundColor:'currentColor', width:'16px'}}></div><div style={{height:'1px', backgroundColor:'currentColor', width:'8px'}}></div></div>} onClick={() => { formatText('justifyLeft'); }} title="Align Left" active={!!formatState.justifyLeft} />
+            <IconButton icon={<div style={{display:'flex', flexDirection:'column', gap:'2px', width:'16px', alignItems:'center'}}><div style={{height:'1px', backgroundColor:'currentColor', width:'12px'}}></div><div style={{height:'1px', backgroundColor:'currentColor', width:'16px'}}></div><div style={{height:'1px', backgroundColor:'currentColor', width:'8px'}}></div></div>} onClick={() => { formatText('justifyCenter'); }} title="Align Center" active={!!formatState.justifyCenter} />
+            <IconButton icon={<div style={{display:'flex', flexDirection:'column', gap:'2px', width:'16px', alignItems:'flex-end'}}><div style={{height:'1px', backgroundColor:'currentColor', width:'12px'}}></div><div style={{height:'1px', backgroundColor:'currentColor', width:'16px'}}></div><div style={{height:'1px', backgroundColor:'currentColor', width:'8px'}}></div></div>} onClick={() => { formatText('justifyRight'); }} title="Align Right" active={!!formatState.justifyRight} />
             
             <ToolbarSeparator />
             
@@ -1715,7 +1680,7 @@ function Notepad({
                 fontSize: '16px',
                 resize: 'vertical',
                 marginBottom: 0,
-                fontFamily: 'Arial, sans-serif',
+                fontFamily: '"Times New Roman", serif',
                 backgroundColor: theme.editorBackground,
                 color: theme.inputColor,
                 transition: 'all 0.3s ease',
