@@ -1,0 +1,26 @@
+
+> ai-writing-simple@1.0.0 build
+> react-scripts build
+
+Creating an optimized production build...
+Compiled with warnings.
+
+Critical dependency: the request of a dependency is an expression
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+File sizes after gzip:
+
+  118.49 kB  build\static\js\main.be645284.js
+  2.76 kB    build\static\css\main.729ac5e6.css
+
+The project was built assuming it is hosted at ./.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+

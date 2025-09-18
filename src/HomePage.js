@@ -801,12 +801,35 @@ function HomePage({
               flexDirection: 'column'
             }}>
               <div style={{
-                padding: '12px 16px',
+                padding: '8px 16px',
                 borderBottom: '1px solid #e0e0e0'
               }}>
                 <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Controls</h3>
               </div>
-              
+
+              {/* Humanize Button */}
+              <div style={{ padding: '8px 12px 12px 12px' }}>
+                <button
+                  onClick={handleHumanize}
+                  disabled={isProcessing}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    background: 'linear-gradient(135deg, #635bff, #10b981)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: isProcessing ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: isProcessing ? 0.7 : 1
+                  }}
+                >
+                  {isProcessing ? 'Humanizing...' : 'Humanize Text'}
+                </button>
+              </div>
+
               {/* Advanced Controls */}
               <div style={{
                 display: 'grid',
@@ -914,29 +937,6 @@ function HomePage({
                   <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
                   Avoid changing dates & figures
                 </label>
-              </div>
-
-              {/* Humanize Button */}
-              <div style={{ padding: '12px' }}>
-                <button
-                  onClick={handleHumanize}
-                  disabled={isProcessing}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    background: 'linear-gradient(135deg, #635bff, #10b981)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: isProcessing ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    opacity: isProcessing ? 0.7 : 1
-                  }}
-                >
-                  {isProcessing ? 'Humanizing...' : 'Humanize Text'}
-                </button>
               </div>
 
               {/* Analytics */}
@@ -1180,23 +1180,6 @@ function HomePage({
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                <button 
-                  onClick={handleHumanize}
-                  disabled={!text.trim() || isProcessing}
-                  className={`btn btn-gradient btn-lg ${(!text.trim() || isProcessing) ? 'btn-disabled' : ''}`}
-                  style={{
-                    opacity: text.trim() && !isProcessing ? 1 : 0.6
-                  }}
-                >
-                  {isProcessing ? (
-                    <>
-                      <div className="spinner" style={{ marginRight: '8px' }}></div>
-                      Processing...
-                    </>
-                  ) : 'Humanize Text'}
-                </button>
-              </div>
               
               {/* Test Button for Development */}
               {process.env.NODE_ENV === 'development' && (
@@ -1239,8 +1222,8 @@ function HomePage({
           }}>Humanize AI text in three simple steps:</h2>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 'clamp(1.5rem, 4vw, 2rem)',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: isMobile ? 'clamp(1rem, 4vw, 1.5rem)' : 'clamp(1.5rem, 4vw, 2rem)',
             padding: '0 clamp(1rem, 4vw, 2rem)'
           }}>
             <div className="card">

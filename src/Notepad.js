@@ -907,12 +907,9 @@ function Notepad({
         backdropFilter: 'blur(20px)',
         padding: '0.75rem 0'
       }}>
-        <div style={{
-          maxWidth: 'clamp(320px, 95vw, 1400px)',
-          margin: '0 auto',
-          padding: '0 clamp(15px, 2vw, 20px)', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <div className="container" style={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '20px'
@@ -1063,10 +1060,7 @@ function Notepad({
       </nav>
 
       {/* Main Content */}
-      <div style={{
-        maxWidth: 'clamp(320px, 95vw, 1400px)',
-        margin: '0 auto',
-        padding: '0 clamp(20px, 3vw, 30px)',
+      <div className="container" style={{
         paddingTop: '80px', // Reduced space from fixed header
         boxSizing: 'border-box',
         boxShadow: 'none',
