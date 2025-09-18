@@ -522,8 +522,8 @@ function HomePage({
 
       {/* Hero Section with SEO-optimized headings */}
       <section className="section" style={{
-        paddingTop: isMobile ? '100px' : '120px',
-        paddingBottom: isMobile ? '40px' : '60px',
+        paddingTop: isMobile ? '80px' : '90px',
+        paddingBottom: isMobile ? '20px' : '30px',
         textAlign: 'center',
         background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)',
         color: theme.text,
@@ -532,8 +532,8 @@ function HomePage({
       }}>
         <div className="container">
           <h1 style={{
-            marginBottom: 'clamp(1rem, 3vw, 1.2rem)',
-            fontSize: 'clamp(2rem, 6vw, 3rem)',
+            marginBottom: 'clamp(0.5rem, 2vw, 0.8rem)',
+            fontSize: 'clamp(1.8rem, 5vw, 2.5rem)',
             fontWeight: 'bold',
             lineHeight: '1.2'
           }}>
@@ -541,16 +541,16 @@ function HomePage({
             <span className="text-accent" style={{ color: theme.primary }}>Notecraft Pro</span>
           </h1>
           <p style={{
-            fontSize: 'clamp(1rem, 3vw, 1.3rem)',
-            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
+            marginBottom: 'clamp(1rem, 3vw, 1.2rem)',
             opacity: 0.95,
-            lineHeight: '1.5'
+            lineHeight: '1.4'
           }}>
             Transform AI-generated text into natural, human-like writing. Bypass AI detectors like GPTZero, Copyleaks, and Originality with our advanced humanization technology.
           </p>
           
           {/* Plan Selection */}
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
               {['basic', 'pro', 'ultra'].map((tier) => {
                 const canAccess = canAccessFeature ? canAccessFeature(tier) : true;
@@ -639,7 +639,7 @@ function HomePage({
               display: 'grid',
               gridTemplateColumns: responsive('1fr', '1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
               gap: isMobile ? '0.5rem' : '1rem',
-              marginBottom: '2rem',
+              marginBottom: '1rem',
               width: '100%',
               overflowX: 'auto'
             }}>
@@ -653,7 +653,7 @@ function HomePage({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: '400px'
+              minHeight: '300px'
             }}>
               <div style={{
                 display: 'flex',
@@ -716,7 +716,7 @@ function HomePage({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: '400px'
+              minHeight: '300px'
             }}>
               <div style={{
                 display: 'flex',
