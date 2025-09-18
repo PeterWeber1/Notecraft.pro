@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import AIWritingAssistant from './AIWritingAssistant';
 import { useResponsive } from './hooks/useResponsive';
 
@@ -895,166 +896,202 @@ function Notepad({
           background: ${isDarkMode ? 'rgba(99, 91, 255, 0.6)' : 'rgba(99, 91, 255, 0.5)'};
         }
       `}</style>
-      {/* Fixed Header */}
-      <nav style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        zIndex: 1000, 
-        background: theme.background,
-        borderBottom: `1px solid ${theme.cardBorder}`,
+      {/* Navigation */}
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        background: theme.card,
+        borderBottom: `1px solid ${theme.border}`,
         backdropFilter: 'blur(20px)',
-        padding: '0.75rem 0'
+        padding: isMobile ? '0.75rem 0' : '1rem 0',
+        width: '100%'
       }}>
         <div className="container" style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '20px'
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          gap: isMobile ? '0.5rem' : '1rem'
         }}>
-          <div style={{ 
-            fontSize: '1.5rem', 
-            fontWeight: 'var(--stripe-font-weight-bold)', 
-            color: '#635bff',
-            marginLeft: '20px'
+          <div style={{
+            fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
+            fontWeight: 'var(--stripe-font-weight-bold)',
+            color: theme.primary
           }}>
             Notecraft Pro
           </div>
-          
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            {/* User Authentication */}
-            {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '0.8rem', color: theme.mutedColor }}>
-                  {user.name}
-                </span>
-                <button
-                  onClick={logout}
-                  style={{
-                    background: 'transparent',
-                    border: `1px solid ${theme.cardBorder}`,
-                    color: theme.color,
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    fontWeight: '500'
-                  }}
-                >
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowLoginModal(true)}
-                style={{
-                  background: theme.primary,
-                  border: 'none',
-                  color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '500'
-                }}
-              >
-                Sign In
-              </button>
-            )}
-            
-            {/* Tier Selection */}
-            <div style={{
-              display: 'flex',
-              gap: '4px',
-              background: theme.cardBackground,
-              border: `1px solid ${theme.cardBorder}`,
-              borderRadius: '6px',
-              padding: '2px'
-            }}>
-              {['basic', 'pro', 'ultra'].map((tier) => {
-                const canAccess = canAccessFeature ? canAccessFeature(tier) : true;
-                const isSelected = selectedTier === tier;
-                
-                return (
-                  <button
-                    key={tier}
-                    onClick={() => {
-                      if (canAccess) {
-                        setSelectedTier(tier);
-                      } else if (tier === 'pro' || tier === 'ultra') {
-                        setShowUpgradeModal(true);
-                      }
-                    }}
-                    style={{
-                      background: isSelected ? getTierFeatures(tier).color : 'transparent',
-                      color: isSelected ? '#ffffff' : theme.color,
-                      border: 'none',
-                      borderRadius: '6px',
-                      padding: '8px 16px',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      textTransform: 'capitalize',
-                      fontSize: '0.9rem',
-                      opacity: canAccess ? 1 : 0.6,
-                      position: 'relative'
-                    }}
-                  >
-                    {tier}
-                    {!canAccess && (tier === 'pro' || tier === 'ultra') && (
-                      <span style={{
-                        position: 'absolute',
-                        top: '-4px',
-                        right: '-4px',
-                        background: '#635bff',
-                        color: 'white',
-                        fontSize: '0.6rem',
-                        padding: '1px 4px',
-                        borderRadius: '8px',
-                        fontWeight: 'bold'
-                      }}>
-                        $
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            
-            <a 
-              href="/" 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'clamp(0.5rem, 2vw, 1rem)',
+            flexWrap: 'wrap'
+          }}>
+            <Link
+              to="/"
+              className="btn btn-secondary"
               style={{
-                background: isDarkMode ? '#38444d' : '#e0e0e0',
-                color: isDarkMode ? '#8899a6' : '#606060',
-                padding: '12px 24px',
-                borderRadius: '8px',
                 textDecoration: 'none',
-                fontSize: '16px',
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxSizing: 'border-box',
+                lineHeight: '1',
+                minHeight: 'auto',
+                height: 'auto',
+                fontFamily: 'inherit',
+                fontSize: 'var(--stripe-font-size-sm)',
+                fontWeight: 'var(--stripe-font-weight-medium)',
+                padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                borderRadius: 'var(--stripe-radius-md)',
                 whiteSpace: 'nowrap'
               }}
             >
-              ← Back to Humanizer
-            </a>
-            <button
-              onClick={toggleTheme}
-              style={{
-                background: isDarkMode ? '#38444d' : '#e0e0e0',
-                border: 'none',
-                borderRadius: '50px',
-                padding: '14px',
-                cursor: 'pointer',
-                fontSize: '22px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-              }}
-              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDarkMode ? '☀️' : '🌙'}
-            </button>
+              Back to Humanizer
+            </Link>
+            {!user && (
+              <button
+                onClick={() => setShowUpgradeModal && setShowUpgradeModal(true)}
+                className="btn btn-secondary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
+                  lineHeight: '1',
+                  minHeight: 'auto',
+                  height: 'auto',
+                  fontFamily: 'inherit',
+                  fontSize: 'var(--stripe-font-size-sm)',
+                  fontWeight: 'var(--stripe-font-weight-medium)',
+                  padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                  borderRadius: 'var(--stripe-radius-md)',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                Pricing
+              </button>
+            )}
+            {user ? (
+              <div className="user-nav" style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.5rem' : '1rem' }}>
+                {/* Current Plan Badge */}
+                <div style={{
+                  background: getUserTier() === 'basic' ? 'rgba(99, 91, 255, 0.1)' :
+                             getUserTier() === 'pro' ? 'rgba(16, 185, 129, 0.1)' :
+                             'rgba(139, 92, 246, 0.1)',
+                  color: getUserTier() === 'basic' ? '#635bff' :
+                         getUserTier() === 'pro' ? '#10b981' :
+                         '#8b5cf6',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '1rem',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  textTransform: 'uppercase',
+                  border: `1px solid ${
+                    getUserTier() === 'basic' ? 'rgba(99, 91, 255, 0.3)' :
+                    getUserTier() === 'pro' ? 'rgba(16, 185, 129, 0.3)' :
+                    'rgba(139, 92, 246, 0.3)'
+                  }`
+                }}>
+                  {getUserTier()} Plan
+                </div>
+
+                {/* User Profile Icon */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div
+                    onClick={() => setShowProfileModal && setShowProfileModal(true)}
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: user.user_metadata?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #635bff, #10b981)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      fontSize: '1.1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      border: '2px solid rgba(255, 255, 255, 0.1)',
+                      overflow: 'hidden'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    title={`${user.user_metadata?.username || user.email?.split('@')[0]} - Click to manage profile`}
+                  >
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt="Profile"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '50%'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                    ) : null}
+                    <span style={{
+                      display: user.user_metadata?.avatar_url ? 'none' : 'block'
+                    }}>
+                      {(user.user_metadata?.username?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button
+                  onClick={() => setShowLoginModal && setShowLoginModal(true)}
+                  className="btn btn-secondary"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxSizing: 'border-box',
+                    lineHeight: '1',
+                    minHeight: 'auto',
+                    height: 'auto',
+                    fontFamily: 'inherit',
+                    fontSize: 'var(--stripe-font-size-sm)',
+                    fontWeight: 'var(--stripe-font-weight-medium)',
+                    padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                    borderRadius: 'var(--stripe-radius-md)',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setShowRegisterModal && setShowRegisterModal(true)}
+                  className="btn btn-primary"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxSizing: 'border-box',
+                    lineHeight: '1',
+                    minHeight: 'auto',
+                    height: 'auto',
+                    fontFamily: 'inherit',
+                    fontSize: 'var(--stripe-font-size-sm)',
+                    fontWeight: 'var(--stripe-font-weight-medium)',
+                    padding: 'var(--stripe-space-3) var(--stripe-space-6)',
+                    borderRadius: 'var(--stripe-radius-md)',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  Start Free
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </nav>
