@@ -279,12 +279,10 @@ function Dashboard({
         background: theme.card,
         borderBottom: `1px solid ${theme.border}`,
         backdropFilter: 'blur(20px)',
-        padding: '1rem 0'
+        padding: isMobile ? '0.75rem 0' : '1rem 0',
+        width: '100%'
       }}>
-        <div style={{
-          maxWidth: 'clamp(320px, 95vw, 1400px)',
-          margin: '0 auto',
-          padding: '0 clamp(15px, 2vw, 20px)',
+        <div className="container" style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -292,7 +290,7 @@ function Dashboard({
           gap: isMobile ? '0.5rem' : '1rem'
         }}>
           <Link to="/" style={{
-            fontSize: '1.5rem',
+            fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             fontWeight: 'var(--stripe-font-weight-bold)',
             color: theme.primary,
             textDecoration: 'none'
