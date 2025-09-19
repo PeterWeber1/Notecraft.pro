@@ -771,7 +771,7 @@ function Dashboard({
             gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1fr 1fr', '1fr 1fr'),
             gap: isMobile ? '0.5rem' : isTablet ? '1rem' : '1.5rem',
             marginBottom: isMobile ? '1rem' : '2rem',
-            maxWidth: isMobile ? '100%' : isTablet ? '1200px' : '1600px',
+            maxWidth: isMobile ? '100%' : isTablet ? '1400px' : '1800px',
             margin: '0 auto',
             width: '100%'
           }}>
