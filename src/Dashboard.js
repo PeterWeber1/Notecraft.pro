@@ -299,11 +299,19 @@ function Dashboard({
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{
-              fontSize: 'clamp(1rem, 3vw, 1.1rem)',
+              fontSize: 'clamp(0.9rem, 2.5vw, 1rem)',
               fontWeight: '500',
-              color: theme.text
+              color: theme.muted,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}>
-              Welcome back, {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 19c-5 0-8-3-8-8s3-8 8-8 8 3 8 8-3 8-8 8"/>
+                <path d="m15 9 6 6"/>
+                <path d="m21 9-6 6"/>
+              </svg>
+              T5 Paraphrase Model
             </span>
           </div>
 
@@ -419,7 +427,7 @@ function Dashboard({
             fontWeight: 'bold',
             lineHeight: '1.2'
           }}>
-            AI Text Humanizer
+            Welcome back, {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}!
           </h1>
           <p style={{
             fontSize: 'clamp(1rem, 3vw, 1.1rem)',
