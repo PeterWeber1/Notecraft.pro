@@ -26,6 +26,9 @@ function Dashboard({
   const navigate = useNavigate();
   const { windowSize, isMobile, isTablet, responsive, containerPadding } = useResponsive();
 
+  // Sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   // Redirect non-authenticated users to homepage
   useEffect(() => {
     if (!user) {
@@ -289,7 +292,21 @@ function Dashboard({
           flexWrap: isMobile ? 'wrap' : 'nowrap',
           gap: isMobile ? '0.5rem' : '1rem'
         }}>
-          <Link to="/" style={{
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '1.2rem',
+                cursor: 'pointer',
+                color: theme.text,
+                padding: '5px'
+              }}
+            >
+              ☰
+            </button>
+            <Link to="/" style={{
             fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             fontWeight: 'var(--stripe-font-weight-bold)',
             color: theme.primary,
@@ -297,6 +314,7 @@ function Dashboard({
           }}>
             Notecraft Pro
           </Link>
+          </div>
 
           <div style={{
             display: 'flex',
@@ -442,6 +460,243 @@ function Dashboard({
           </div>
         </div>
       </section>
+
+      {/* Sidebar */}
+      {sidebarOpen && (
+        <>
+          {/* Overlay */}
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 999
+            }}
+            onClick={() => setSidebarOpen(false)}
+          />
+
+          {/* Sidebar */}
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: isMobile ? '280px' : '320px',
+            height: '100vh',
+            background: theme.card,
+            borderRight: `1px solid ${theme.border}`,
+            zIndex: 1000,
+            padding: '0',
+            boxShadow: '2px 0 20px rgba(0, 0, 0, 0.1)',
+            transform: 'translateX(0)',
+            transition: 'transform 0.3s ease-in-out'
+          }}>
+            {/* Sidebar Header */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '20px',
+              borderBottom: `1px solid ${theme.border}`
+            }}>
+              <h3 style={{ margin: 0, color: theme.text, fontSize: '1.2rem' }}>Menu</h3>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  color: theme.muted,
+                  padding: '5px',
+                  borderRadius: '4px'
+                }}
+                onMouseOver={(e) => e.target.style.background = theme.secondary}
+                onMouseOut={(e) => e.target.style.background = 'none'}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Sidebar Content */}
+            <div style={{ padding: '0' }}>
+              {/* Navigation Items */}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0'
+              }}>
+                <Link
+                  to="/"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px 20px',
+                    color: theme.text,
+                    textDecoration: 'none',
+                    borderBottom: `1px solid ${theme.border}`,
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  <span>🏠</span>
+                  <span>Home</span>
+                </Link>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px 20px',
+                    color: theme.primary,
+                    backgroundColor: theme.secondary,
+                    borderBottom: `1px solid ${theme.border}`,
+                    fontWeight: '500'
+                  }}
+                >
+                  <span>📊</span>
+                  <span>Dashboard</span>
+                </div>
+
+                <Link
+                  to="/notepad"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px 20px',
+                    color: theme.text,
+                    textDecoration: 'none',
+                    borderBottom: `1px solid ${theme.border}`,
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  <span>📝</span>
+                  <span>Notepad</span>
+                </Link>
+
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px 20px',
+                    color: theme.text,
+                    background: 'none',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    width: '100%',
+                    borderBottom: `1px solid ${theme.border}`,
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  <span>👤</span>
+                  <span>Profile</span>
+                </button>
+
+                <button
+                  onClick={() => setShowBillingModal(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '16px 20px',
+                    color: theme.text,
+                    background: 'none',
+                    border: 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    width: '100%',
+                    borderBottom: `1px solid ${theme.border}`,
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  <span>💳</span>
+                  <span>Billing</span>
+                </button>
+              </div>
+
+              {/* User Info */}
+              <div style={{
+                padding: '20px',
+                marginTop: '20px',
+                borderTop: `1px solid ${theme.border}`
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #635bff, #10b981)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: '600'
+                  }}>
+                    {user?.email?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: '500', color: theme.text }}>
+                      {user?.email || 'User'}
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: theme.muted }}>
+                      {getUserTier()} Plan
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={logout}
+                  style={{
+                    width: '100%',
+                    padding: '8px 16px',
+                    background: 'none',
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: '6px',
+                    color: theme.text,
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = theme.error;
+                    e.target.style.color = 'white';
+                    e.target.style.borderColor = theme.error;
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = 'none';
+                    e.target.style.color = theme.text;
+                    e.target.style.borderColor = theme.border;
+                  }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Main Humanizer Interface */}
       <section style={{ padding: '40px 0', background: theme.background }}>
