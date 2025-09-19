@@ -281,7 +281,7 @@ function Dashboard({
       <nav style={{
         position: 'fixed',
         top: 0,
-        left: sidebarCollapsed ? 0 : (isMobile ? '280px' : '300px'),
+        left: sidebarCollapsed ? (isMobile ? '60px' : '80px') : (isMobile ? '280px' : '300px'),
         right: 0,
         zIndex: 1000,
         background: theme.card,
