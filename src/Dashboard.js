@@ -766,10 +766,10 @@ function Dashboard({
           {/* Advanced Humanizer Grid - Mobile Responsive */}
           <div className="humanizer-interface dashboard-grid" style={{
             display: 'grid',
-            gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
+            gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1fr 1fr', '1fr 1fr'),
             gap: isMobile ? '0.5rem' : '1rem',
             marginBottom: isMobile ? '1rem' : '2rem',
-            maxWidth: '1400px',
+            maxWidth: '1200px',
             margin: '0 auto',
             width: '100%'
           }}>
@@ -825,13 +825,81 @@ function Dashboard({
                   }}
                 />
               </div>
+
+              {/* Style Controls */}
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                padding: '12px 16px',
+                borderTop: '1px solid #e0e0e0',
+                borderBottom: '1px solid #e0e0e0',
+                background: '#fafafa'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  flex: 1
+                }}>
+                  <label style={{ fontSize: '0.75rem', color: theme.muted, fontWeight: '500' }}>Tone</label>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    style={{
+                      padding: '6px 8px',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '6px',
+                      background: '#ffffff',
+                      color: theme.text,
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="neutral">Neutral</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="formal">Formal</option>
+                    <option value="enthusiastic">Enthusiastic</option>
+                    <option value="confident">Confident</option>
+                  </select>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  flex: 1
+                }}>
+                  <label style={{ fontSize: '0.75rem', color: theme.muted, fontWeight: '500' }}>Style</label>
+                  <select
+                    value={writingStyle}
+                    onChange={(e) => setWritingStyle(e.target.value)}
+                    style={{
+                      padding: '6px 8px',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '6px',
+                      background: '#ffffff',
+                      color: theme.text,
+                      fontSize: '0.85rem',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="professional">Professional</option>
+                    <option value="casual">Casual</option>
+                    <option value="academic">Academic</option>
+                    <option value="creative">Creative</option>
+                    <option value="technical">Technical</option>
+                  </select>
+                </div>
+              </div>
+
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '10px 16px',
-                borderTop: '1px solid #e0e0e0'
+                padding: '10px 16px'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <button
@@ -851,28 +919,47 @@ function Dashboard({
                     {Math.max(1, Math.round(wordCount / 200))}m read
                   </div>
                 </div>
-                <button
-                  onClick={handleHumanize}
-                  disabled={isProcessing || !text.trim() || isOverLimit}
-                  style={{
-                    padding: '8px 16px',
-                    background: isOverLimit ? theme.muted : (isProcessing || !text.trim()) ? '#e0e0e0' : 'linear-gradient(135deg, #635bff, #10b981)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    cursor: (isProcessing || !text.trim() || isOverLimit) ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    opacity: (isProcessing || !text.trim() || isOverLimit) ? 0.7 : 1,
-                    minWidth: '120px'
-                  }}
-                >
-                  {isProcessing ? 'Humanizing...' :
-                   isOverLimit ? 'Upgrade Plan' :
-                   !text.trim() ? 'Enter Text' :
-                   'Humanize'}
-                </button>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {isOverLimit && (
+                    <button
+                      onClick={() => setShowUpgradeModal(true)}
+                      style={{
+                        padding: '6px 12px',
+                        background: 'rgba(99, 91, 255, 0.1)',
+                        color: theme.primary,
+                        border: `1px solid ${theme.primary}`,
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Upgrade
+                    </button>
+                  )}
+                  <button
+                    onClick={isOverLimit ? () => setShowUpgradeModal(true) : handleHumanize}
+                    disabled={isProcessing || !text.trim()}
+                    style={{
+                      padding: '8px 16px',
+                      background: isOverLimit ? `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` : (isProcessing || !text.trim()) ? '#e0e0e0' : 'linear-gradient(135deg, #635bff, #10b981)',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: (isProcessing || !text.trim()) ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s',
+                      opacity: (isProcessing || !text.trim()) ? 0.7 : 1,
+                      minWidth: '120px'
+                    }}
+                  >
+                    {isProcessing ? 'Humanizing...' :
+                     isOverLimit ? 'Upgrade Plan' :
+                     !text.trim() ? 'Enter Text' :
+                     'Humanize'}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -949,108 +1036,6 @@ function Dashboard({
                   Copy
                 </button>
                 <div>Quality: {humanizedText ? 'High' : 'N/A'}</div>
-              </div>
-            </div>
-
-            {/* Style Controls Panel */}
-            <div style={{
-              background: '#ffffff',
-              border: '1px solid #e0e0e0',
-              borderRadius: '16px',
-              boxShadow: '0 10px 30px rgba(10,10,20,0.07)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <div style={{
-                padding: '12px 16px',
-                borderBottom: '1px solid #e0e0e0'
-              }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Style Settings</h3>
-              </div>
-
-              {/* Style Controls */}
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                padding: '16px'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px'
-                }}>
-                  <label style={{ fontSize: '0.85rem', color: theme.text, fontWeight: '500' }}>Tone</label>
-                  <select
-                    value={tone}
-                    onChange={(e) => setTone(e.target.value)}
-                    style={{
-                      padding: '8px 12px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '8px',
-                      background: '#ffffff',
-                      color: theme.text,
-                      fontSize: '0.9rem',
-                      outline: 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="neutral">Neutral</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="formal">Formal</option>
-                    <option value="enthusiastic">Enthusiastic</option>
-                    <option value="confident">Confident</option>
-                  </select>
-                </div>
-
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px'
-                }}>
-                  <label style={{ fontSize: '0.85rem', color: theme.text, fontWeight: '500' }}>Writing Style</label>
-                  <select
-                    value={writingStyle}
-                    onChange={(e) => setWritingStyle(e.target.value)}
-                    style={{
-                      padding: '8px 12px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '8px',
-                      background: '#ffffff',
-                      color: theme.text,
-                      fontSize: '0.9rem',
-                      outline: 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="professional">Professional</option>
-                    <option value="casual">Casual</option>
-                    <option value="academic">Academic</option>
-                    <option value="creative">Creative</option>
-                    <option value="technical">Technical</option>
-                  </select>
-                </div>
-
-                {isOverLimit && (
-                  <button
-                    onClick={() => setShowUpgradeModal(true)}
-                    style={{
-                      width: '100%',
-                      marginTop: '8px',
-                      padding: '10px 16px',
-                      background: 'rgba(99, 91, 255, 0.1)',
-                      color: theme.primary,
-                      border: `1px solid ${theme.primary}`,
-                      borderRadius: '8px',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Upgrade Plan
-                  </button>
-                )}
               </div>
             </div>
           </div>
