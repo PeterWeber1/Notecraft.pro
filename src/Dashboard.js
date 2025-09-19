@@ -96,6 +96,13 @@ function Dashboard({
   const [showNotification, setShowNotification] = useState('');
   const [notificationTimer, setNotificationTimer] = useState(null);
 
+  // Auto-focus the textarea when component mounts
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, []);
+
   const showNotificationMessage = (message, duration = 3000) => {
     setShowNotification(message);
     if (notificationTimer) {
@@ -132,9 +139,12 @@ function Dashboard({
   const clearText = () => {
     setText('');
     setHumanizedText('');
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    // Ensure focus returns to textarea after clearing
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 0);
   };
 
   const copyText = async (textToCopy = humanizedText || text) => {
@@ -827,7 +837,7 @@ function Dashboard({
                     lineHeight: 1.55,
                     fontSize: '1rem',
                     fontFamily: 'inherit',
-                    caretColor: '#635bff'
+                    caretColor: '#000000'
                   }}
                 />
               </div>
