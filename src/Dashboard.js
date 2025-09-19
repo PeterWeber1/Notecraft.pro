@@ -501,7 +501,7 @@ function Dashboard({
             onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {sidebarCollapsed ? '☰' : '‹'}
+            {sidebarCollapsed ? '›' : '‹'}
           </button>
         </div>
 
@@ -528,7 +528,10 @@ function Dashboard({
             onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
             title={sidebarCollapsed ? 'Home' : ''}
           >
-            <span style={{ fontSize: '1.2rem' }}>🏠</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
             {!sidebarCollapsed && <span>Home</span>}
           </Link>
 
@@ -545,7 +548,11 @@ function Dashboard({
             }}
             title={sidebarCollapsed ? 'Dashboard (current)' : ''}
           >
-            <span style={{ fontSize: '1.2rem' }}>📊</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <rect x="7" y="7" width="3" height="9"/>
+              <rect x="14" y="7" width="3" height="5"/>
+            </svg>
             {!sidebarCollapsed && <span>Dashboard</span>}
           </div>
 
@@ -567,7 +574,10 @@ function Dashboard({
             onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
             title={sidebarCollapsed ? 'Notepad' : ''}
           >
-            <span style={{ fontSize: '1.2rem' }}>📝</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
             {!sidebarCollapsed && <span>Notepad</span>}
           </Link>
 
@@ -591,7 +601,10 @@ function Dashboard({
             onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
             title={sidebarCollapsed ? 'Profile' : ''}
           >
-            <span style={{ fontSize: '1.2rem' }}>👤</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
             {!sidebarCollapsed && <span>Profile</span>}
           </button>
 
@@ -615,7 +628,10 @@ function Dashboard({
             onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
             title={sidebarCollapsed ? 'Billing' : ''}
           >
-            <span style={{ fontSize: '1.2rem' }}>💳</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
             {!sidebarCollapsed && <span>Billing</span>}
           </button>
         </div>
