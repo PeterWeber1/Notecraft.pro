@@ -785,7 +785,7 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: isMobile ? '250px' : '400px'
+              minHeight: isMobile ? '350px' : isTablet ? '450px' : '550px'
             }}>
               <div style={{
                 display: 'flex',
@@ -974,7 +974,7 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: isMobile ? '250px' : '400px'
+              minHeight: isMobile ? '350px' : isTablet ? '450px' : '550px'
             }}>
               <div style={{
                 display: 'flex',
