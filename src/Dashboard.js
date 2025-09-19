@@ -87,10 +87,6 @@ function Dashboard({
   const textareaRef = useRef(null);
   const [showNotification, setShowNotification] = useState('');
   const [notificationTimer, setNotificationTimer] = useState(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeHistory, setActiveHistory] = useState([]);
-  const [savedTexts, setSavedTexts] = useState([]);
-  const [recentActivity, setRecentActivity] = useState([]);
 
   const showNotificationMessage = (message, duration = 3000) => {
     setShowNotification(message);
@@ -196,19 +192,6 @@ function Dashboard({
         if (data.ai_detection_score !== undefined) {
           setAiScore(Math.round(data.ai_detection_score));
         }
-
-        // Add to activity history
-        const activity = {
-          id: Date.now(),
-          timestamp: new Date(),
-          originalText: text.slice(0, 100) + (text.length > 100 ? '...' : ''),
-          humanizedText: data.humanizedText.slice(0, 100) + (data.humanizedText.length > 100 ? '...' : ''),
-          tone,
-          style: writingStyle,
-          aiScore: Math.round(data.ai_detection_score || aiScore)
-        };
-        setRecentActivity(prev => [activity, ...prev.slice(0, 9)]);
-
         showNotificationMessage('Text successfully humanized!');
       } else {
         throw new Error('Invalid response from API');
@@ -404,303 +387,14 @@ function Dashboard({
         </div>
       </nav>
 
-      {/* Full Height Sidebar - Claude/ChatGPT Style */}
-      {!isMobile && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: sidebarCollapsed ? '60px' : '280px',
-          height: '100vh',
-          background: 'linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%)',
-          borderRight: '1px solid #e0e0e0',
-          zIndex: 1001,
-          transition: 'width 0.3s ease',
-          boxShadow: '4px 0 12px rgba(0,0,0,0.08)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-        {/* Sidebar Header */}
-        <div style={{
-          padding: sidebarCollapsed ? '16px 8px' : '16px 20px',
-          borderBottom: '1px solid #e5e7eb',
-          background: '#ffffff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: sidebarCollapsed ? 'center' : 'space-between',
-          minHeight: '80px'
-        }}>
-          {!sidebarCollapsed && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
-            }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                background: 'linear-gradient(135deg, #635bff, #7c3aed)',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#ffffff',
-                fontSize: '18px',
-                fontWeight: 'bold'
-              }}>
-                N
-              </div>
-              <div>
-                <div style={{
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  color: '#1f2937'
-                }}>
-                  Notecraft Pro
-                </div>
-                <div style={{
-                  fontSize: '0.8rem',
-                  color: '#6b7280'
-                }}>
-                  {currentTier.toUpperCase()} Plan
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Toggle Button */}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            style={{
-              width: '32px',
-              height: '32px',
-              background: 'transparent',
-              border: '1px solid #e5e7eb',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#6b7280',
-              fontSize: '14px',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#f3f4f6';
-              e.target.style.borderColor = '#d1d5db';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'transparent';
-              e.target.style.borderColor = '#e5e7eb';
-            }}
-          >
-            {sidebarCollapsed ? '→' : '←'}
-          </button>
-        </div>
-
-        {/* Quick Actions Section */}
-        <div style={{
-          padding: sidebarCollapsed ? '16px 8px' : '16px 20px',
-          borderBottom: '1px solid #f3f4f6'
-        }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}>
-            <button
-              onClick={() => {
-                setText('');
-                setHumanizedText('');
-                if (textareaRef.current) textareaRef.current.focus();
-              }}
-              style={{
-                width: '100%',
-                padding: sidebarCollapsed ? '12px' : '12px 16px',
-                background: '#635bff',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: sidebarCollapsed ? '16px' : '0.9rem',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
-                gap: sidebarCollapsed ? '0' : '8px'
-              }}
-              onMouseEnter={(e) => e.target.style.background = '#4f46e5'}
-              onMouseLeave={(e) => e.target.style.background = '#635bff'}
-              title={sidebarCollapsed ? 'New Humanization' : ''}
-            >
-              {sidebarCollapsed ? '✨' : '✨ New Humanization'}
-            </button>
-          </div>
-        </div>
-
-        {/* History Section */}
-        <div style={{
-          flex: 1,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          {!sidebarCollapsed && (
-            <div style={{
-              padding: '16px 20px 12px',
-              borderBottom: '1px solid #f3f4f6'
-            }}>
-              <div style={{
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                color: '#374151',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                📜 History
-              </div>
-            </div>
-          )}
-
-          <div style={{
-            flex: 1,
-            overflow: 'auto',
-            padding: sidebarCollapsed ? '8px' : '0'
-          }}>
-            {sidebarCollapsed ? (
-              // Collapsed mode - show only icons
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-                alignItems: 'center',
-                padding: '16px 0'
-              }}>
-                <div
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    background: '#f3f4f6',
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '16px',
-                    color: '#6b7280',
-                    cursor: 'pointer'
-                  }}
-                  title="History"
-                >
-                  📜
-                </div>
-              </div>
-            ) : (
-              // Expanded mode - show full history
-              <div style={{ padding: '8px 0' }}>
-                {recentActivity.length === 0 ? (
-                  <div style={{
-                    padding: '40px 20px',
-                    textAlign: 'center',
-                    color: '#9ca3af',
-                    fontSize: '0.9rem'
-                  }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📜</div>
-                    <div>No history yet</div>
-                    <div style={{ fontSize: '0.8rem', marginTop: '4px' }}>
-                      Start humanizing text to see your history here
-                    </div>
-                  </div>
-                ) : (
-                  recentActivity.map((activity, index) => (
-                    <div
-                      key={activity.id}
-                      style={{
-                        margin: '0 12px 8px',
-                        padding: '12px',
-                        background: '#ffffff',
-                        border: '1px solid #f3f4f6',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.background = '#f9fafb';
-                        e.target.style.borderColor = '#e5e7eb';
-                        e.target.style.transform = 'translateY(-1px)';
-                        e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = '#ffffff';
-                        e.target.style.borderColor = '#f3f4f6';
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = 'none';
-                      }}
-                      onClick={() => {
-                        setText(activity.originalText.replace('...', ''));
-                        setTone(activity.tone);
-                        setWritingStyle(activity.style);
-                      }}
-                    >
-                      <div style={{
-                        fontSize: '0.75rem',
-                        color: '#9ca3af',
-                        marginBottom: '6px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
-                        <span>{activity.timestamp.toLocaleDateString()}</span>
-                        <span style={{
-                          padding: '2px 6px',
-                          background: activity.aiScore < 30 ? '#dcfce7' : '#fef2f2',
-                          color: activity.aiScore < 30 ? '#166534' : '#dc2626',
-                          borderRadius: '4px',
-                          fontSize: '0.7rem',
-                          fontWeight: '500'
-                        }}>
-                          AI: {activity.aiScore}%
-                        </span>
-                      </div>
-                      <div style={{
-                        fontSize: '0.85rem',
-                        color: '#374151',
-                        lineHeight: '1.4',
-                        marginBottom: '6px'
-                      }}>
-                        {activity.originalText}
-                      </div>
-                      <div style={{
-                        fontSize: '0.75rem',
-                        color: '#6b7280',
-                        display: 'flex',
-                        gap: '8px'
-                      }}>
-                        <span>Style: {activity.style}</span>
-                        <span>•</span>
-                        <span>Tone: {activity.tone}</span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Dashboard Header */}
       <section style={{
         paddingTop: isMobile ? '80px' : '100px',
         paddingBottom: isMobile ? '30px' : '40px',
-        paddingLeft: isMobile ? '0' : (sidebarCollapsed ? '60px' : '280px'),
         textAlign: 'center',
         background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)',
         color: theme.text,
-        width: '100%',
-        transition: 'padding-left 0.3s ease'
+        width: '100%'
       }}>
         <div className="container" style={{
           maxWidth: '100%',
@@ -750,12 +444,7 @@ function Dashboard({
       </section>
 
       {/* Main Humanizer Interface */}
-      <section style={{
-        padding: '40px 0',
-        paddingLeft: isMobile ? '0' : (sidebarCollapsed ? '60px' : '280px'),
-        background: theme.background,
-        transition: 'padding-left 0.3s ease'
-      }}>
+      <section style={{ padding: '40px 0', background: theme.background }}>
         <div className="container">
 
           {/* Advanced Humanizer Grid - Mobile Responsive */}
