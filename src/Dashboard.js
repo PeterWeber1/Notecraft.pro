@@ -496,7 +496,7 @@ function Dashboard({
               alignItems: 'center',
               justifyContent: 'center',
               width: '20px',
-              opacity: sidebarCollapsed ? 0.4 : 0,
+              opacity: sidebarCollapsed ? 0.7 : 0,
               transition: 'opacity 0.3s ease-in-out'
             }}>
               <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
