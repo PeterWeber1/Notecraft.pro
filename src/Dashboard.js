@@ -809,74 +809,6 @@ function Dashboard({
                   {wordCount}/{currentLimit} words
                 </div>
               </div>
-
-              {/* Style Controls */}
-              <div style={{
-                display: 'flex',
-                gap: '12px',
-                padding: '12px 16px',
-                borderBottom: '1px solid #e0e0e0',
-                background: '#fafafa'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                  flex: 1
-                }}>
-                  <label style={{ fontSize: '0.75rem', color: theme.muted, fontWeight: '500' }}>Tone</label>
-                  <select
-                    value={tone}
-                    onChange={(e) => setTone(e.target.value)}
-                    style={{
-                      padding: '6px 8px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '6px',
-                      background: '#ffffff',
-                      color: theme.text,
-                      fontSize: '0.85rem',
-                      outline: 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="neutral">Neutral</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="formal">Formal</option>
-                    <option value="enthusiastic">Enthusiastic</option>
-                    <option value="confident">Confident</option>
-                  </select>
-                </div>
-
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                  flex: 1
-                }}>
-                  <label style={{ fontSize: '0.75rem', color: theme.muted, fontWeight: '500' }}>Style</label>
-                  <select
-                    value={writingStyle}
-                    onChange={(e) => setWritingStyle(e.target.value)}
-                    style={{
-                      padding: '6px 8px',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '6px',
-                      background: '#ffffff',
-                      color: theme.text,
-                      fontSize: '0.85rem',
-                      outline: 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <option value="professional">Professional</option>
-                    <option value="casual">Casual</option>
-                    <option value="academic">Academic</option>
-                    <option value="creative">Creative</option>
-                    <option value="technical">Technical</option>
-                  </select>
-                </div>
-              </div>
-
               <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
                 <textarea
                   ref={textareaRef}
@@ -905,7 +837,8 @@ function Dashboard({
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '10px 16px'
+                padding: '10px 16px',
+                borderTop: '1px solid #e0e0e0'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <button
@@ -924,7 +857,53 @@ function Dashboard({
                   <div style={{ fontSize: '0.85rem', color: theme.muted }}>
                     {Math.max(1, Math.round(wordCount / 200))}m read
                   </div>
+
+                  {/* Style Controls */}
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <select
+                      value={tone}
+                      onChange={(e) => setTone(e.target.value)}
+                      style={{
+                        padding: '4px 6px',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '4px',
+                        background: '#ffffff',
+                        color: theme.text,
+                        fontSize: '0.8rem',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="neutral">Neutral</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="formal">Formal</option>
+                      <option value="enthusiastic">Enthusiastic</option>
+                      <option value="confident">Confident</option>
+                    </select>
+
+                    <select
+                      value={writingStyle}
+                      onChange={(e) => setWritingStyle(e.target.value)}
+                      style={{
+                        padding: '4px 6px',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '4px',
+                        background: '#ffffff',
+                        color: theme.text,
+                        fontSize: '0.8rem',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="academic">Academic</option>
+                      <option value="creative">Creative</option>
+                      <option value="technical">Technical</option>
+                    </select>
+                  </div>
                 </div>
+
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   {isOverLimit && (
                     <button
