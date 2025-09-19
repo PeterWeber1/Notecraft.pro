@@ -298,14 +298,13 @@ function Dashboard({
           gap: isMobile ? '0.5rem' : '1rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Link to="/" style={{
-            fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
-            fontWeight: 'var(--stripe-font-weight-bold)',
-            color: theme.primary,
-            textDecoration: 'none'
-          }}>
-            Notecraft Pro
-          </Link>
+            <span style={{
+              fontSize: 'clamp(1rem, 3vw, 1.1rem)',
+              fontWeight: '500',
+              color: theme.text
+            }}>
+              Welcome back, {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}
+            </span>
           </div>
 
           <div style={{
@@ -420,38 +419,16 @@ function Dashboard({
             fontWeight: 'bold',
             lineHeight: '1.2'
           }}>
-            Welcome back, {user.user_metadata?.username || user.email?.split('@')[0] || 'User'}!
+            AI Text Humanizer
           </h1>
           <p style={{
             fontSize: 'clamp(1rem, 3vw, 1.1rem)',
             color: theme.muted,
-            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+            marginBottom: 'clamp(1rem, 3vw, 1.5rem)',
             lineHeight: '1.5'
           }}>
             Transform your AI-generated text into natural, human-like writing
           </p>
-
-          {/* Usage Stats */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 'clamp(1rem, 4vw, 2rem)',
-            marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
-            flexWrap: 'wrap'
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.primary }}>{currentLimit.toLocaleString()}</div>
-              <div style={{ fontSize: '0.9rem', color: theme.muted }}>Words per request</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.success }}>∞</div>
-              <div style={{ fontSize: '0.9rem', color: theme.muted }}>Requests per day</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 'bold', color: theme.accent }}>{currentTier.toUpperCase()}</div>
-              <div style={{ fontSize: '0.9rem', color: theme.muted }}>Current plan</div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -480,7 +457,7 @@ function Dashboard({
           minHeight: '70px'
         }}>
           {!sidebarCollapsed && (
-            <h3 style={{ margin: 0, color: theme.text, fontSize: '1.1rem', fontWeight: '600' }}>Navigation</h3>
+            <h3 style={{ margin: 0, color: theme.primary, fontSize: '1.2rem', fontWeight: '700' }}>Notecraft Pro</h3>
           )}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
