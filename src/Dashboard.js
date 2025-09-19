@@ -96,12 +96,23 @@ function Dashboard({
   const [showNotification, setShowNotification] = useState('');
   const [notificationTimer, setNotificationTimer] = useState(null);
 
-  // Auto-focus the textarea when component mounts
+  // Auto-focus the textarea when component mounts and maintain focus
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
   }, []);
+
+  // Maintain focus when sidebar state changes
+  useEffect(() => {
+    // Small delay to ensure DOM has updated after sidebar transition
+    const timer = setTimeout(() => {
+      if (textareaRef.current && document.activeElement !== textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [sidebarCollapsed]);
 
   const showNotificationMessage = (message, duration = 3000) => {
     setShowNotification(message);
