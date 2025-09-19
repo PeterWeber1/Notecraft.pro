@@ -809,35 +809,12 @@ function Dashboard({
                   {wordCount}/{currentLimit} words
                 </div>
               </div>
-              <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
-                <textarea
-                  ref={textareaRef}
-                  value={text}
-                  onChange={handleTextChange}
-                  placeholder="Paste your AI-generated text here..."
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    resize: 'none',
-                    outline: 'none',
-                    border: 0,
-                    padding: '16px',
-                    background: 'transparent',
-                    color: theme.text,
-                    lineHeight: 1.55,
-                    fontSize: '1rem',
-                    fontFamily: 'inherit',
-                    caretColor: '#635bff'
-                  }}
-                />
-              </div>
 
               {/* Style Controls */}
               <div style={{
                 display: 'flex',
                 gap: '12px',
                 padding: '12px 16px',
-                borderTop: '1px solid #e0e0e0',
                 borderBottom: '1px solid #e0e0e0',
                 background: '#fafafa'
               }}>
@@ -898,6 +875,29 @@ function Dashboard({
                     <option value="technical">Technical</option>
                   </select>
                 </div>
+              </div>
+
+              <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
+                <textarea
+                  ref={textareaRef}
+                  value={text}
+                  onChange={handleTextChange}
+                  placeholder="Paste your AI-generated text here..."
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    resize: 'none',
+                    outline: 'none',
+                    border: 0,
+                    padding: '16px',
+                    background: 'transparent',
+                    color: theme.text,
+                    lineHeight: 1.55,
+                    fontSize: '1rem',
+                    fontFamily: 'inherit',
+                    caretColor: '#635bff'
+                  }}
+                />
               </div>
 
               <div style={{
