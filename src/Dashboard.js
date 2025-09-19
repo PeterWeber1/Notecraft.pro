@@ -769,9 +769,9 @@ function Dashboard({
           <div className="humanizer-interface dashboard-grid" style={{
             display: 'grid',
             gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1fr 1fr', '1fr 1fr'),
-            gap: isMobile ? '0.5rem' : '1rem',
+            gap: isMobile ? '0.5rem' : isTablet ? '1rem' : '1.5rem',
             marginBottom: isMobile ? '1rem' : '2rem',
-            maxWidth: '1200px',
+            maxWidth: isMobile ? '100%' : isTablet ? '1200px' : '1600px',
             margin: '0 auto',
             width: '100%'
           }}>
