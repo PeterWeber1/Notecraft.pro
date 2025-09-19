@@ -297,7 +297,7 @@ function Dashboard({
           flexWrap: isMobile ? 'wrap' : 'nowrap',
           gap: isMobile ? '0.5rem' : '1rem',
           paddingLeft: '1rem',
-          paddingRight: containerPadding,
+          paddingRight: '1rem',
           maxWidth: 'none',
           margin: 0
         }}>
