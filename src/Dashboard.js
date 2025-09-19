@@ -487,10 +487,18 @@ function Dashboard({
           justifyContent: sidebarCollapsed ? 'center' : 'space-between',
           padding: sidebarCollapsed ? '20px 10px' : '20px',
           borderBottom: `1px solid ${theme.border}`,
-          minHeight: '70px'
+          minHeight: '70px',
+          transition: 'padding 0.3s ease-in-out'
         }}>
           {!sidebarCollapsed && (
-            <h3 style={{ margin: 0, color: theme.primary, fontSize: '1.2rem', fontWeight: '700' }}>Notecraft Pro</h3>
+            <h3 style={{
+              margin: 0,
+              color: theme.primary,
+              fontSize: '1.2rem',
+              fontWeight: '700',
+              opacity: sidebarCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>Notecraft Pro</h3>
           )}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -542,7 +550,10 @@ function Dashboard({
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9,22 9,12 15,12 15,22"/>
             </svg>
-            {!sidebarCollapsed && <span>Home</span>}
+            {!sidebarCollapsed && <span style={{
+              opacity: sidebarCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>Home</span>}
           </Link>
 
           <div
@@ -563,7 +574,10 @@ function Dashboard({
               <rect x="7" y="7" width="3" height="9"/>
               <rect x="14" y="7" width="3" height="5"/>
             </svg>
-            {!sidebarCollapsed && <span>Dashboard</span>}
+            {!sidebarCollapsed && <span style={{
+              opacity: sidebarCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>Dashboard</span>}
           </div>
 
           <Link
@@ -588,7 +602,10 @@ function Dashboard({
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
               <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
             </svg>
-            {!sidebarCollapsed && <span>Notepad</span>}
+            {!sidebarCollapsed && <span style={{
+              opacity: sidebarCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>Notepad</span>}
           </Link>
 
           <button
@@ -615,7 +632,10 @@ function Dashboard({
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
-            {!sidebarCollapsed && <span>Profile</span>}
+            {!sidebarCollapsed && <span style={{
+              opacity: sidebarCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>Profile</span>}
           </button>
 
           <button
@@ -642,7 +662,10 @@ function Dashboard({
               <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
               <line x1="1" y1="10" x2="23" y2="10"/>
             </svg>
-            {!sidebarCollapsed && <span>Billing</span>}
+            {!sidebarCollapsed && <span style={{
+              opacity: sidebarCollapsed ? 0 : 1,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>Billing</span>}
           </button>
         </div>
 
