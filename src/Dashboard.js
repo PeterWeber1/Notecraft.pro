@@ -785,7 +785,11 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: isMobile ? '350px' : isTablet ? '450px' : '550px'
+              minHeight: isMobile ?
+                (windowSize.height > windowSize.width ? 'clamp(300px, 35vh, 400px)' : '350px') :
+                isTablet ?
+                  (windowSize.height > windowSize.width ? 'clamp(350px, 40vh, 500px)' : '450px') :
+                  'clamp(450px, 45vh, 650px)'
             }}>
               <div style={{
                 display: 'flex',
@@ -974,7 +978,11 @@ function Dashboard({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: isMobile ? '350px' : isTablet ? '450px' : '550px'
+              minHeight: isMobile ?
+                (windowSize.height > windowSize.width ? 'clamp(300px, 35vh, 400px)' : '350px') :
+                isTablet ?
+                  (windowSize.height > windowSize.width ? 'clamp(350px, 40vh, 500px)' : '450px') :
+                  'clamp(450px, 45vh, 650px)'
             }}>
               <div style={{
                 display: 'flex',
