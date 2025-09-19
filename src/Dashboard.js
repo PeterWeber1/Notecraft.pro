@@ -295,7 +295,9 @@ function Dashboard({
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: isMobile ? 'wrap' : 'nowrap',
-          gap: isMobile ? '0.5rem' : '1rem'
+          gap: isMobile ? '0.5rem' : '1rem',
+          paddingLeft: isMobile ? containerPadding : '1rem',
+          paddingRight: containerPadding
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{
