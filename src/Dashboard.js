@@ -290,14 +290,16 @@ function Dashboard({
         padding: isMobile ? '0.75rem 0' : '1rem 0',
         transition: 'left 0.3s ease-in-out'
       }}>
-        <div className="container" style={{
+        <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: isMobile ? 'wrap' : 'nowrap',
           gap: isMobile ? '0.5rem' : '1rem',
-          paddingLeft: isMobile ? containerPadding : '1rem',
-          paddingRight: containerPadding
+          paddingLeft: '1rem',
+          paddingRight: containerPadding,
+          maxWidth: 'none',
+          margin: 0
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{
