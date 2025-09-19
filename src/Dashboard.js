@@ -829,26 +829,50 @@ function Dashboard({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '12px',
                 padding: '10px 16px',
-                borderTop: '1px solid #e0e0e0',
-                fontSize: '0.85rem',
-                color: theme.muted
+                borderTop: '1px solid #e0e0e0'
               }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button
+                    onClick={clearText}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: theme.error,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Clear
+                  </button>
+                  <div style={{ fontSize: '0.85rem', color: theme.muted }}>
+                    {Math.max(1, Math.round(wordCount / 200))}m read
+                  </div>
+                </div>
                 <button
-                  onClick={clearText}
+                  onClick={handleHumanize}
+                  disabled={isProcessing || !text.trim() || isOverLimit}
                   style={{
-                    background: 'none',
+                    padding: '8px 16px',
+                    background: isOverLimit ? theme.muted : (isProcessing || !text.trim()) ? '#e0e0e0' : 'linear-gradient(135deg, #635bff, #10b981)',
+                    color: '#ffffff',
                     border: 'none',
-                    color: theme.error,
-                    cursor: 'pointer',
-                    fontSize: '0.85rem',
-                    textDecoration: 'underline'
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: (isProcessing || !text.trim() || isOverLimit) ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: (isProcessing || !text.trim() || isOverLimit) ? 0.7 : 1,
+                    minWidth: '120px'
                   }}
                 >
-                  Clear
+                  {isProcessing ? 'Humanizing...' :
+                   isOverLimit ? 'Upgrade Plan' :
+                   !text.trim() ? 'Enter Text' :
+                   'Humanize'}
                 </button>
-                <div>{Math.max(1, Math.round(wordCount / 200))}m read</div>
               </div>
             </div>
 
@@ -928,7 +952,7 @@ function Dashboard({
               </div>
             </div>
 
-            {/* Controls Panel */}
+            {/* Style Controls Panel */}
             <div style={{
               background: '#ffffff',
               border: '1px solid #e0e0e0',
@@ -942,35 +966,34 @@ function Dashboard({
                 padding: '12px 16px',
                 borderBottom: '1px solid #e0e0e0'
               }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Settings</h3>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Style Settings</h3>
               </div>
 
               {/* Style Controls */}
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '10px',
-                padding: '12px'
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                padding: '16px'
               }}>
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '6px',
-                  background: '#fbfcff',
-                  border: '1px solid #e0e0e0',
-                  padding: '10px',
-                  borderRadius: '12px'
+                  gap: '6px'
                 }}>
-                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Tone</label>
+                  <label style={{ fontSize: '0.85rem', color: theme.text, fontWeight: '500' }}>Tone</label>
                   <select
                     value={tone}
                     onChange={(e) => setTone(e.target.value)}
                     style={{
-                      border: 'none',
-                      background: 'transparent',
+                      padding: '8px 12px',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      background: '#ffffff',
                       color: theme.text,
                       fontSize: '0.9rem',
-                      outline: 'none'
+                      outline: 'none',
+                      cursor: 'pointer'
                     }}
                   >
                     <option value="neutral">Neutral</option>
@@ -984,22 +1007,21 @@ function Dashboard({
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '6px',
-                  background: '#fbfcff',
-                  border: '1px solid #e0e0e0',
-                  padding: '10px',
-                  borderRadius: '12px'
+                  gap: '6px'
                 }}>
-                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Style</label>
+                  <label style={{ fontSize: '0.85rem', color: theme.text, fontWeight: '500' }}>Writing Style</label>
                   <select
                     value={writingStyle}
                     onChange={(e) => setWritingStyle(e.target.value)}
                     style={{
-                      border: 'none',
-                      background: 'transparent',
+                      padding: '8px 12px',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      background: '#ffffff',
                       color: theme.text,
                       fontSize: '0.9rem',
-                      outline: 'none'
+                      outline: 'none',
+                      cursor: 'pointer'
                     }}
                   >
                     <option value="professional">Professional</option>
@@ -1009,31 +1031,6 @@ function Dashboard({
                     <option value="technical">Technical</option>
                   </select>
                 </div>
-              </div>
-
-              {/* Humanize Button */}
-              <div style={{ padding: '12px' }}>
-                <button
-                  onClick={handleHumanize}
-                  disabled={isProcessing || !text.trim() || isOverLimit}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    background: isOverLimit ? theme.muted : 'linear-gradient(135deg, #635bff, #10b981)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: (isProcessing || !text.trim() || isOverLimit) ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    opacity: (isProcessing || !text.trim() || isOverLimit) ? 0.7 : 1
-                  }}
-                >
-                  {isProcessing ? 'Humanizing...' :
-                   isOverLimit ? `Upgrade for ${currentLimit}+ words` :
-                   'Humanize Text'}
-                </button>
 
                 {isOverLimit && (
                   <button
@@ -1041,7 +1038,7 @@ function Dashboard({
                     style={{
                       width: '100%',
                       marginTop: '8px',
-                      padding: '8px 16px',
+                      padding: '10px 16px',
                       background: 'rgba(99, 91, 255, 0.1)',
                       color: theme.primary,
                       border: `1px solid ${theme.primary}`,
