@@ -867,7 +867,7 @@ function Dashboard({
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: theme.error,
+                      color: theme.muted,
                       cursor: 'pointer',
                       fontSize: '0.85rem',
                       textDecoration: 'underline'
