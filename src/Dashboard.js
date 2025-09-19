@@ -26,8 +26,8 @@ function Dashboard({
   const navigate = useNavigate();
   const { windowSize, isMobile, isTablet, responsive, containerPadding } = useResponsive();
 
-  // Sidebar state
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Sidebar state - now collapsed by default on mobile, expanded on desktop
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(isMobile);
 
   // Redirect non-authenticated users to homepage
   useEffect(() => {
@@ -35,6 +35,11 @@ function Dashboard({
       navigate('/');
     }
   }, [user, navigate]);
+
+  // Update sidebar state on screen size change
+  useEffect(() => {
+    setSidebarCollapsed(isMobile);
+  }, [isMobile]);
 
   // Show loading while redirecting
   if (!user) {
@@ -276,14 +281,14 @@ function Dashboard({
       <nav style={{
         position: 'fixed',
         top: 0,
-        left: 0,
+        left: sidebarCollapsed ? 0 : (isMobile ? '280px' : '300px'),
         right: 0,
         zIndex: 1000,
         background: theme.card,
         borderBottom: `1px solid ${theme.border}`,
         backdropFilter: 'blur(20px)',
         padding: isMobile ? '0.75rem 0' : '1rem 0',
-        width: '100%'
+        transition: 'left 0.3s ease-in-out'
       }}>
         <div className="container" style={{
           display: 'flex',
@@ -293,19 +298,6 @@ function Dashboard({
           gap: isMobile ? '0.5rem' : '1rem'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: '1.2rem',
-                cursor: 'pointer',
-                color: theme.text,
-                padding: '5px'
-              }}
-            >
-              ☰
-            </button>
             <Link to="/" style={{
             fontSize: 'clamp(1.2rem, 4vw, 1.5rem)',
             fontWeight: 'var(--stripe-font-weight-bold)',
@@ -409,10 +401,12 @@ function Dashboard({
       <section style={{
         paddingTop: isMobile ? '80px' : '100px',
         paddingBottom: isMobile ? '30px' : '40px',
+        paddingLeft: sidebarCollapsed ? (isMobile ? '60px' : '80px') : (isMobile ? '280px' : '300px'),
         textAlign: 'center',
         background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)',
         color: theme.text,
-        width: '100%'
+        width: '100%',
+        transition: 'padding-left 0.3s ease-in-out'
       }}>
         <div className="container" style={{
           maxWidth: '100%',
@@ -461,245 +455,309 @@ function Dashboard({
         </div>
       </section>
 
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <>
-          {/* Overlay */}
+      {/* Claude AI/ChatGPT Style Sidebar */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: sidebarCollapsed ? (isMobile ? '60px' : '80px') : (isMobile ? '280px' : '300px'),
+        height: '100vh',
+        background: theme.card,
+        borderRight: `1px solid ${theme.border}`,
+        zIndex: 1001,
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'width 0.3s ease-in-out',
+        boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)'
+      }}>
+        {/* Sidebar Header with Toggle */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: sidebarCollapsed ? 'center' : 'space-between',
+          padding: sidebarCollapsed ? '20px 10px' : '20px',
+          borderBottom: `1px solid ${theme.border}`,
+          minHeight: '70px'
+        }}>
+          {!sidebarCollapsed && (
+            <h3 style={{ margin: 0, color: theme.text, fontSize: '1.1rem', fontWeight: '600' }}>Navigation</h3>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: sidebarCollapsed ? '1.3rem' : '1.2rem',
+              cursor: 'pointer',
+              color: theme.text,
+              padding: '8px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+            onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? '☰' : '‹'}
+          </button>
+        </div>
+
+        {/* Navigation Items */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '10px 0'
+        }}>
+          <Link
+            to="/"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: sidebarCollapsed ? '0' : '12px',
+              padding: sidebarCollapsed ? '16px' : '16px 20px',
+              color: theme.text,
+              textDecoration: 'none',
+              transition: 'background-color 0.2s',
+              justifyContent: sidebarCollapsed ? 'center' : 'flex-start'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+            onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+            title={sidebarCollapsed ? 'Home' : ''}
+          >
+            <span style={{ fontSize: '1.2rem' }}>🏠</span>
+            {!sidebarCollapsed && <span>Home</span>}
+          </Link>
+
           <div
             style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              background: 'rgba(0, 0, 0, 0.5)',
-              zIndex: 999
+              display: 'flex',
+              alignItems: 'center',
+              gap: sidebarCollapsed ? '0' : '12px',
+              padding: sidebarCollapsed ? '16px' : '16px 20px',
+              color: theme.primary,
+              backgroundColor: theme.secondary,
+              fontWeight: '500',
+              justifyContent: sidebarCollapsed ? 'center' : 'flex-start'
             }}
-            onClick={() => setSidebarOpen(false)}
-          />
+            title={sidebarCollapsed ? 'Dashboard (current)' : ''}
+          >
+            <span style={{ fontSize: '1.2rem' }}>📊</span>
+            {!sidebarCollapsed && <span>Dashboard</span>}
+          </div>
 
-          {/* Sidebar */}
+          <Link
+            to="/notepad"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: sidebarCollapsed ? '0' : '12px',
+              padding: sidebarCollapsed ? '16px' : '16px 20px',
+              color: theme.text,
+              textDecoration: 'none',
+              transition: 'background-color 0.2s',
+              justifyContent: sidebarCollapsed ? 'center' : 'flex-start'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+            onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+            title={sidebarCollapsed ? 'Notepad' : ''}
+          >
+            <span style={{ fontSize: '1.2rem' }}>📝</span>
+            {!sidebarCollapsed && <span>Notepad</span>}
+          </Link>
+
+          <button
+            onClick={() => setShowProfileModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: sidebarCollapsed ? '0' : '12px',
+              padding: sidebarCollapsed ? '16px' : '16px 20px',
+              color: theme.text,
+              background: 'none',
+              border: 'none',
+              textAlign: 'left',
+              cursor: 'pointer',
+              width: '100%',
+              transition: 'background-color 0.2s',
+              justifyContent: sidebarCollapsed ? 'center' : 'flex-start'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+            onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+            title={sidebarCollapsed ? 'Profile' : ''}
+          >
+            <span style={{ fontSize: '1.2rem' }}>👤</span>
+            {!sidebarCollapsed && <span>Profile</span>}
+          </button>
+
+          <button
+            onClick={() => setShowBillingModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: sidebarCollapsed ? '0' : '12px',
+              padding: sidebarCollapsed ? '16px' : '16px 20px',
+              color: theme.text,
+              background: 'none',
+              border: 'none',
+              textAlign: 'left',
+              cursor: 'pointer',
+              width: '100%',
+              transition: 'background-color 0.2s',
+              justifyContent: sidebarCollapsed ? 'center' : 'flex-start'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+            onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+            title={sidebarCollapsed ? 'Billing' : ''}
+          >
+            <span style={{ fontSize: '1.2rem' }}>💳</span>
+            {!sidebarCollapsed && <span>Billing</span>}
+          </button>
+        </div>
+
+        {/* User Info at Bottom */}
+        {!sidebarCollapsed && (
           <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: isMobile ? '280px' : '320px',
-            height: '100vh',
-            background: theme.card,
-            borderRight: `1px solid ${theme.border}`,
-            zIndex: 1000,
-            padding: '0',
-            boxShadow: '2px 0 20px rgba(0, 0, 0, 0.1)',
-            transform: 'translateX(0)',
-            transition: 'transform 0.3s ease-in-out'
+            padding: '20px',
+            borderTop: `1px solid ${theme.border}`
           }}>
-            {/* Sidebar Header */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '20px',
-              borderBottom: `1px solid ${theme.border}`
+              gap: '12px',
+              marginBottom: '16px'
             }}>
-              <h3 style={{ margin: 0, color: theme.text, fontSize: '1.2rem' }}>Menu</h3>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  color: theme.muted,
-                  padding: '5px',
-                  borderRadius: '4px'
-                }}
-                onMouseOver={(e) => e.target.style.background = theme.secondary}
-                onMouseOut={(e) => e.target.style.background = 'none'}
-              >
-                ×
-              </button>
+              <div style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: user.user_metadata?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #635bff, #10b981)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '600',
+                fontSize: '0.9rem'
+              }}>
+                {user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt="Profile"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '50%'
+                    }}
+                  />
+                ) : (
+                  (user?.email?.charAt(0).toUpperCase() || 'U')
+                )}
+              </div>
+              <div style={{ overflow: 'hidden' }}>
+                <div style={{
+                  fontSize: '0.85rem',
+                  fontWeight: '500',
+                  color: theme.text,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}>
+                  {user?.email || 'User'}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: theme.muted }}>
+                  {getUserTier()} Plan
+                </div>
+              </div>
             </div>
 
-            {/* Sidebar Content */}
-            <div style={{ padding: '0' }}>
-              {/* Navigation Items */}
-              <div style={{
+            <button
+              onClick={logout}
+              style={{
+                width: '100%',
+                padding: '8px 16px',
+                background: 'none',
+                border: `1px solid ${theme.border}`,
+                borderRadius: '6px',
+                color: theme.text,
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = theme.error;
+                e.target.style.color = 'white';
+                e.target.style.borderColor = theme.error;
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+                e.target.style.color = theme.text;
+                e.target.style.borderColor = theme.border;
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
+        )}
+
+        {/* Collapsed User Avatar */}
+        {sidebarCollapsed && (
+          <div style={{
+            padding: '20px 10px',
+            borderTop: `1px solid ${theme.border}`,
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <div
+              onClick={() => setShowProfileModal(true)}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: user.user_metadata?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #635bff, #10b981)',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '0'
-              }}>
-                <Link
-                  to="/"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '16px 20px',
-                    color: theme.text,
-                    textDecoration: 'none',
-                    borderBottom: `1px solid ${theme.border}`,
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
-                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
-                >
-                  <span>🏠</span>
-                  <span>Home</span>
-                </Link>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '16px 20px',
-                    color: theme.primary,
-                    backgroundColor: theme.secondary,
-                    borderBottom: `1px solid ${theme.border}`,
-                    fontWeight: '500'
-                  }}
-                >
-                  <span>📊</span>
-                  <span>Dashboard</span>
-                </div>
-
-                <Link
-                  to="/notepad"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '16px 20px',
-                    color: theme.text,
-                    textDecoration: 'none',
-                    borderBottom: `1px solid ${theme.border}`,
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
-                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
-                >
-                  <span>📝</span>
-                  <span>Notepad</span>
-                </Link>
-
-                <button
-                  onClick={() => setShowProfileModal(true)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '16px 20px',
-                    color: theme.text,
-                    background: 'none',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    width: '100%',
-                    borderBottom: `1px solid ${theme.border}`,
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
-                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
-                >
-                  <span>👤</span>
-                  <span>Profile</span>
-                </button>
-
-                <button
-                  onClick={() => setShowBillingModal(true)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '16px 20px',
-                    color: theme.text,
-                    background: 'none',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    width: '100%',
-                    borderBottom: `1px solid ${theme.border}`,
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
-                  onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
-                >
-                  <span>💳</span>
-                  <span>Billing</span>
-                </button>
-              </div>
-
-              {/* User Info */}
-              <div style={{
-                padding: '20px',
-                marginTop: '20px',
-                borderTop: `1px solid ${theme.border}`
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  marginBottom: '16px'
-                }}>
-                  <div style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #635bff, #10b981)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontWeight: '600'
-                  }}>
-                    {user?.email?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: '500', color: theme.text }}>
-                      {user?.email || 'User'}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: theme.muted }}>
-                      {getUserTier()} Plan
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={logout}
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'transform 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+              onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+              title={`${user?.email || 'User'} - ${getUserTier()} Plan`}
+            >
+              {user.user_metadata?.avatar_url ? (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt="Profile"
                   style={{
                     width: '100%',
-                    padding: '8px 16px',
-                    background: 'none',
-                    border: `1px solid ${theme.border}`,
-                    borderRadius: '6px',
-                    color: theme.text,
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    transition: 'all 0.2s'
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%'
                   }}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = theme.error;
-                    e.target.style.color = 'white';
-                    e.target.style.borderColor = theme.error;
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = 'none';
-                    e.target.style.color = theme.text;
-                    e.target.style.borderColor = theme.border;
-                  }}
-                >
-                  Sign Out
-                </button>
-              </div>
+                />
+              ) : (
+                (user?.email?.charAt(0).toUpperCase() || 'U')
+              )}
             </div>
           </div>
-        </>
-      )}
+        )}
+      </div>
 
       {/* Main Humanizer Interface */}
-      <section style={{ padding: '40px 0', background: theme.background }}>
+      <section style={{
+        padding: '40px 0',
+        paddingLeft: sidebarCollapsed ? (isMobile ? '60px' : '80px') : (isMobile ? '280px' : '300px'),
+        background: theme.background,
+        transition: 'padding-left 0.3s ease-in-out'
+      }}>
         <div className="container">
 
           {/* Advanced Humanizer Grid - Mobile Responsive */}

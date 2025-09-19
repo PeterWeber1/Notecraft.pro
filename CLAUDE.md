@@ -46,10 +46,6 @@ This is a React SPA for AI-powered text humanization called "Notecraft Pro". The
 - Advanced options for Pro/Ultra users (writing style, tone, target audience)
 - Mock AI humanization with simple text transformations
 
-**Modal System** (`src/components/AccountModals.js`):
-- LoginModal, RegisterModal, ProfileModal, BillingModal, UpgradeModal
-- Integrated with AccountManager context for seamless authentication flow
-
 ### Authentication & Subscription Architecture
 The app uses **Supabase Authentication** with real user management:
 
@@ -85,9 +81,24 @@ The app uses **Supabase Authentication** with real user management:
 - Advanced humanization with style options (tone, creativity, target audience)
 - Built-in AI detection scoring using GPT-4 analysis
 
+**Dashboard Component** (`src/Dashboard.js`):
+- Protected route requiring authentication with redirect logic
+- Responsive sidebar navigation for logged-in users
+- Integration with useResponsive hook for mobile/tablet layouts
+- User management interface with tier-based feature access
+
+**Modal System** (`src/components/AccountModals.js`):
+- LoginModal, RegisterModal, ProfileModal, BillingModal, UpgradeModal
+- Integrated with AccountManager context for seamless authentication flow
+
+**Responsive Hook** (`src/hooks/useResponsive.js`):
+- Custom hook for responsive design breakpoints
+- Provides window size, device detection (mobile/tablet), and container padding
+- Used across Dashboard and other components for consistent layouts
+
 ### Routing Structure
 - `/` - HomePage with text humanization interface
-- `/dashboard` - User dashboard for logged-in users
+- `/dashboard` - User dashboard for logged-in users (protected route)
 - `/notepad` - Rich text editor with formatting tools
 - `/privacy` - Privacy Policy page
 - `/terms` - Terms of Service page
@@ -143,10 +154,14 @@ Multiple versions exist for debugging and development:
 ## Project Structure Notes
 - `src/` - React frontend application
 - `src/lib/supabase.js` - Supabase client configuration and auth helpers
+- `src/hooks/` - Custom React hooks (useResponsive for responsive design)
+- `src/components/` - Reusable UI components and modals
+  - `AccountModals.js` - Authentication modal components
+  - `UserDashboard.js` - Dashboard user interface components
+  - `Breadcrumbs.js` - Navigation breadcrumb component
 - `.env` - Environment variables including Supabase credentials
 - `api/` - Python FastAPI backend with AI models
 - `server/` - Node.js Express alternative backend
-- `src/components/` - Reusable UI components and modals
 - Multiple backup/test versions of core files for debugging
 
 ## Supabase Configuration
