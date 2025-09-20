@@ -673,9 +673,7 @@ export function ProfileModal({ isOpen, onClose, theme }) {
       <div style={{
         position: 'fixed',
         top: '70px',
-        right: width <= 480 ? '10px' :
-               width <= 1200 ? `clamp(1rem, 4vw, 2rem)` :
-               `calc((100vw - 1200px) / 2 + clamp(1rem, 4vw, 2rem))`,
+        right: width <= 480 ? '10px' : '20px',
         background: 'rgba(255, 255, 255, 0.9)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
