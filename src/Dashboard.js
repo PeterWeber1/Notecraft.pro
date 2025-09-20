@@ -308,7 +308,9 @@ function Dashboard({
         background: theme.card,
         borderBottom: `1px solid ${theme.border}`,
         backdropFilter: 'blur(20px)',
-        padding: isMobile ? '0.75rem 0' : '1rem 0',
+        height: '70px',
+        display: 'flex',
+        alignItems: 'center',
         transition: 'left 0.3s ease-in-out'
       }}>
         <div style={{
@@ -320,7 +322,8 @@ function Dashboard({
           paddingLeft: '1rem',
           paddingRight: '1rem',
           maxWidth: 'none',
-          margin: 0
+          margin: 0,
+          width: '100%'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{
@@ -487,7 +490,8 @@ function Dashboard({
             display: 'flex',
             alignItems: 'center',
             background: '#f1f3f4',
-            borderBottom: `1px solid ${theme.border}`
+            borderBottom: `1px solid ${theme.border}`,
+            height: '70px'
           }}>
             {/* Favicon - Centered */}
             <div style={{
