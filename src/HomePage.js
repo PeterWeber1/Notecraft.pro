@@ -620,29 +620,6 @@ function HomePage({
             </div>
             <div style={{ fontSize: '0.9rem', opacity: 1 }}>
               {currentTier.wordLimit} words • {currentTier.features.join(' • ')}
-              {!user && (
-                <>
-                  <br />
-                  <span style={{ color: '#10b981', fontWeight: '600' }}>
-                    👆 
-                    <button 
-                      onClick={() => setShowRegisterModal(true)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#10b981',
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '0.9rem'
-                      }}
-                    >
-                      Sign up free
-                    </button> 
-                    to unlock Pro & Ultra features
-                  </span>
-                </>
-              )}
             </div>
           </div>
 
