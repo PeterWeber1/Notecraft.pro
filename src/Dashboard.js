@@ -480,25 +480,59 @@ function Dashboard({
         transition: 'width 0.3s ease-in-out',
         boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)'
       }}>
-        {/* Favicon - Standalone when collapsed */}
+        {/* Favicon and Expand Arrow Row - when collapsed */}
         {sidebarCollapsed && (
           <div style={{
+            position: 'relative',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px',
-            opacity: 0.7,
-            transition: 'opacity 0.3s ease-in-out'
+            alignItems: 'center'
           }}>
-            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="8" fill="#606060"/>
-              <rect x="4" y="6" width="24" height="20" rx="4" fill="#606060"/>
-              <rect x="10" y="2" width="2" height="4" fill="#606060"/>
-              <rect x="20" y="2" width="2" height="4" fill="#606060"/>
-              <circle cx="11" cy="2" r="1" fill="#ffffff"/>
-              <circle cx="21" cy="2" r="1" fill="#ffffff"/>
-              <path d="M8 10 L8 22 L11 22 L11 16 L21 22 L24 22 L24 10 L21 10 L21 16 L11 10 L8 10 Z" fill="#ffffff"/>
-            </svg>
+            {/* Favicon - Centered */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '16px',
+              opacity: 0.7,
+              transition: 'opacity 0.3s ease-in-out',
+              width: '100%'
+            }}>
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#606060"/>
+                <rect x="4" y="6" width="24" height="20" rx="4" fill="#606060"/>
+                <rect x="10" y="2" width="2" height="4" fill="#606060"/>
+                <rect x="20" y="2" width="2" height="4" fill="#606060"/>
+                <circle cx="11" cy="2" r="1" fill="#ffffff"/>
+                <circle cx="21" cy="2" r="1" fill="#ffffff"/>
+                <path d="M8 10 L8 22 L11 22 L11 16 L21 22 L24 22 L24 10 L21 10 L21 16 L11 10 L8 10 Z" fill="#ffffff"/>
+              </svg>
+            </div>
+            {/* Expand Arrow - Positioned on right */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                fontSize: '1.3rem',
+                cursor: 'pointer',
+                color: theme.text,
+                padding: '8px',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+              onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+              title="Expand sidebar"
+            >
+              ›
+            </button>
           </div>
         )}
 
