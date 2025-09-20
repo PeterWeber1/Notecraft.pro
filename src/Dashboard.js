@@ -431,8 +431,8 @@ function Dashboard({
 
       {/* Dashboard Header */}
       <section style={{
-        paddingTop: isMobile ? '80px' : '100px',
-        paddingBottom: isMobile ? '30px' : '40px',
+        paddingTop: isMobile ? '70px' : '80px',
+        paddingBottom: isMobile ? '15px' : '20px',
         paddingLeft: sidebarCollapsed ? (isMobile ? '60px' : '80px') : (isMobile ? '280px' : '300px'),
         textAlign: 'center',
         background: 'linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%)',
@@ -447,7 +447,7 @@ function Dashboard({
           width: '100%'
         }}>
           <h1 style={{
-            marginBottom: '1rem',
+            marginBottom: '0.5rem',
             fontSize: 'clamp(1.8rem, 5vw, 2.5rem)',
             fontWeight: 'bold',
             lineHeight: '1.2'
@@ -457,7 +457,7 @@ function Dashboard({
           <p style={{
             fontSize: 'clamp(1rem, 3vw, 1.1rem)',
             color: theme.muted,
-            marginBottom: 'clamp(1rem, 3vw, 1.5rem)',
+            marginBottom: '0',
             lineHeight: '1.5'
           }}>
             Transform your AI-generated text into natural, human-like writing
