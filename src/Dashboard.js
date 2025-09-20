@@ -495,7 +495,7 @@ function Dashboard({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '20px',
+              padding: '16px',
               opacity: sidebarCollapsed ? 0.7 : 0,
               transition: 'opacity 0.3s ease-in-out'
             }}>
