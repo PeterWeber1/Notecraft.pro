@@ -607,7 +607,8 @@ function Dashboard({
             </svg>
             {!sidebarCollapsed && <span style={{
               opacity: sidebarCollapsed ? 0 : 1,
-              transition: 'opacity 0.3s ease-in-out'
+              transition: 'opacity 0.3s ease-in-out',
+              fontSize: '0.9rem'
             }}>Humanizer</span>}
           </div>
 
@@ -635,7 +636,8 @@ function Dashboard({
             </svg>
             {!sidebarCollapsed && <span style={{
               opacity: sidebarCollapsed ? 0 : 1,
-              transition: 'opacity 0.3s ease-in-out'
+              transition: 'opacity 0.3s ease-in-out',
+              fontSize: '0.9rem'
             }}>Notepad</span>}
           </Link>
 
@@ -667,7 +669,8 @@ function Dashboard({
             </svg>
             {!sidebarCollapsed && <span style={{
               opacity: sidebarCollapsed ? 0 : 1,
-              transition: 'opacity 0.3s ease-in-out'
+              transition: 'opacity 0.3s ease-in-out',
+              fontSize: '0.9rem'
             }}>History</span>}
           </button>
 
@@ -697,7 +700,8 @@ function Dashboard({
             </svg>
             {!sidebarCollapsed && <span style={{
               opacity: sidebarCollapsed ? 0 : 1,
-              transition: 'opacity 0.3s ease-in-out'
+              transition: 'opacity 0.3s ease-in-out',
+              fontSize: '0.9rem'
             }}>Profile</span>}
           </button>
 
@@ -727,7 +731,8 @@ function Dashboard({
             </svg>
             {!sidebarCollapsed && <span style={{
               opacity: sidebarCollapsed ? 0 : 1,
-              transition: 'opacity 0.3s ease-in-out'
+              transition: 'opacity 0.3s ease-in-out',
+              fontSize: '0.9rem'
             }}>Billing</span>}
           </button>
         </div>
