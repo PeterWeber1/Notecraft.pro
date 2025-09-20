@@ -54,6 +54,16 @@ function HomePage({
   const [showNotification, setShowNotification] = useState('');
   const [notificationTimer, setNotificationTimer] = useState(null);
 
+  // Add tier limit logic
+  const currentTierName = getUserTier ? getUserTier() : 'basic';
+  const tierLimits = {
+    basic: 500,
+    pro: 2000,
+    ultra: 10000
+  };
+  const currentLimit = tierLimits[currentTierName] || 500;
+  const isOverLimit = wordCount > currentLimit;
+
   const showNotificationMessage = (message, duration = 3000) => {
     setShowNotification(message);
     if (notificationTimer) {
@@ -637,14 +647,15 @@ function HomePage({
           </div>
 
           {/* Advanced Humanizer Interface */}
-            <div className="humanizer-grid" style={{
-              display: 'grid',
-              gridTemplateColumns: responsive('1fr', '1fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr', '1.2fr 1.2fr 0.8fr'),
-              gap: isMobile ? '0.5rem' : '1rem',
-              marginBottom: '1rem',
-              width: '100%',
-              overflowX: 'auto'
-            }}>
+          <div className="humanizer-interface dashboard-grid" style={{
+            display: 'grid',
+            gridTemplateColumns: responsive('1fr', '1fr', '1fr 1fr', '1fr 1fr', '1fr 1fr'),
+            gap: isMobile ? '0.5rem' : isTablet ? '1rem' : '1.5rem',
+            marginBottom: isMobile ? '1rem' : '2rem',
+            maxWidth: isMobile ? '100%' : isTablet ? '1400px' : '1800px',
+            margin: '0 auto',
+            width: '100%'
+          }}>
 
             {/* Original Text Panel */}
             <div style={{
@@ -655,7 +666,11 @@ function HomePage({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: '300px'
+              minHeight: isMobile ?
+                (windowSize.height > windowSize.width ? 'clamp(300px, 35vh, 400px)' : '350px') :
+                isTablet ?
+                  (windowSize.height > windowSize.width ? 'clamp(350px, 40vh, 500px)' : '450px') :
+                  'clamp(450px, 45vh, 650px)'
             }}>
               <div style={{
                 display: 'flex',
@@ -666,46 +681,154 @@ function HomePage({
                 borderBottom: '1px solid #e0e0e0',
                 background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02))'
               }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Original</h3>
-                <div style={{ color: theme.muted, fontSize: '0.85rem' }}>Write or paste your AI‑generated text</div>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Original Text</h3>
+                <div style={{
+                  color: isOverLimit ? theme.error : theme.muted,
+                  fontSize: '0.85rem',
+                  fontWeight: isOverLimit ? '600' : 'normal'
+                }}>
+                  {text.trim().split(/\s+/).filter(Boolean).length}/{currentLimit} words
+                </div>
               </div>
               <div style={{ position: 'relative', flex: 1, display: 'flex' }}>
                 <textarea
                   ref={textareaRef}
                   value={text}
                   onChange={handleTextChange}
-                  placeholder="Paste or type your text here…"
-                  className="w-full"
+                  placeholder="Paste your AI-generated text here..."
                   style={{
                     width: '100%',
                     height: '100%',
                     resize: 'none',
                     outline: 'none',
                     border: 0,
-                    padding: isMobile ? '12px' : '16px',
+                    padding: '16px',
                     background: 'transparent',
                     color: theme.text,
                     lineHeight: 1.55,
-                    fontSize: isMobile ? '16px' : '1rem',
-                    minHeight: isMobile ? '250px' : '300px',
-                    boxSizing: 'border-box',
+                    fontSize: '1rem',
                     fontFamily: 'inherit',
-                    caretColor: '#635bff'
+                    caretColor: '#000000'
                   }}
                 />
               </div>
+
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '12px',
                 padding: '10px 16px',
-                borderTop: '1px solid #e0e0e0',
-                fontSize: '0.85rem',
-                color: theme.muted
+                borderTop: '1px solid #e0e0e0'
               }}>
-                <div>{text.trim().split(/\s+/).filter(Boolean).length} words</div>
-                <div>{Math.max(1, Math.round(text.trim().split(/\s+/).filter(Boolean).length / 200))}m read</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button
+                    onClick={() => {
+                      setText('');
+                      setHumanizedText('');
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: theme.muted,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Clear
+                  </button>
+                  <div style={{ fontSize: '0.85rem', color: theme.muted }}>
+                    {Math.max(1, Math.round(text.trim().split(/\s+/).filter(Boolean).length / 200))}m read
+                  </div>
+
+                  {/* Style Controls */}
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <select
+                      value={tone}
+                      onChange={(e) => setTone(e.target.value)}
+                      style={{
+                        padding: '4px 6px',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '4px',
+                        background: '#ffffff',
+                        color: theme.text,
+                        fontSize: '0.8rem',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="neutral">Neutral</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="formal">Formal</option>
+                      <option value="enthusiastic">Enthusiastic</option>
+                      <option value="confident">Confident</option>
+                    </select>
+
+                    <select
+                      value={writingStyle}
+                      onChange={(e) => setWritingStyle(e.target.value)}
+                      style={{
+                        padding: '4px 6px',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '4px',
+                        background: '#ffffff',
+                        color: theme.text,
+                        fontSize: '0.8rem',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="academic">Academic</option>
+                      <option value="creative">Creative</option>
+                      <option value="technical">Technical</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  {isOverLimit && (
+                    <button
+                      onClick={() => setShowUpgradeModal(true)}
+                      style={{
+                        padding: '6px 12px',
+                        background: 'rgba(99, 91, 255, 0.1)',
+                        color: theme.primary,
+                        border: `1px solid ${theme.primary}`,
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Upgrade
+                    </button>
+                  )}
+                  <button
+                    onClick={isOverLimit ? () => setShowUpgradeModal(true) : handleHumanize}
+                    disabled={isProcessing || !text.trim()}
+                    style={{
+                      padding: '8px 16px',
+                      background: isOverLimit ? `linear-gradient(135deg, ${theme.primary}, ${theme.accent})` : (isProcessing || !text.trim()) ? '#e0e0e0' : 'linear-gradient(135deg, #635bff, #10b981)',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: (isProcessing || !text.trim()) ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s',
+                      opacity: (isProcessing || !text.trim()) ? 0.7 : 1,
+                      minWidth: '120px'
+                    }}
+                  >
+                    {isProcessing ? 'Humanizing...' :
+                     isOverLimit ? 'Upgrade Plan' :
+                     !text.trim() ? 'Enter Text' :
+                     'Humanize'}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -718,7 +841,11 @@ function HomePage({
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              minHeight: '300px'
+              minHeight: isMobile ?
+                (windowSize.height > windowSize.width ? 'clamp(300px, 35vh, 400px)' : '350px') :
+                isTablet ?
+                  (windowSize.height > windowSize.width ? 'clamp(350px, 40vh, 500px)' : '450px') :
+                  'clamp(450px, 45vh, 650px)'
             }}>
               <div style={{
                 display: 'flex',
@@ -728,20 +855,19 @@ function HomePage({
                 padding: '12px 16px',
                 borderBottom: '1px solid #e0e0e0'
               }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Humanized</h3>
+                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Humanized Text</h3>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <button style={{
-                    padding: '8px 12px',
+                  <div style={{
+                    padding: '4px 8px',
                     border: '1px solid #e0e0e0',
-                    borderRadius: '10px',
-                    background: 'linear-gradient(135deg, rgba(124,92,255,0.12), rgba(0,224,184,0.12))',
-                    borderColor: 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '0.85rem',
-                    color: theme.text
+                    borderRadius: '6px',
+                    background: aiScore < 30 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                    color: aiScore < 30 ? theme.success : theme.error,
+                    fontSize: '0.75rem',
+                    fontWeight: '600'
                   }}>
-                    Preview
-                  </button>
+                    AI: {aiScore}%
+                  </div>
                 </div>
               </div>
               <div style={{
@@ -768,232 +894,26 @@ function HomePage({
                 fontSize: '0.85rem',
                 color: theme.muted
               }}>
-                <button 
+                <button
                   onClick={() => {
                     if (humanizedText) {
                       navigator.clipboard.writeText(humanizedText);
                       showNotificationMessage('Humanized text copied!');
                     }
                   }}
+                  disabled={!humanizedText}
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#10b981',
-                    cursor: 'pointer',
+                    color: humanizedText ? theme.success : theme.muted,
+                    cursor: humanizedText ? 'pointer' : 'not-allowed',
                     fontSize: '0.85rem',
                     textDecoration: 'underline'
                   }}
                 >
                   Copy
                 </button>
-                <div>AI Detection: {aiScore}%</div>
-              </div>
-            </div>
-
-            {/* Controls Panel */}
-            <div style={{
-              background: '#ffffff',
-              border: '1px solid #e0e0e0',
-              borderRadius: '16px',
-              boxShadow: '0 10px 30px rgba(10,10,20,0.07)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <div style={{
-                padding: '8px 16px',
-                borderBottom: '1px solid #e0e0e0'
-              }}>
-                <h3 style={{ margin: 0, fontSize: '1rem', color: theme.text }}>Controls</h3>
-              </div>
-
-              {/* Humanize Button */}
-              <div style={{ padding: '8px 12px 12px 12px' }}>
-                <button
-                  onClick={handleHumanize}
-                  disabled={isProcessing}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    background: 'linear-gradient(135deg, #635bff, #10b981)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    cursor: isProcessing ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s',
-                    opacity: isProcessing ? 0.7 : 1
-                  }}
-                >
-                  {isProcessing ? 'Humanizing...' : 'Humanize Text'}
-                </button>
-              </div>
-
-              {/* Advanced Controls */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '10px',
-                padding: '12px'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                  background: '#fbfcff',
-                  border: '1px solid #e0e0e0',
-                  padding: '10px',
-                  borderRadius: '12px'
-                }}>
-                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Tone</label>
-                  <select style={{
-                    border: 'none',
-                    background: 'transparent',
-                    color: theme.text,
-                    fontSize: '0.9rem',
-                    outline: 'none'
-                  }}>
-                    <option>professional</option>
-                    <option>casual</option>
-                    <option>academic</option>
-                    <option>friendly</option>
-                    <option>persuasive</option>
-                  </select>
-                </div>
-                
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                  background: '#fbfcff',
-                  border: '1px solid #e0e0e0',
-                  padding: '10px',
-                  borderRadius: '12px'
-                }}>
-                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Formality</label>
-                  <input type="range" min="0" max="100" defaultValue="60" style={{
-                    width: '100%',
-                    accentColor: '#635bff'
-                  }} />
-                </div>
-
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                  background: '#fbfcff',
-                  border: '1px solid #e0e0e0',
-                  padding: '10px',
-                  borderRadius: '12px'
-                }}>
-                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Reading Level</label>
-                  <select style={{
-                    border: 'none',
-                    background: 'transparent',
-                    color: theme.text,
-                    fontSize: '0.9rem',
-                    outline: 'none'
-                  }}>
-                    <option>standard</option>
-                    <option>simple</option>
-                    <option>advanced</option>
-                  </select>
-                </div>
-
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                  background: '#fbfcff',
-                  border: '1px solid #e0e0e0',
-                  padding: '10px',
-                  borderRadius: '12px'
-                }}>
-                  <label style={{ fontSize: '0.8rem', color: theme.muted }}>Intensity</label>
-                  <input type="range" min="0" max="100" defaultValue="55" style={{
-                    width: '100%',
-                    accentColor: '#635bff'
-                  }} />
-                </div>
-              </div>
-
-              {/* Protection Switches */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr',
-                gap: '8px',
-                padding: '12px'
-              }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
-                  <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
-                  Keep quotes & code unchanged
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
-                  <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
-                  Preserve citations & links
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem' }}>
-                  <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
-                  Avoid changing dates & figures
-                </label>
-              </div>
-
-              {/* Analytics */}
-              <div style={{
-                padding: '12px',
-                borderTop: '1px solid #e0e0e0'
-              }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: theme.text }}>Analytics</h4>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '10px'
-                }}>
-                  <div style={{
-                    background: '#fbfcff',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '12px',
-                    padding: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: theme.text }}>
-                      {text.trim().split(/\s+/).filter(Boolean).length}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: theme.muted }}>Words</div>
-                  </div>
-                  <div style={{
-                    background: '#fbfcff',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '12px',
-                    padding: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: theme.text }}>
-                      {Math.max(1, Math.round(text.trim().split(/\s+/).filter(Boolean).length / 200))}m
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: theme.muted }}>Read Time</div>
-                  </div>
-                </div>
-                
-                {/* Humanization Meter */}
-                <div style={{ marginTop: '12px' }}>
-                  <div style={{ fontSize: '0.8rem', color: theme.muted, marginBottom: '6px' }}>Humanization Level</div>
-                  <div style={{
-                    height: '10px',
-                    background: 'rgba(127,127,127,0.18)',
-                    borderRadius: '999px',
-                    overflow: 'hidden',
-                    border: '1px solid #e0e0e0'
-                  }}>
-                    <div style={{
-                      display: 'block',
-                      height: '100%',
-                      width: '55%',
-                      background: 'linear-gradient(90deg, #635bff, #10b981)'
-                    }}></div>
-                  </div>
-                </div>
+                <div>Quality: {humanizedText ? 'High' : 'N/A'}</div>
               </div>
             </div>
           </div>
