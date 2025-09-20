@@ -82,6 +82,13 @@ function HomePage({
     }
   }, [getUserTier, subscription]);
 
+  // Auto-focus textarea when component mounts for immediate cursor visibility
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, []);
+
   const faqs = [
     {
       q: 'What is Notecraft Pro?',
