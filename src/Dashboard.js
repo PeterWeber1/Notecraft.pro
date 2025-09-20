@@ -537,47 +537,46 @@ function Dashboard({
         )}
 
         {/* Sidebar Header with Toggle */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: sidebarCollapsed ? 'flex-end' : 'space-between',
-          padding: sidebarCollapsed ? '10px 20px' : '20px',
-          borderBottom: `1px solid ${theme.border}`,
-          minHeight: '70px',
-          transition: 'padding 0.3s ease-in-out'
-        }}>
-          {!sidebarCollapsed && (
+        {!sidebarCollapsed && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '20px',
+            borderBottom: `1px solid ${theme.border}`,
+            minHeight: '70px',
+            transition: 'padding 0.3s ease-in-out'
+          }}>
             <h3 style={{
               margin: 0,
               color: theme.primary,
               fontSize: '1.2rem',
               fontWeight: '700',
-              opacity: sidebarCollapsed ? 0 : 1,
               transition: 'opacity 0.3s ease-in-out'
             }}>Notecraft Pro</h3>
-          )}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: sidebarCollapsed ? '1.3rem' : '1.2rem',
-              cursor: 'pointer',
-              color: theme.text,
-              padding: '8px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
-            onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
-            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {sidebarCollapsed ? '›' : '‹'}
-          </button>
-        </div>
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '1.2rem',
+                cursor: 'pointer',
+                color: theme.text,
+                padding: '8px',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = theme.secondary}
+              onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
+              title="Collapse sidebar"
+            >
+              ‹
+            </button>
+          </div>
+        )}
 
         {/* Navigation Items */}
         <div style={{
