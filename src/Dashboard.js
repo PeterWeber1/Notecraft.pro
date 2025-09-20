@@ -495,7 +495,7 @@ function Dashboard({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '16px',
+              width: isMobile ? '60px' : '80px',
               opacity: 0.7,
               transition: 'opacity 0.3s ease-in-out'
             }}>
