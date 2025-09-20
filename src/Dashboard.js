@@ -484,12 +484,33 @@ function Dashboard({
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: sidebarCollapsed ? 'flex-end' : 'space-between',
-          padding: sidebarCollapsed ? '20px 10px' : '20px',
+          justifyContent: sidebarCollapsed ? 'space-between' : 'space-between',
+          padding: sidebarCollapsed ? '10px 0' : '20px',
           borderBottom: `1px solid ${theme.border}`,
           minHeight: '70px',
           transition: 'padding 0.3s ease-in-out'
         }}>
+          {sidebarCollapsed && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0',
+              padding: '16px',
+              justifyContent: 'center',
+              opacity: sidebarCollapsed ? 0.7 : 0,
+              transition: 'opacity 0.3s ease-in-out'
+            }}>
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="#606060"/>
+                <rect x="4" y="6" width="24" height="20" rx="4" fill="#606060"/>
+                <rect x="10" y="2" width="2" height="4" fill="#606060"/>
+                <rect x="20" y="2" width="2" height="4" fill="#606060"/>
+                <circle cx="11" cy="2" r="1" fill="#ffffff"/>
+                <circle cx="21" cy="2" r="1" fill="#ffffff"/>
+                <path d="M8 10 L8 22 L11 22 L11 16 L21 22 L24 22 L24 10 L21 10 L21 16 L11 10 L8 10 Z" fill="#ffffff"/>
+              </svg>
+            </div>
+          )}
           {!sidebarCollapsed && (
             <h3 style={{
               margin: 0,
@@ -530,27 +551,6 @@ function Dashboard({
           flexDirection: 'column',
           padding: '10px 0'
         }}>
-          {sidebarCollapsed && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: sidebarCollapsed ? '0' : '12px',
-              padding: sidebarCollapsed ? '16px' : '16px 20px',
-              justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
-              opacity: sidebarCollapsed ? 0.7 : 0,
-              transition: 'opacity 0.3s ease-in-out'
-            }}>
-              <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="8" fill="#606060"/>
-                <rect x="4" y="6" width="24" height="20" rx="4" fill="#606060"/>
-                <rect x="10" y="2" width="2" height="4" fill="#606060"/>
-                <rect x="20" y="2" width="2" height="4" fill="#606060"/>
-                <circle cx="11" cy="2" r="1" fill="#ffffff"/>
-                <circle cx="21" cy="2" r="1" fill="#ffffff"/>
-                <path d="M8 10 L8 22 L11 22 L11 16 L21 22 L24 22 L24 10 L21 10 L21 16 L11 10 L8 10 Z" fill="#ffffff"/>
-              </svg>
-            </div>
-          )}
           <Link
             to="/"
             style={{
