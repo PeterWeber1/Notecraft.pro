@@ -472,7 +472,7 @@ function Dashboard({
         left: 0,
         width: sidebarCollapsed ? (isMobile ? '60px' : '80px') : (isMobile ? '280px' : '300px'),
         height: '100vh',
-        background: theme.card,
+        background: '#f8f9fa',
         borderRight: `1px solid ${theme.border}`,
         zIndex: 1001,
         display: 'flex',
