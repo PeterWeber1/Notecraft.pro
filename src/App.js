@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './HomePage';
 import Dashboard from './Dashboard';
 import Notepad from './Notepad';
@@ -78,27 +78,31 @@ function App() {
               <Route
                 path="/"
                 element={
-                  <HomePage
-                    isDarkMode={isDarkMode}
-                    toggleTheme={toggleTheme}
-                    user={user}
-                    subscription={subscription}
-                    getUserTier={getUserTier}
-                    canAccessFeature={canAccessFeature}
-                    login={login}
-                    logout={logout}
-                    upgradeSubscription={upgradeSubscription}
-                    register={register}
-                    updateProfile={updateProfile}
-                    cancelSubscription={cancelSubscription}
-                    setShowLoginModal={setShowLoginModal}
-                    setShowRegisterModal={setShowRegisterModal}
-                    setShowUpgradeModal={setShowUpgradeModal}
-                    setShowProfileModal={setShowProfileModal}
-                    setShowBillingModal={setShowBillingModal}
-                    showEmailConfirmationBanner={showEmailConfirmationBanner}
-                    isEmailVerified={isEmailVerified}
-                  />
+                  user ? (
+                    <Navigate to="/dashboard" replace />
+                  ) : (
+                    <HomePage
+                      isDarkMode={isDarkMode}
+                      toggleTheme={toggleTheme}
+                      user={user}
+                      subscription={subscription}
+                      getUserTier={getUserTier}
+                      canAccessFeature={canAccessFeature}
+                      login={login}
+                      logout={logout}
+                      upgradeSubscription={upgradeSubscription}
+                      register={register}
+                      updateProfile={updateProfile}
+                      cancelSubscription={cancelSubscription}
+                      setShowLoginModal={setShowLoginModal}
+                      setShowRegisterModal={setShowRegisterModal}
+                      setShowUpgradeModal={setShowUpgradeModal}
+                      setShowProfileModal={setShowProfileModal}
+                      setShowBillingModal={setShowBillingModal}
+                      showEmailConfirmationBanner={showEmailConfirmationBanner}
+                      isEmailVerified={isEmailVerified}
+                    />
+                  )
                 }
               />
               <Route
