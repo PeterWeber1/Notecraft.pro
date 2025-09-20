@@ -485,7 +485,9 @@ function Dashboard({
           <div style={{
             position: 'relative',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            background: '#f1f3f4',
+            borderBottom: `1px solid ${theme.border}`
           }}>
             {/* Favicon - Centered */}
             <div style={{
@@ -545,7 +547,8 @@ function Dashboard({
             padding: '20px',
             borderBottom: `1px solid ${theme.border}`,
             minHeight: '70px',
-            transition: 'padding 0.3s ease-in-out'
+            transition: 'padding 0.3s ease-in-out',
+            background: '#f1f3f4'
           }}>
             <h3 style={{
               margin: 0,
@@ -583,7 +586,8 @@ function Dashboard({
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
-          padding: '10px 0'
+          padding: '10px 0',
+          background: '#f8f9fa'
         }}>
 
 
@@ -741,7 +745,8 @@ function Dashboard({
         {!sidebarCollapsed && (
           <div style={{
             padding: '20px',
-            borderTop: `1px solid ${theme.border}`
+            borderTop: `1px solid ${theme.border}`,
+            background: '#eeeff1'
           }}>
             <div style={{
               display: 'flex',
@@ -828,7 +833,8 @@ function Dashboard({
             padding: '20px 10px',
             borderTop: `1px solid ${theme.border}`,
             display: 'flex',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            background: '#eeeff1'
           }}>
             <div
               onClick={() => setShowProfileModal(true)}
