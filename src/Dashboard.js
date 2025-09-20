@@ -486,6 +486,8 @@ function Dashboard({
           alignItems: 'center',
           justifyContent: sidebarCollapsed ? 'space-between' : 'space-between',
           padding: sidebarCollapsed ? '16px' : '20px',
+          paddingLeft: sidebarCollapsed ? '20px' : '20px',
+          paddingRight: sidebarCollapsed ? '20px' : '20px',
           borderBottom: `1px solid ${theme.border}`,
           minHeight: '70px',
           transition: 'padding 0.3s ease-in-out'
