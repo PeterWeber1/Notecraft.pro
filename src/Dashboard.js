@@ -493,7 +493,8 @@ function Dashboard({
           {sidebarCollapsed && (
             <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{
               opacity: 0.7,
-              transition: 'opacity 0.3s ease-in-out'
+              transition: 'opacity 0.3s ease-in-out',
+              marginLeft: '-4px'
             }}>
               <rect width="32" height="32" rx="8" fill="#606060"/>
               <rect x="4" y="6" width="24" height="20" rx="4" fill="#606060"/>
