@@ -484,18 +484,16 @@ function Dashboard({
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: sidebarCollapsed ? 'flex-start' : 'space-between',
-          padding: sidebarCollapsed ? '10px 0' : '20px',
+          justifyContent: sidebarCollapsed ? 'space-between' : 'space-between',
+          padding: sidebarCollapsed ? '16px' : '20px',
           borderBottom: `1px solid ${theme.border}`,
           minHeight: '70px',
-          transition: 'padding 0.3s ease-in-out',
-          gap: sidebarCollapsed ? '8px' : '0'
+          transition: 'padding 0.3s ease-in-out'
         }}>
           {sidebarCollapsed && (
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              padding: '16px',
               opacity: sidebarCollapsed ? 0.7 : 0,
               transition: 'opacity 0.3s ease-in-out'
             }}>
